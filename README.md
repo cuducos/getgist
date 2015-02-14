@@ -2,7 +2,7 @@
 
 This is a simple script I wrote to easily download any file from a public [GitHub Gist](http://gist.github.com) account.
 
-For some reason I do not have a `dotfile` repository because I prefer to store my `.vimrc`, `.gitconfig`, `.bash*` etc. as gists.
+For some reason I do not have a `dotfile` repository because I prefer to store my `.vimrc`, `.gitconfig`, `.bash_whatever` etc. as gists. I wrote this script so I can update my `.vimrc` with one single command.
 
 ## Installing
 
