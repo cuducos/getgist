@@ -92,7 +92,7 @@ class file_name(object):
             # delete or backup existing file?
             confirm = 'y'
             if not self.assume_yes:
-                message = '  Replace existing {} ? (y/n) '
+                message = '  Delete existing {} ? (y/n) '
                 confirm = raw_input(message.format(self.file_name))
 
             # delete exitsing file
