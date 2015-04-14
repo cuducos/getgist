@@ -2,9 +2,10 @@
 
 Easily download any file from a public [GitHub Gist](http://gist.github.com) account, with a one single command.
 
-[![Last Version](https://pypip.in/version/getgist/badge.svg)](https://pypi.python.org/pypi/getgist/)
+[![Latest release](https://pypip.in/version/getgist/badge.svg)](https://pypi.python.org/pypi/getgist/)
 [![Downloads](https://pypip.in/download/getgist/badge.svg)](https://pypi.python.org/pypi/getgist/)
-[![Lincense](https://pypip.in/license/getgist/badge.svg)](https://pypi.python.org/pypi/getgist/)
+[![License](https://pypip.in/license/getgist/badge.svg)](https://pypi.python.org/pypi/getgist/)
+[![Supported Python versions](https://pypip.in/py_versions/getgist/badge.svg)](https://pypi.python.org/pypi/getgist/)
 
 ## Why?
 
