@@ -38,7 +38,7 @@ class Gist(object):
         # set support variables
         self.local_dir = os.path.dirname(os.path.realpath(__file__))
         self.local_path = os.path.join(self.local_dir, self.file_name)
-        self.info = self.__load_gist()
+        self.info = self.__load_info()
 
     @property
     def id(self):
@@ -48,26 +48,8 @@ class Gist(object):
     def raw_url(self):
         return self.info.get('raw_url', None)
 
-    def __load_gist(self):
-        url = 'https://api.github.com/users/{}/gists'.format(self.user)
-        gists = json.loads(self.__curl(url))
-        for gist in gists:
-            if self.file_name in gist['files']:
-                return {'id': gist['id'],
-                        'raw_url': gist['files'][self.file_name]['raw_url']}
-        return False
-
-    def __curl(self, url):
-        request = urllib2.urlopen(url)
-        self.__output('Fetching {} …'.format(url))
-        status = request.getcode()
-        if status == 200:
-            return request.read()
-        self.__output('[Fail] HTTP Status {}'.format(url, status))
-        return False
-
-    def __output(self, message):
-        print('  {}'.format(message))
+    def load(self):
+        return self.__curl(self.raw_url)
 
     def save(self):
 
@@ -91,7 +73,7 @@ class Gist(object):
 
         # save new file
         with open(self.local_path, 'w') as file_handler:
-            contents = self.__curl(self.raw_url)
+            contents = self.load()
             self.__output('Saving new {} …'.format(self.file_name))
             file_handler.write(contents)
         self.__output('Done!')
@@ -106,6 +88,27 @@ class Gist(object):
             backup = os.path.join(self.local_dir, name)
         self.__output('Moving existing {} to {}…'.format(self.file_name, name))
         os.rename(os.path.join(self.local_dir, self.file_name), backup)
+
+    def __load_info(self):
+        url = 'https://api.github.com/users/{}/gists'.format(self.user)
+        gists = json.loads(self.__curl(url))
+        for gist in gists:
+            if self.file_name in gist['files']:
+                return {'id': gist['id'],
+                        'raw_url': gist['files'][self.file_name]['raw_url']}
+        return False
+
+    def __curl(self, url):
+        request = urllib2.urlopen(url)
+        self.__output('Fetching {} …'.format(url))
+        status = request.getcode()
+        if status == 200:
+            return request.read()
+        self.__output('[Fail] HTTP Status {}'.format(url, status))
+        return False
+
+    def __output(self, message):
+        print('  {}'.format(message))
 
 if __name__ == '__main__':
     gist = Gist()
