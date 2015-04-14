@@ -24,7 +24,7 @@ class TestAPI(TestCase):
 class TestDownload(TestCase):
 
     def setUp(self):
-        self.gist = Gist(test_user, test_gist)
+        self.gist = Gist(test_user, test_gist, True)
 
     def tearDown(self):
         for file_name in os.listdir(self.gist.local_dir):
