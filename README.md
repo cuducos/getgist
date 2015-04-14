@@ -1,35 +1,50 @@
 # GetGist
 
-This is a simple script I wrote to easily download any file from a public [GitHub Gist](http://gist.github.com) account.
+Easily download any file from a public [GitHub Gist](http://gist.github.com) account, with a one single command.
 
-For some reason I do not have a `dotfile` repository because I prefer to store my `.vimrc`, `.gitconfig`, `.bash_whatever` etc. as gists. I wrote this script so I can update my `.vimrc` with one single command.
+[![Last Version](https://pypip.in/version/getgist/badge.svg)](https://pypi.python.org/pypi/getgist/)
+[![Downloads](https://pypip.in/download/getgist/badge.svg)](https://pypi.python.org/pypi/getgist/)
+[![Lincense](https://pypip.in/license/getgist/badge.svg)](https://pypi.python.org/pypi/getgist/)
 
-## Installing
+## Why?
 
-Just copy the `getgist.py` to the directory where you want to have your files downloaded.
+Because of reasons I do not have a `dotfile` repository. I prefer to store my `.vimrc`, `.gitconfig`, `.bash_whatever` etc. as [Gists](http://gist.github.com/).
+
+Thus, to be honest, I wrote this script so update my `.vimrc` with one single command.
+
+## Install
+
+`$ pip install getgist`
+
+*GetGist* runs with Python 2 or 3 and is built only with core modules (no dependencies but Python).
 
 ## Usage
 
-Just run `python getgist.py <user> <file>`. For example:
+Just run `getgist <user> <file>`. For example:
 
 ```
-vagrant@vagrant ~ $ python getgist.py cuducos .vimrc
+user@localhost ~ $ getgist cuducos .vimrc
   Fetching https://api.github.com/users/cuducos/gists …
   Fetching https://gist.githubusercontent.com/cuducos/409fac6ac23bf515f495/raw/f8acc26f0422b02fc282c5b4e97b70710044dbb3/.vimrc …
   Replace existing .vimrc ? (y/n) y
   Deleting existing .vimrc …
   Saving new .vimrc …
   Done!
-vagrant@vagrant ~ $
+user@localhost ~ $
 ```
 
-If you decide **not to delete** your copy of the local file, the **local file is renamed** with an extension such as `.bkp`, `.bkp.1`, `.bkp.2` etc.
+If you decide not to delete your copy of the local file, it will be renamed with extensions such as `.bkp`, `.bkp.1`, `.bkp.2` etc.
 
-## To do list
+## Contributing
 
-* Distribute it as standard PyPI package
-* Make it a CLI command (e.g. `$ getgist cuducos .vimrc`)
-* Store default user (e.g. `$ getgist .vimrc` to download my `.vimrc` but `$ getgist johndoe .vimrc` to download John's one)
+Feel free to [report an issue](http://github.com/cuducos/getgist/issues), [open a pull request](http://github.com/cuducos/getgist/pulls), or [drop a line](http://twitter.com/cuducos).
+
+### To do list
+
+* Authenticate users to:
+  * Have a default user (`$ getgist .vimrc` to mine, `$ getgist johndoe .vimrc` to get John's one)
+  * Allow the possibility of getting private Gists
+* Write tests for `Gist.__backup()`
 
 ## License
 
