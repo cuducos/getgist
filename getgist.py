@@ -1,9 +1,11 @@
 # coding: utf-8
-
 import argparse
 import json
 import os
-import urllib2
+try:
+    from urllib2 import urlopen
+except ImportError:
+    from urllib.request import urlopen
 
 
 class Gist(object):
@@ -60,7 +62,10 @@ class Gist(object):
             confirm = 'y'
             if not self.assume_yes:
                 message = '  Delete existing {} ? (y/n) '
-                confirm = raw_input(message.format(self.file_name))
+                try:
+                    confirm = raw_input(message.format(self.file_name))
+                except NameError:
+                    confirm = input(message.format(self.file_name))
 
             # delete exitsing file
             if confirm.lower() == 'y':
@@ -91,7 +96,7 @@ class Gist(object):
 
     def __load_info(self):
         url = 'https://api.github.com/users/{}/gists'.format(self.user)
-        gists = json.loads(self.__curl(url))
+        gists = json.loads(str(self.__curl(url)))
         for gist in gists:
             if self.file_name in gist['files']:
                 return {'id': gist['id'],
@@ -99,11 +104,12 @@ class Gist(object):
         return False
 
     def __curl(self, url):
-        request = urllib2.urlopen(url)
+        request = urlopen(url)
         self.__output('Fetching {} …'.format(url))
         status = request.getcode()
         if status == 200:
-            return request.read()
+            contents = request.read()
+            return contents.decode('utf-8')
         self.__output('[Fail] HTTP Status {}'.format(url, status))
         return False
 

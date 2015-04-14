@@ -1,8 +1,11 @@
 import os
-from getgist.getgist import Gist
+from getgist import Gist
 from re import search
 from unittest import TestCase
-from urllib2 import urlopen
+try:
+    from urllib2 import urlopen
+except ImportError:
+    from urllib.request import urlopen
 
 test_user = 'cuducos'
 test_gist = '.vimrc'
