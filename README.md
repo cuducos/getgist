@@ -11,7 +11,7 @@ Easily download any file from a public [GitHub Gist](http://gist.github.com) acc
 
 Because of reasons I do not have a `dotfile` repository. I prefer to store my `.vimrc`, `.gitconfig`, `.bash_whatever` etc. as [Gists](http://gist.github.com/).
 
-Thus, to be honest, I wrote this script so update my `.vimrc` with one single command.
+Thus, to be honest, I wrote this script so I can update my `.vimrc` with one single command.
 
 ## Install
 
