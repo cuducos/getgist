@@ -1,5 +1,4 @@
 # coding: utf-8
-
 import argparse
 import json
 import os
@@ -39,7 +38,7 @@ class Gist(object):
                 self.assume_yes = args.yes_to_all
 
         # set support variables
-        self.local_dir = os.path.dirname(os.path.realpath(__file__))
+        self.local_dir = os.path.realpath(os.curdir)
         self.local_path = os.path.join(self.local_dir, self.file_name)
         self.info = self.__load_info()
 
@@ -83,6 +82,7 @@ class Gist(object):
             self.__output('Saving new {} …'.format(self.file_name))
             file_handler.write(contents)
         self.__output('Saved as {}'.format(os.path.abspath(self.local_path)))
+        self.__output('Done!')
 
     def __backup(self):
         count = 0

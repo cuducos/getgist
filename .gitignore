@@ -1,3 +1,4 @@
 *.pyc
 GetGist.egg-info/
+build/
 dist/
