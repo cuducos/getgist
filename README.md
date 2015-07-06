@@ -2,10 +2,11 @@
 
 Easily download any file from a public [GitHub Gist](http://gist.github.com), with a one single command.
 
-[![Latest release](https://pypip.in/version/getgist/badge.svg?style=flat-square)](https://pypi.python.org/pypi/getgist/)
-[![Downloads](https://pypip.in/download/getgist/badge.svg?style=flat-square)](https://pypi.python.org/pypi/getgist/)
-[![License](https://pypip.in/license/getgist/badge.svg?style=flat-square)](https://pypi.python.org/pypi/getgist/)
-[![Supported Python versions](https://pypip.in/py_versions/getgist/badge.svg?style=flat-square)](https://pypi.python.org/pypi/getgist/)
+[![Development Status: Alpha](https://img.shields.io/pypi/status/getgist.svg?style=flat)](https://pypi.python.org/pypi/getgist)
+[![Latest release](https://img.shields.io/pypi/v/getgist.svg?style=flat)](https://pypi.python.org/pypi/getgist)
+[![Downloads](https://img.shields.io/pypi/dm/getgist.svg?style=flat)](https://pypi.python.org/pypi/getgist)
+[![Python Version](https://img.shields.io/pypi/pyversions/getgist.svg)](https://pypi.python.org/pypi/getgist) 
+[![License](https://img.shields.io/pypi/l/getgist.svg?style=flat)](https://pypi.python.org/pypi/getgist)
 
 ## Why?
 
@@ -46,6 +47,11 @@ Feel free to [report an issue](http://github.com/cuducos/getgist/issues), [open 
   * Have a default user (`$ getgist .vimrc` to mine, `$ getgist johndoe .vimrc` to get John's one)
   * Allow the possibility of getting private Gists
 * Write tests for `Gist.__backup()`
+
+## Changelog
+
+* **0.0.2**
+  * Fix a bug related to the instalation, path and import
 
 ## License
 
