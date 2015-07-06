@@ -1,4 +1,5 @@
 # coding: utf-8
+
 import argparse
 import json
 import os
@@ -81,7 +82,7 @@ class Gist(object):
             contents = self.load()
             self.__output('Saving new {} …'.format(self.file_name))
             file_handler.write(contents)
-        self.__output('Done!')
+        self.__output('Saved as {}'.format(os.path.abspath(self.local_path)))
 
     def __backup(self):
         count = 0
