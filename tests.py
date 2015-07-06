@@ -1,7 +1,10 @@
+from __future__ import absolute_import
+
 import os
-from getgist import Gist
+from .getgist import Gist
 from re import search
 from unittest import TestCase
+
 try:
     from urllib2 import urlopen
 except ImportError:
