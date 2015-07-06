@@ -1,6 +1,6 @@
 # GetGist
 
-Easily download any file from a public [GitHub Gist](http://gist.github.com) account, with a one single command.
+Easily download any file from a public [GitHub Gist](http://gist.github.com), with a one single command.
 
 [![Latest release](https://pypip.in/version/getgist/badge.svg?style=flat-square)](https://pypi.python.org/pypi/getgist/)
 [![Downloads](https://pypip.in/download/getgist/badge.svg?style=flat-square)](https://pypi.python.org/pypi/getgist/)
@@ -9,15 +9,15 @@ Easily download any file from a public [GitHub Gist](http://gist.github.com) acc
 
 ## Why?
 
-Because of reasons I do not have a `dotfile` repository. I prefer to store my `.vimrc`, `.gitconfig`, `.bash_whatever` etc. as [Gists](http://gist.github.com/).
+Because of reasons I do not have a `dotfiles` repository. I prefer to store my `.vimrc`, `.gitconfig`, `.bash_whatever` etc. as [Gists](http://gist.github.com/).
 
-Thus, to be honest, I wrote this script so update my `.vimrc` with one single command.
+Thus, to be honest, I wrote this script so I could update my `dotfiles` with one single command.
 
 ## Install
 
 `$ pip install getgist`
 
-*GetGist* runs with Python 2 or 3 and is built only with core modules (no dependencies but Python).
+*GetGist* runs with Python 2 or 3 and is written **only** with core modules (no extra dependencies but Python).
 
 ## Usage
 
