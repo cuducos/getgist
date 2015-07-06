@@ -42,6 +42,8 @@ If you decide not to delete your copy of the local file, it will be renamed with
 
 Feel free to [report an issue](http://github.com/cuducos/getgist/issues), [open a pull request](http://github.com/cuducos/getgist/pulls), or [drop a line](http://twitter.com/cuducos).
 
+Thank you very much [Daniel Boline](https://github.com/ddboline) for the contribution!
+
 ### To do list
 
 * Authenticate users to:
@@ -51,6 +53,8 @@ Feel free to [report an issue](http://github.com/cuducos/getgist/issues), [open 
 
 ## Changelog
 
+* **0.0.3**
+  * Fix a bug related to the directory where the file was being saved
 * **0.0.2**
   * Fix a bug related to the instalation, path and import
 
