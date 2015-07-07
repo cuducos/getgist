@@ -1,9 +1,12 @@
 # coding: utf-8
+
 import argparse
 import json
 import os
+
 try:
     from urllib2 import urlopen
+    input = raw_input
 except ImportError:
     from urllib.request import urlopen
 
@@ -62,10 +65,7 @@ class Gist(object):
             confirm = 'y'
             if not self.assume_yes:
                 message = '  Delete existing {} ? (y/n) '
-                try:
-                    confirm = raw_input(message.format(self.file_name))
-                except NameError:
-                    confirm = input(message.format(self.file_name))
+                confirm = input(message.format(self.file_name))
 
             # delete exitsing file
             if confirm.lower() == 'y':
@@ -117,6 +117,6 @@ class Gist(object):
     def __output(self, message):
         print('  {}'.format(message))
 
-if __name__ == '__main__':
+def run():
     gist = Gist()
     gist.save()
