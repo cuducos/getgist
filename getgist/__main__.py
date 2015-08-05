@@ -47,14 +47,15 @@ class Gist(object):
 
     @property
     def id(self):
-        return self.info.get('id', None)
+        if self.info:
+            return self.info.get('id', None)
+        return False
 
     @property
     def raw_url(self):
-        return self.info.get('raw_url', None)
-
-    def load(self):
-        return self.__curl(self.raw_url)
+        if self.info:
+            return self.info.get('raw_url', None)
+        return False
 
     def save(self):
 
