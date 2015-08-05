@@ -73,6 +73,9 @@ $ nosetests
 
 ## Changelog
 
+* **0.0.5**
+  * Ask user which Gist to use if more than one file is found
+  * General code improvements
 * **0.0.4**
   * Use `entry_points` instead of `scripts`
   * Implement tests for `Gist.__backup()`
