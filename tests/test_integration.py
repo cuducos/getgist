@@ -62,7 +62,6 @@ class TestDownload(TestCase):
         # backup filenames
         backup1 = '{}.bkp'.format(self.gist.local_path)
         backup2 = '{}.bkp.1'.format(self.gist.local_path)
-        backup3 = '{}.bkp.2'.format(self.gist.local_path)
 
         # 1st download
         self.gist.save()
@@ -78,4 +77,3 @@ class TestDownload(TestCase):
 
         # 4th download
         self.gist.save()
-        self.assertTrue(os.path.exists(backup3))
