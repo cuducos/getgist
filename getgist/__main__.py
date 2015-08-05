@@ -117,6 +117,8 @@ class Gist(object):
     def __output(self, message):
         print('  {}'.format(message))
 
+
 def run():
     gist = Gist()
-    gist.save()
+    if gist.info:
+        gist.save()
