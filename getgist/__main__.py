@@ -43,7 +43,7 @@ class Gist(object):
         # set support variables
         self.local_dir = os.path.realpath(os.curdir)
         self.local_path = os.path.join(self.local_dir, self.file_name)
-        self.info = self.__load_info()
+        self.info = self.__load_gist_info()
 
     @property
     def id(self):
@@ -79,7 +79,7 @@ class Gist(object):
 
         # save new file
         with open(self.local_path, 'w') as file_handler:
-            contents = self.load()
+            contents = self.__curl(self.raw_url)
             self.__output('Saving new {} …'.format(self.file_name))
             file_handler.write(contents)
         self.__output('Saved as {}'.format(os.path.abspath(self.local_path)))
@@ -96,14 +96,72 @@ class Gist(object):
         self.__output('Moving existing {} to {}…'.format(self.file_name, name))
         os.rename(os.path.join(self.local_dir, self.file_name), backup)
 
-    def __load_info(self):
-        url = 'https://api.github.com/users/{}/gists'.format(self.user)
-        gists = json.loads(str(self.__curl(url)))
-        for gist in gists:
-            if self.file_name in gist['files']:
-                return {'id': gist['id'],
-                        'raw_url': gist['files'][self.file_name]['raw_url']}
+    def __load_gist_info(self):
+
+        # return Gist info if Gist is found
+        gists = [gist for gist in self.__filter_gists()]
+        if gists:
+            return self.__select_file(gists)
+
+        # return False if no match if found
+        error = "[Error] No file named `{}` found in {}'s public Gists."
+        self.__output(error.format(self.file_name, self.user))
         return False
+
+    def __filter_gists(self):
+        for gist in self.__query_api():
+            if self.file_name in gist['files']:
+                yield {'id': gist['id'],
+                       'description': gist['description'],
+                       'raw_url': gist['files'][self.file_name]['raw_url']}
+
+    def __query_api(self):
+        url = 'https://api.github.com/users/{}/gists'.format(self.user)
+        contents = str(self.__curl(url))
+        if not contents:
+            self.__output('[Hint] Check if the entered user name is correct.')
+            return list()
+        return json.loads(contents)
+
+    def __select_file(self, files):
+
+        # return false if no match
+        if len(files) == 0:
+            return False
+
+        # if there is only one match (or `yes to all`), return the 1st match
+        elif len(files) == 1 or self.assume_yes:
+            return files[0]
+
+        # if we have more macthes return the appropriate one
+        else:
+
+            # list and ask
+            question = 'Download {} from which Gist?'.format(self.file_name)
+            self.__output(question)
+            options = '[{}] {}'
+            valid_indexes = list()
+            for f in files:
+                index = files.index(f)
+                valid_indexes.append(index)
+                self.__output(options.format(index + 1, f['description']))
+
+            # get the gist index
+            try:
+                gist_index = int(input('Type the number: ')) - 1
+            except:
+                self.__output('Please type a number.')
+                return self.__select_file(files)
+
+            # check if entered index is valid
+            if gist_index not in valid_indexes:
+                self.__output('Invalid number, please try again.')
+                return self.__select_file(files)
+
+            # return the approproate file
+            selected = files[gist_index]
+            self.__output('Using `{}` Gist…'.format(selected['description']))
+            return selected
 
     def __curl(self, url):
 
