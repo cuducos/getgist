@@ -5,10 +5,10 @@ import json
 import os
 
 try:
-    from urllib2 import urlopen
+    from urllib2 import HTTPError, urlopen
     input = raw_input
 except ImportError:
-    from urllib.request import urlopen
+    from urllib.request import HTTPError, urlopen
 
 
 class Gist(object):
@@ -105,14 +105,24 @@ class Gist(object):
         return False
 
     def __curl(self, url):
-        request = urlopen(url)
+
+        # try to connect
         self.__output('Fetching {} …'.format(url))
-        status = request.getcode()
+        try:
+            request = urlopen(url)
+            status = request.getcode()
+        except HTTPError:
+            self.__output("[Error] Couldn't reach GitHub at {}.".format(url))
+            return ''
+
+        # if it works
         if status == 200:
             contents = request.read()
             return contents.decode('utf-8')
-        self.__output('[Fail] HTTP Status {}'.format(url, status))
-        return False
+
+        # in case of error
+        self.__output('[Error] HTTP Status {}.'.format(url, status))
+        return ''
 
     def __output(self, message):
         print('  {}'.format(message))
