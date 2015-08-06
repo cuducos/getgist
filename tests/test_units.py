@@ -13,7 +13,7 @@ except ImportError:
 
 class TestSelectFile(TestCase):
 
-    @patch('getgist.__main__.Gist._Gist__filter_gists')
+    @patch('getgist.__main__.Gist.filter_gists')
     def test_select_file_with_one_option(self, mocked):
         mocked.return_value = [{'id': 12345,
                                 'description': 'Gist #1',
@@ -23,7 +23,7 @@ class TestSelectFile(TestCase):
         self.assertEqual(g.raw_url, 'URL #1')
 
     @patch(input_function)
-    @patch('getgist.__main__.Gist._Gist__filter_gists')
+    @patch('getgist.__main__.Gist.filter_gists')
     def test_select_file_with_two_options(self, mocked_filter, mocked_input):
         mocked_filter.return_value = [{'id': 12345,
                                        'description': 'Gist #1',
@@ -36,7 +36,7 @@ class TestSelectFile(TestCase):
         self.assertEqual(g.id, 67890)
         self.assertEqual(g.raw_url, 'URL #2')
 
-    @patch('getgist.__main__.Gist._Gist__filter_gists')
+    @patch('getgist.__main__.Gist.filter_gists')
     def test_select_file_with_no_option(self, mocked):
         mocked.return_value = list()
         g = Gist('user', 'file')

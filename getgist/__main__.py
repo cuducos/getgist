@@ -43,7 +43,7 @@ class Gist(object):
         # set support variables
         self.local_dir = os.path.realpath(os.curdir)
         self.local_path = os.path.join(self.local_dir, self.file_name)
-        self.info = self.__load_gist_info()
+        self.info = self.load_gist_info()
 
     @property
     def id(self):
@@ -70,22 +70,22 @@ class Gist(object):
 
             # delete exitsing file
             if confirm.lower() == 'y':
-                self.__output('Deleting existing {} …'.format(self.file_name))
+                self.output('Deleting existing {} …'.format(self.file_name))
                 os.remove(self.local_path)
 
             # backup existing file
             else:
-                self.__backup()
+                self.backup()
 
         # save new file
         with open(self.local_path, 'w') as file_handler:
-            contents = self.__curl(self.raw_url)
-            self.__output('Saving new {} …'.format(self.file_name))
+            contents = self.curl(self.raw_url)
+            self.output('Saving new {} …'.format(self.file_name))
             file_handler.write(contents)
-        self.__output('Saved as {}'.format(os.path.abspath(self.local_path)))
-        self.__output('Done!')
+        self.output('Saved as {}'.format(os.path.abspath(self.local_path)))
+        self.output('Done!')
 
-    def __backup(self):
+    def backup(self):
         count = 0
         name = '{}.bkp'.format(self.file_name)
         backup = os.path.join(self.local_dir, name)
@@ -93,37 +93,37 @@ class Gist(object):
             count += 1
             name = '{}.bkp.{}'.format(self.file_name, count)
             backup = os.path.join(self.local_dir, name)
-        self.__output('Moving existing {} to {}…'.format(self.file_name, name))
+        self.output('Moving existing {} to {}…'.format(self.file_name, name))
         os.rename(os.path.join(self.local_dir, self.file_name), backup)
 
-    def __load_gist_info(self):
+    def load_gist_info(self):
 
         # return Gist info if Gist is found
-        gists = [gist for gist in self.__filter_gists()]
+        gists = [gist for gist in self.filter_gists()]
         if gists:
-            return self.__select_file(gists)
+            return self.select_file(gists)
 
         # return False if no match if found
         error = "[Error] No file named `{}` found in {}'s public Gists."
-        self.__output(error.format(self.file_name, self.user))
+        self.output(error.format(self.file_name, self.user))
         return False
 
-    def __filter_gists(self):
-        for gist in self.__query_api():
+    def filter_gists(self):
+        for gist in self.query_api():
             if self.file_name in gist['files']:
                 yield {'id': gist['id'],
                        'description': gist['description'],
                        'raw_url': gist['files'][self.file_name]['raw_url']}
 
-    def __query_api(self):
+    def query_api(self):
         url = 'https://api.github.com/users/{}/gists'.format(self.user)
-        contents = str(self.__curl(url))
+        contents = str(self.curl(url))
         if not contents:
-            self.__output('[Hint] Check if the entered user name is correct.')
+            self.output('[Hint] Check if the entered user name is correct.')
             return list()
         return json.loads(contents)
 
-    def __select_file(self, files):
+    def select_file(self, files):
 
         # return false if no match
         if len(files) == 0:
@@ -138,40 +138,40 @@ class Gist(object):
 
             # list and ask
             question = 'Download {} from which Gist?'.format(self.file_name)
-            self.__output(question)
+            self.output(question)
             options = '[{}] {}'
             valid_indexes = list()
             for f in files:
                 index = files.index(f)
                 valid_indexes.append(index)
-                self.__output(options.format(index + 1, f['description']))
+                self.output(options.format(index + 1, f['description']))
 
             # get the gist index
             try:
                 gist_index = int(input('Type the number: ')) - 1
             except:
-                self.__output('Please type a number.')
-                return self.__select_file(files)
+                self.output('Please type a number.')
+                return self.select_file(files)
 
             # check if entered index is valid
             if gist_index not in valid_indexes:
-                self.__output('Invalid number, please try again.')
-                return self.__select_file(files)
+                self.output('Invalid number, please try again.')
+                return self.select_file(files)
 
             # return the approproate file
             selected = files[gist_index]
-            self.__output('Using `{}` Gist…'.format(selected['description']))
+            self.output('Using `{}` Gist…'.format(selected['description']))
             return selected
 
-    def __curl(self, url):
+    def curl(self, url):
 
         # try to connect
-        self.__output('Fetching {} …'.format(url))
+        self.output('Fetching {} …'.format(url))
         try:
             request = urlopen(url)
             status = request.getcode()
         except HTTPError:
-            self.__output("[Error] Couldn't reach GitHub at {}.".format(url))
+            self.output("[Error] Couldn't reach GitHub at {}.".format(url))
             return ''
 
         # if it works
@@ -180,10 +180,10 @@ class Gist(object):
             return contents.decode('utf-8')
 
         # in case of error
-        self.__output('[Error] HTTP Status {}.'.format(url, status))
+        self.output('[Error] HTTP Status {}.'.format(url, status))
         return ''
 
-    def __output(self, message):
+    def output(self, message):
         print('  {}'.format(message))
 
 
