@@ -64,9 +64,7 @@ Thank you very much [@ddboline](http://github.com/ddboline) and [/u/Sean1708](ht
 ### To do list
 
 * Write tests for `entry_points`
-* Authenticate users to:
-  * Have a default user (e.g: `$ getgist .vimrc` to get my `.vimrc`, and `$ getgist johndoe .vimrc` to get John's one)
-  * Allow the possibility of getting private Gists
+* Authenticate users to allow the possibility of getting private Gists
 
 ### Tests
 
@@ -80,6 +78,8 @@ In Python 2 you also need to install `mock` with `$ pip install mock`.
 
 ## Changelog
 
+* **0.0.6**
+  * Add default user feature (`getmy`)
 * **0.0.5**
   * Ask user which Gist to use if more than one file is found
   * General code improvements
