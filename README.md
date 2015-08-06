@@ -37,6 +37,24 @@ $ getgist cuducos .vimrc
 
 If you decide not to delete your copy of the local file, it will be renamed with extensions such as `.bkp`, `.bkp.1`, `.bkp.2` etc.
 
+## Setting a default user
+
+You can set a default user to avoid typing your GitHub user name all the time.
+
+1. Set an environment variable called `GETGIST_USER` (e.g. add something like `export GETGIST_USER='cuducos'` to your `.bash_profile`)
+2. Use the shortcut `getmy <file>` instead of `getgist <user> <file>`
+
+For example:
+
+```
+$ getmy .vimrc
+  Fetching https://api.github.com/users/cuducos/gists …
+  Fetching https://gist.githubusercontent.com/cuducos/1a2b3c4d5e/raw/1a2b3c4d5e1a2b3c4d5e/.vimrc …
+  Saving new .vimrc …
+  Saved as /home/cuducos/.vimrc
+  Done!
+```
+
 ## Contributing
 
 Feel free to [report an issue](http://github.com/cuducos/getgist/issues), [open a pull request](http://github.com/cuducos/getgist/pulls), or [drop a line](http://twitter.com/cuducos).
