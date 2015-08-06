@@ -1,0 +1,222 @@
+[
+  {
+    "url": "https://api.github.com/gists/e943694a1ef1e224ef78",
+    "forks_url": "https://api.github.com/gists/e943694a1ef1e224ef78/forks",
+    "commits_url": "https://api.github.com/gists/e943694a1ef1e224ef78/commits",
+    "id": "e943694a1ef1e224ef78",
+    "git_pull_url": "https://gist.github.com/e943694a1ef1e224ef78.git",
+    "git_push_url": "https://gist.github.com/e943694a1ef1e224ef78.git",
+    "html_url": "https://gist.github.com/e943694a1ef1e224ef78",
+    "files": {
+      "uBlockFilters": {
+        "filename": "uBlockFilters",
+        "type": "text/plain",
+        "language": null,
+        "raw_url": "https://gist.githubusercontent.com/cuducos/e943694a1ef1e224ef78/raw/e9acab49aefe3b780adfc5b10b51a0db84a1e773/uBlockFilters",
+        "size": 271
+      }
+    },
+    "public": true,
+    "created_at": "2015-04-22T11:48:29Z",
+    "updated_at": "2015-05-11T17:48:03Z",
+    "description": "uBlockFilters",
+    "comments": 0,
+    "user": null,
+    "comments_url": "https://api.github.com/gists/e943694a1ef1e224ef78/comments",
+    "owner": {
+      "login": "cuducos",
+      "id": 4732915,
+      "avatar_url": "https://avatars.githubusercontent.com/u/4732915?v=3",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cuducos",
+      "html_url": "https://github.com/cuducos",
+      "followers_url": "https://api.github.com/users/cuducos/followers",
+      "following_url": "https://api.github.com/users/cuducos/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cuducos/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cuducos/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cuducos/subscriptions",
+      "organizations_url": "https://api.github.com/users/cuducos/orgs",
+      "repos_url": "https://api.github.com/users/cuducos/repos",
+      "events_url": "https://api.github.com/users/cuducos/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cuducos/received_events",
+      "type": "User",
+      "site_admin": false
+    }
+  },
+  {
+    "url": "https://api.github.com/gists/5bf1739c81c8f64c1167",
+    "forks_url": "https://api.github.com/gists/5bf1739c81c8f64c1167/forks",
+    "commits_url": "https://api.github.com/gists/5bf1739c81c8f64c1167/commits",
+    "id": "5bf1739c81c8f64c1167",
+    "git_pull_url": "https://gist.github.com/5bf1739c81c8f64c1167.git",
+    "git_push_url": "https://gist.github.com/5bf1739c81c8f64c1167.git",
+    "html_url": "https://gist.github.com/5bf1739c81c8f64c1167",
+    "files": {
+      ".gitconfig": {
+        "filename": ".gitconfig",
+        "type": "text/plain",
+        "language": "INI",
+        "raw_url": "https://gist.githubusercontent.com/cuducos/5bf1739c81c8f64c1167/raw/68835869e7bf0ebcf1c0871f267d049fc6194d7b/.gitconfig",
+        "size": 654
+      }
+    },
+    "public": true,
+    "created_at": "2015-01-22T09:39:45Z",
+    "updated_at": "2015-02-03T12:35:42Z",
+    "description": ".gitconfig",
+    "comments": 0,
+    "user": null,
+    "comments_url": "https://api.github.com/gists/5bf1739c81c8f64c1167/comments",
+    "owner": {
+      "login": "cuducos",
+      "id": 4732915,
+      "avatar_url": "https://avatars.githubusercontent.com/u/4732915?v=3",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cuducos",
+      "html_url": "https://github.com/cuducos",
+      "followers_url": "https://api.github.com/users/cuducos/followers",
+      "following_url": "https://api.github.com/users/cuducos/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cuducos/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cuducos/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cuducos/subscriptions",
+      "organizations_url": "https://api.github.com/users/cuducos/orgs",
+      "repos_url": "https://api.github.com/users/cuducos/repos",
+      "events_url": "https://api.github.com/users/cuducos/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cuducos/received_events",
+      "type": "User",
+      "site_admin": false
+    }
+  },
+  {
+    "url": "https://api.github.com/gists/c76255137f2a14b3c7b0",
+    "forks_url": "https://api.github.com/gists/c76255137f2a14b3c7b0/forks",
+    "commits_url": "https://api.github.com/gists/c76255137f2a14b3c7b0/commits",
+    "id": "c76255137f2a14b3c7b0",
+    "git_pull_url": "https://gist.github.com/c76255137f2a14b3c7b0.git",
+    "git_push_url": "https://gist.github.com/c76255137f2a14b3c7b0.git",
+    "html_url": "https://gist.github.com/c76255137f2a14b3c7b0",
+    "files": {
+      ".bash_profile": {
+        "filename": ".bash_profile",
+        "type": "text/plain",
+        "language": "Shell",
+        "raw_url": "https://gist.githubusercontent.com/cuducos/c76255137f2a14b3c7b0/raw/95e10537ea1e8b3d5f843fae70c8c2c2a054010d/.bash_profile",
+        "size": 4015
+      }
+    },
+    "public": true,
+    "created_at": "2014-12-30T11:41:51Z",
+    "updated_at": "2015-08-06T18:43:03Z",
+    "description": ".bash_profile",
+    "comments": 0,
+    "user": null,
+    "comments_url": "https://api.github.com/gists/c76255137f2a14b3c7b0/comments",
+    "owner": {
+      "login": "cuducos",
+      "id": 4732915,
+      "avatar_url": "https://avatars.githubusercontent.com/u/4732915?v=3",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cuducos",
+      "html_url": "https://github.com/cuducos",
+      "followers_url": "https://api.github.com/users/cuducos/followers",
+      "following_url": "https://api.github.com/users/cuducos/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cuducos/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cuducos/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cuducos/subscriptions",
+      "organizations_url": "https://api.github.com/users/cuducos/orgs",
+      "repos_url": "https://api.github.com/users/cuducos/repos",
+      "events_url": "https://api.github.com/users/cuducos/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cuducos/received_events",
+      "type": "User",
+      "site_admin": false
+    }
+  },
+  {
+    "url": "https://api.github.com/gists/2d9e9c3033c6834614e7",
+    "forks_url": "https://api.github.com/gists/2d9e9c3033c6834614e7/forks",
+    "commits_url": "https://api.github.com/gists/2d9e9c3033c6834614e7/commits",
+    "id": "2d9e9c3033c6834614e7",
+    "git_pull_url": "https://gist.github.com/2d9e9c3033c6834614e7.git",
+    "git_push_url": "https://gist.github.com/2d9e9c3033c6834614e7.git",
+    "html_url": "https://gist.github.com/2d9e9c3033c6834614e7",
+    "files": {
+      "gistfile1.txt": {
+        "filename": "gistfile1.txt",
+        "type": "text/plain",
+        "language": "Text",
+        "raw_url": "https://gist.githubusercontent.com/cuducos/2d9e9c3033c6834614e7/raw/0e958edef087cb0f7d78916e6ed70623d39262f9/gistfile1.txt",
+        "size": 341
+      }
+    },
+    "public": true,
+    "created_at": "2014-10-06T15:33:35Z",
+    "updated_at": "2015-05-23T11:39:46Z",
+    "description": "crouton install",
+    "comments": 0,
+    "user": null,
+    "comments_url": "https://api.github.com/gists/2d9e9c3033c6834614e7/comments",
+    "owner": {
+      "login": "cuducos",
+      "id": 4732915,
+      "avatar_url": "https://avatars.githubusercontent.com/u/4732915?v=3",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cuducos",
+      "html_url": "https://github.com/cuducos",
+      "followers_url": "https://api.github.com/users/cuducos/followers",
+      "following_url": "https://api.github.com/users/cuducos/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cuducos/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cuducos/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cuducos/subscriptions",
+      "organizations_url": "https://api.github.com/users/cuducos/orgs",
+      "repos_url": "https://api.github.com/users/cuducos/repos",
+      "events_url": "https://api.github.com/users/cuducos/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cuducos/received_events",
+      "type": "User",
+      "site_admin": false
+    }
+  },
+  {
+    "url": "https://api.github.com/gists/409fac6ac23bf515f495",
+    "forks_url": "https://api.github.com/gists/409fac6ac23bf515f495/forks",
+    "commits_url": "https://api.github.com/gists/409fac6ac23bf515f495/commits",
+    "id": "409fac6ac23bf515f495",
+    "git_pull_url": "https://gist.github.com/409fac6ac23bf515f495.git",
+    "git_push_url": "https://gist.github.com/409fac6ac23bf515f495.git",
+    "html_url": "https://gist.github.com/409fac6ac23bf515f495",
+    "files": {
+      ".vimrc": {
+        "filename": ".vimrc",
+        "type": "text/plain",
+        "language": "VimL",
+        "raw_url": "https://gist.githubusercontent.com/cuducos/409fac6ac23bf515f495/raw/3e0e33de213cd1ebf7eb4d2b6f8a6ede63a35f21/.vimrc",
+        "size": 8645
+      }
+    },
+    "public": true,
+    "created_at": "2014-08-23T12:48:29Z",
+    "updated_at": "2015-07-26T08:42:09Z",
+    "description": ".vimrc",
+    "comments": 0,
+    "user": null,
+    "comments_url": "https://api.github.com/gists/409fac6ac23bf515f495/comments",
+    "owner": {
+      "login": "cuducos",
+      "id": 4732915,
+      "avatar_url": "https://avatars.githubusercontent.com/u/4732915?v=3",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cuducos",
+      "html_url": "https://github.com/cuducos",
+      "followers_url": "https://api.github.com/users/cuducos/followers",
+      "following_url": "https://api.github.com/users/cuducos/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cuducos/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cuducos/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cuducos/subscriptions",
+      "organizations_url": "https://api.github.com/users/cuducos/orgs",
+      "repos_url": "https://api.github.com/users/cuducos/repos",
+      "events_url": "https://api.github.com/users/cuducos/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cuducos/received_events",
+      "type": "User",
+      "site_admin": false
+    }
+  }
+]
