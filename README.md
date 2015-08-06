@@ -22,21 +22,16 @@ I wrote this script so I could update my *dotfiles* with one single command.
 
 ## Usage
 
-Just run `getgist <user> <file>`. For example, type:
+Just run `getgist <user> <file>`. For example:
 
 ```
 $ getgist cuducos .vimrc
-```
-
-And follow the output:
-
-```
   Fetching https://api.github.com/users/cuducos/gists …
-  Fetching https://gist.githubusercontent.com/cuducos/409fac6ac23bf515f495/raw/f8acc26f0422b02fc282c5b4e97b70710044dbb3/.vimrc …
+  Fetching https://gist.githubusercontent.com/cuducos/1a2b3c4d5e/raw/1a2b3c4d5e1a2b3c4d5e/.vimrc …
   Replace existing .vimrc ? (y/n) y
   Deleting existing .vimrc …
   Saving new .vimrc …
-  Saved as /Users/cuducos/.vimrc
+  Saved as /home/cuducos/.vimrc
   Done!
 ```
 
@@ -57,19 +52,13 @@ Thank you very much [@ddboline](http://github.com/ddboline) and [/u/Sean1708](ht
 
 ### Tests
 
-#### Python 2
-
-```
-$ pip install nose mock
-$ nosetests
-```
-
-#### Python 3
 
 ```
 $ pip install nose
 $ nosetests
 ```
+
+In Python 2 you also need to install `mock` with `$ pip install mock`.
 
 ## Changelog
 
