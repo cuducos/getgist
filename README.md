@@ -10,15 +10,19 @@ Easily download any file from a public [GitHub Gist](http://gist.github.com), wi
 
 ## Why?
 
-Because of reasons I do not have a *dotfiles* repository. I prefer to store my `.vimrc`, `.gitconfig`, `.bash_whatever` etc. as [Gists](http://gist.github.com/).
+Because of reasons I do not have a *dotfiles* repository. I prefer to store my `.vimrc`, `.gitconfig`, `.bash_profile` etc. as [Gists](http://gist.github.com/).
 
-I wrote this script so I could update my *dotfiles* with one single command.
+I wrote this script so I could update my *dotfiles* with one single command: `getmy .vimrc`, for example, and it's done.
 
 ## Install
 
-`$ pip install getgist`
+```
+$ pip install getgist
+```
 
 *GetGist* works with Python 2 or 3 and is written only with Python core modules (no extra dependencies).
+
+To update just run `$ pip install -U getgist`.
 
 ## Usage
 
@@ -42,7 +46,7 @@ If you decide not to delete your copy of the local file, it will be renamed with
 You can set a default user to avoid typing your GitHub user name all the time.
 
 1. Set an environment variable called `GETGIST_USER` (e.g. add something like `export GETGIST_USER='cuducos'` to your `.bash_profile`)
-2. Use the shortcut `getmy <file>` instead of `getgist <user> <file>`
+2. Use the shortcut `getmy <file>`
 
 For example:
 
@@ -74,18 +78,17 @@ $ pip install nose
 $ nosetests
 ```
 
-In Python 2 you also need to install `mock` with `$ pip install mock`.
+In Python 2 you also need to install [mock](https://github.com/testing-cabal/mock) (e.g. `pip install mock`).
 
 ## Changelog
 
 * **0.0.6**
-  * Add default user feature (`getmy`)
+  * Add default user feature
 * **0.0.5**
   * Ask user which Gist to use if more than one file is found
   * General code improvements
 * **0.0.4**
   * Use `entry_points` instead of `scripts`
-  * Implement tests for `Gist.__backup()`
 * **0.0.3**
   * Fix a bug related to the directory where the file was being saved
 * **0.0.2**
