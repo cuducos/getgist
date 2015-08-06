@@ -14,6 +14,10 @@ except ImportError:
 class Gist(object):
 
     def __init__(self, user=False, file_name=False, assume_yes=False):
+        self.config(user, file_name, assume_yes)
+        self.info = self.load_gist_info()
+
+    def config(self, user, file_name, assume_yes):
 
         # set main variables
         self.user = user
@@ -25,8 +29,10 @@ class Gist(object):
 
             # set argparse
             parser = argparse.ArgumentParser()
-            parser.add_argument('user', help='Gist username')
-            parser.add_argument('file_name', help='Gist file name')
+            if not self.user:
+                parser.add_argument('user', help='Gist username')
+            if not self.file_name:
+                parser.add_argument('file_name', help='Gist file name')
             parser.add_argument('-y', '--yes-to-all',
                                 help='Assume `yes` to all prompts',
                                 action="store_true")
@@ -43,7 +49,6 @@ class Gist(object):
         # set support variables
         self.local_dir = os.path.realpath(os.curdir)
         self.local_path = os.path.join(self.local_dir, self.file_name)
-        self.info = self.load_gist_info()
 
     @property
     def id(self):
