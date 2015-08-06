@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
 import os
-from getgist.__main__ import Gist
+from getgist.__main__ import Gist, MyGist
 from re import search
 from unittest import TestCase
 
@@ -77,3 +77,20 @@ class TestDownload(TestCase):
 
         # 4th download
         self.gist.save()
+
+
+class TestMyGist(TestCase):
+
+    def setUp(self):
+        self.gist = MyGist(test_gist, True)
+
+    def tearDown(self):
+        for file_name in os.listdir(self.gist.local_dir):
+            if search(r'^({})(\.bkp(.\d)?)?$'.format(test_gist), file_name):
+                os.remove(os.path.join(self.gist.local_dir, file_name))
+
+    @patch(input_function)
+    def test_mygist_download(self, mocked_input):
+        mocked_input.return_value = test_user
+        self.gist.save()
+        self.assertTrue(os.path.exists(self.gist.local_path))

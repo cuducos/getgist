@@ -192,7 +192,29 @@ class Gist(object):
         print('  {}'.format(message))
 
 
-def run():
+class MyGist(Gist):
+
+    def __init__(self, file_name=False, assume_yes=False):
+        user = self.get_user()
+        self.config(user, file_name, assume_yes)
+        self.info = self.load_gist_info()
+
+    def get_user(self):
+        user = os.getenv('GETGIST_USER')
+        if not user:
+            self.output('No default user set yet. To avoid this prompt set an')
+            self.output('environmental variable called `GETGIST_USER`.')
+            user = input('Please type your GitHub user name: ')
+        return user
+
+
+def run_getgist():
     gist = Gist()
+    if gist.info:
+        gist.save()
+
+
+def run_getmy():
+    gist = MyGist()
     if gist.info:
         gist.save()
