@@ -18,6 +18,13 @@ class Gist(object):
         self.info = self.load_gist_info()
 
     def config(self, user, file_name, assume_yes):
+        """
+        Set the main variables used by GetGist instance
+        :param user: (string) GitHub user name
+        :param file_name: (string) Gist/file name to search for
+        :param assume_yes: assume yes/default for all possible prompts
+        :returns: None (it only set instance variables)
+        """
 
         # set main variables
         self.user = user
@@ -63,6 +70,7 @@ class Gist(object):
         return False
 
     def save(self):
+        """Saves the contents of a gist to a file"""
 
         # check if file exists
         if os.path.exists(self.local_path):
@@ -91,6 +99,7 @@ class Gist(object):
         self.output('Done!')
 
     def backup(self):
+        """Locally backups the file that has the same name as the gist file"""
         count = 0
         name = '{}.bkp'.format(self.file_name)
         backup = os.path.join(self.local_dir, name)
@@ -102,6 +111,11 @@ class Gist(object):
         os.rename(os.path.join(self.local_dir, self.file_name), backup)
 
     def load_gist_info(self):
+        """
+        Look for gists with the selected file name and return the gist's info
+        :returns: (dict) containing the gist ID (id), description (description)
+        and raw url (raw_url)
+        """
 
         # return Gist info if Gist is found
         gists = [gist for gist in self.filter_gists()]
@@ -114,6 +128,10 @@ class Gist(object):
         return False
 
     def filter_gists(self):
+        """
+        Queries GitHub API searching for gists that have matching file names
+        :returns: (list generator) list of dictiocnaries with matching gists
+        """
         for gist in self.query_api():
             if self.file_name in gist['files']:
                 yield {'id': gist['id'],
@@ -121,6 +139,10 @@ class Gist(object):
                        'raw_url': gist['files'][self.file_name]['raw_url']}
 
     def query_api(self):
+        """
+        Queries GitHub API looking for all public gists of a given user
+        :returns: (dict) dictionary converted version of the JSON response
+        """
         url = 'https://api.github.com/users/{}/gists'.format(self.user)
         contents = str(self.curl(url))
         if not contents:
@@ -129,6 +151,12 @@ class Gist(object):
         return json.loads(contents)
 
     def select_file(self, files):
+        """
+        Given a list of matching files, returns the proper one
+        :param files: (list) list of matching gists (as dictionaries)
+        :returns: (dict) containing the gist ID (id), description (description)
+        and raw url (raw_url)
+        """
 
         # return false if no match
         if len(files) == 0:
@@ -169,6 +197,11 @@ class Gist(object):
             return selected
 
     def curl(self, url):
+        """
+        Mimics the curl command
+        :param url: (string) the URL to be read
+        :returns: (string) the contents of the given URL
+        """
 
         # try to connect
         self.output('Fetching {} …'.format(url))
@@ -189,6 +222,7 @@ class Gist(object):
         return ''
 
     def output(self, message):
+        """A helper to indent outputs"""
         print('  {}'.format(message))
 
 
@@ -200,6 +234,7 @@ class MyGist(Gist):
         self.info = self.load_gist_info()
 
     def get_user(self):
+        """For MyGist shortcut sets the proper GitHub user from env. var."""
         user = os.getenv('GETGIST_USER')
         if not user:
             self.output('No default user set yet. To avoid this prompt set an')
