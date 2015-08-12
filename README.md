@@ -4,6 +4,7 @@ Easily download any file from a public [GitHub Gist](http://gist.github.com), wi
 
 [![Development Status: Alpha](https://img.shields.io/pypi/status/getgist.svg?style=flat)](https://pypi.python.org/pypi/getgist)
 [![Latest release](https://img.shields.io/pypi/v/getgist.svg?style=flat)](https://pypi.python.org/pypi/getgist)
+[![Travis CI](https://img.shields.io/travis/cuducos/getgist.svg?style=flat)](https://travis-ci.org/cuducos/getgist)
 [![Downloads](https://img.shields.io/pypi/dm/getgist.svg?style=flat)](https://pypi.python.org/pypi/getgist)
 [![Python Version](https://img.shields.io/pypi/pyversions/getgist.svg)](https://pypi.python.org/pypi/getgist) 
 [![License](https://img.shields.io/pypi/l/getgist.svg?style=flat)](https://pypi.python.org/pypi/getgist)
@@ -20,7 +21,7 @@ I wrote this script so I could update my *dotfiles* with one single command: `ge
 $ pip install getgist
 ```
 
-*GetGist* works with Python 2 or 3 and is written only with Python core modules (no extra dependencies).
+*GetGist* works with Python 2.7+ or 3.4+ and is written only with Python core modules (no extra dependencies).
 
 To update just run `$ pip install -U getgist`.
 
