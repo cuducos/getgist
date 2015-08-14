@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import os
 from config import config
 from getgist.__main__ import Gist, MyGist
@@ -8,10 +6,8 @@ from unittest import TestCase
 
 try:
     from mock import patch
-    input_function = 'getgist.__main__.input'
 except ImportError:
     from unittest.mock import patch
-    input_function = 'builtins.input'
 
 
 class TestDownload(TestCase):
@@ -26,13 +22,13 @@ class TestDownload(TestCase):
             if search(r'^({})(\.bkp(.\d)?)?$'.format(config['file']), name):
                 os.remove(os.path.join(self.gist.local_dir, name))
 
-    @patch(input_function)
+    @patch('getgist.__main__.Gist.ask')
     def test_local_dir(self, mocked_input):
         mocked_input.return_value = 'y'
         self.assertTrue(os.path.exists(self.gist.local_dir))
         self.assertTrue(os.path.isdir(self.gist.local_dir))
 
-    @patch(input_function)
+    @patch('getgist.__main__.Gist.ask')
     @patch('getgist.__main__.Gist.curl')
     def test_download(self, mocked_curl, mocked_input):
         mocked_input.return_value = 'y'
@@ -40,7 +36,7 @@ class TestDownload(TestCase):
         self.gist.save()
         self.assertTrue(os.path.exists(self.gist.local_path))
 
-    @patch(input_function)
+    @patch('getgist.__main__.Gist.ask')
     @patch('getgist.__main__.Gist.curl')
     def test_backup(self, mocked_curl,  mocked_input):
 
@@ -83,7 +79,7 @@ class TestMyGist(TestCase):
             if search(r'^({})(\.bkp(.\d)?)?$'.format(config['file']), name):
                 os.remove(os.path.join(self.gist.local_dir, name))
 
-    @patch(input_function)
+    @patch('getgist.__main__.Gist.ask')
     @patch('getgist.__main__.Gist.curl')
     def test_mygist_download(self, mocked_curl, mocked_input):
         mocked_input.return_value = config['user']

@@ -78,8 +78,8 @@ class Gist(object):
             # delete or backup existing file?
             confirm = 'y'
             if not self.assume_yes:
-                message = '  Delete existing {} ? (y/n) '
-                confirm = input(message.format(self.file_name))
+                message = 'Delete existing {} ? (y/n) '
+                confirm = self.ask(message.format(self.file_name))
 
             # delete exitsing file
             if confirm.lower() == 'y':
@@ -181,7 +181,7 @@ class Gist(object):
 
             # get the gist index
             try:
-                gist_index = int(input('Type the number: ')) - 1
+                gist_index = int(self.ask('Type the number: ')) - 1
             except:
                 self.output('Please type a number.')
                 return self.select_file(files)
@@ -221,9 +221,17 @@ class Gist(object):
         self.output('[Error] HTTP Status {}.'.format(url, status))
         return ''
 
+    def indent(self, message, spaces=2):
+        """A helper to indent output/input messages"""
+        return '{}{}'.format(' ' * spaces, message)
+
     def output(self, message):
-        """A helper to indent outputs"""
-        print('  {}'.format(message))
+        """A helper to indent print()"""
+        print(self.indent(message))
+
+    def ask(self, message):
+        """A helper to indent input()"""
+        return input(self.indent(message))
 
 
 class MyGist(Gist):
@@ -239,7 +247,7 @@ class MyGist(Gist):
         if not user:
             self.output('No default user set yet. To avoid this prompt set an')
             self.output('environmental variable called `GETGIST_USER`.')
-            user = input('Please type your GitHub user name: ')
+            user = self.ask('Please type your GitHub user name: ')
         return user
 
 

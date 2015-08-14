@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 from config import config, MockAPI
 from getgist.__main__ import Gist, MyGist
 from hashlib import md5
@@ -7,10 +5,8 @@ from unittest import TestCase
 
 try:
     from mock import patch
-    input_function = 'getgist.__main__.input'
 except ImportError:
     from unittest.mock import patch
-    input_function = 'builtins.input'
 
 
 class TestInit(TestCase):
@@ -23,7 +19,7 @@ class TestInit(TestCase):
         self.assertEqual(gist.id, '409fac6ac23bf515f495')
         self.assertEqual(hashed_url, '847fe81c7fdc3b6bd7184379fcd42773')
 
-    @patch(input_function)
+    @patch('getgist.__main__.Gist.ask')
     @patch('getgist.__main__.Gist.curl')
     def test_init_for_mygist(self, mocked_curl, mocked_input):
         mocked_curl.return_value = config['json']
@@ -52,7 +48,7 @@ class TestConfig(TestCase):
         self.assertEqual(gist.file_name, config['file'])
         self.assertFalse(gist.assume_yes)
 
-    @patch(input_function)
+    @patch('getgist.__main__.Gist.ask')
     @patch('getgist.__main__.Gist.curl')
     def test_config_for_mygist(self, mocked_curl, mocked_input):
         mocked_curl.return_value = config['json']
@@ -70,7 +66,7 @@ class TestConfig(TestCase):
         self.assertEqual(gist.file_name, config['file'])
         self.assertTrue(gist.assume_yes)
 
-    @patch(input_function)
+    @patch('getgist.__main__.Gist.ask')
     @patch('getgist.__main__.Gist.curl')
     def test_config_for_mygist_assume_yes(self, mocked_curl, mocked_input):
         mocked_curl.return_value = config['json']
@@ -92,7 +88,7 @@ class TestLoadGistInfo(TestCase):
         gist = Gist(config['user'], config['file'])
         self.assertEqual(gist.load_gist_info(), one_option[0])
 
-    @patch(input_function)
+    @patch('getgist.__main__.Gist.ask')
     @patch('getgist.__main__.Gist.filter_gists')
     def test_select_file_with_two_options(self, mocked_filter, mocked_input):
         two_options = [{'id': 12345,
@@ -126,7 +122,7 @@ class TestFilterGists(TestCase):
         self.assertEqual(filtered[0]['description'], config['file'])
         self.assertEqual(hashed_url, '847fe81c7fdc3b6bd7184379fcd42773')
 
-    @patch(input_function)
+    @patch('getgist.__main__.Gist.ask')
     @patch('getgist.__main__.Gist.curl')
     def test_with_two_results(self, mocked_curl, mocked_input):
         api = MockAPI(config['file'], 2)
@@ -164,7 +160,7 @@ class TestSelectFile(TestCase):
         self.assertEqual(selected['raw_url'], 'URL #1')
         self.assertEqual(selected['description'], 'Gist #1')
 
-    @patch(input_function)
+    @patch('getgist.__main__.Gist.ask')
     @patch('getgist.__main__.Gist.curl')
     def test_select_file_with_two_options(self, mocked_curl, mocked_input):
         api = MockAPI(config['file'], 2)
