@@ -23,25 +23,25 @@ class TestDownload(TestCase):
                 os.remove(os.path.join(self.gist.local_dir, name))
 
     @patch('getgist.__main__.Gist.ask')
-    def test_local_dir(self, mocked_input):
-        mocked_input.return_value = 'y'
+    def test_local_dir(self, mocked_ask):
+        mocked_ask.return_value = 'y'
         self.assertTrue(os.path.exists(self.gist.local_dir))
         self.assertTrue(os.path.isdir(self.gist.local_dir))
 
     @patch('getgist.__main__.Gist.ask')
     @patch('getgist.__main__.Gist.curl')
-    def test_download(self, mocked_curl, mocked_input):
-        mocked_input.return_value = 'y'
+    def test_download(self, mocked_curl, mocked_ask):
+        mocked_ask.return_value = 'y'
         mocked_curl.return_value = config['json']
         self.gist.save()
         self.assertTrue(os.path.exists(self.gist.local_path))
 
     @patch('getgist.__main__.Gist.ask')
     @patch('getgist.__main__.Gist.curl')
-    def test_backup(self, mocked_curl,  mocked_input):
+    def test_backup(self, mocked_curl,  mocked_ask):
 
         # mock input value
-        mocked_input.return_value = 'n'
+        mocked_ask.return_value = 'n'
         mocked_curl.return_value = config['json']
 
         # backup filenames
@@ -69,9 +69,11 @@ class TestDownload(TestCase):
 
 class TestMyGist(TestCase):
 
+    @patch('getgist.__main__.Gist.ask')
     @patch('getgist.__main__.Gist.curl')
-    def setUp(self, mocked_curl):
+    def setUp(self, mocked_curl, mocked_ask):
         mocked_curl.return_value = config['json']
+        mocked_ask.return_value = config['user']
         self.gist = MyGist(config['file'], True)
 
     def tearDown(self):
@@ -81,8 +83,8 @@ class TestMyGist(TestCase):
 
     @patch('getgist.__main__.Gist.ask')
     @patch('getgist.__main__.Gist.curl')
-    def test_mygist_download(self, mocked_curl, mocked_input):
-        mocked_input.return_value = config['user']
+    def test_mygist_download(self, mocked_curl, mocked_ask):
+        mocked_ask.return_value = config['user']
         mocked_curl.return_value = config['json']
         self.gist.save()
         self.assertTrue(os.path.exists(self.gist.local_path))
