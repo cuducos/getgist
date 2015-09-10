@@ -1,8 +1,10 @@
 import json
 
+sample = open('tests/gists.sample.json').read()
 config = {'user': 'cuducos',
           'file': '.vimrc',
-          'json': open('tests/gists.sample.json').read()}
+          'json': json.loads(sample),
+          'content': sample}
 
 
 class MockAPI(object):
@@ -15,7 +17,7 @@ class MockAPI(object):
         self.number = number
 
     def get_json(self):
-        return json.dumps([self.factory(i + 1) for i in range(self.number)])
+        return [self.factory(i + 1) for i in range(self.number)]
 
     def get_results(self):
         for i in range(self.number):
@@ -28,3 +30,11 @@ class MockAPI(object):
                 'description': self.description.format(id),
                 'files': {self.name: {'filename': self.name,
                                       'raw_url': self.url.format(id)}}}
+
+    @staticmethod
+    def success_auth(user='johndoe'):
+        return {'login': user}
+
+    @staticmethod
+    def fail_auth():
+        return {'message': 'Bad credentials'}

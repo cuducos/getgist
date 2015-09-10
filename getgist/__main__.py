@@ -5,15 +5,18 @@ import json
 import os
 
 try:
-    from urllib2 import HTTPError, urlopen
+    from urllib2 import HTTPError, Request, urlopen
     input = raw_input
 except ImportError:
-    from urllib.request import HTTPError, urlopen
+    from urllib.request import HTTPError, Request, urlopen
 
 
 class Gist(object):
 
+    api_url = 'https://api.github.com'
+
     def __init__(self, user=False, file_name=False, assume_yes=False):
+        self.auth = None
         self.config(user, file_name, assume_yes)
         self.info = self.load_gist_info()
 
@@ -52,6 +55,9 @@ class Gist(object):
                 self.file_name = args.file_name
             if not assume_yes:
                 self.assume_yes = args.yes_to_all
+
+        # check if user is authenticated
+        self.auth = self.authenticated()
 
         # set support variables
         self.local_dir = os.path.realpath(os.curdir)
@@ -110,6 +116,32 @@ class Gist(object):
         self.output('Moving existing {} to {}…'.format(self.file_name, name))
         os.rename(os.path.join(self.local_dir, self.file_name), backup)
 
+    def authenticated(self):
+        """Check if access token is set and valid"""
+
+        # check if token is set
+        token = os.getenv('GETGIST_TOKEN')
+        if not token:
+            self.output('No access token set, looking for public Gists only.')
+
+        # check if token is valid
+        response = self.validate_token(token)
+        if response.get('login') != self.user:
+            if token:
+                self.output('Invalid token for user {}.'.format(self.user))
+                self.output('Looking for public Gists only.')
+            return False
+
+        self.output('User authenticated.')
+        self.token = token
+        return True
+
+    def validate_token(self, token):
+        """Reach API with access token"""
+        headers = {'Authorization': 'token {}'.format(token)}
+        url = '{}/user'.format(self.api_url)
+        return json.loads(self.curl(url, headers))
+
     def load_gist_info(self):
         """
         Look for gists with the selected file name and return the gist's info
@@ -123,7 +155,7 @@ class Gist(object):
             return self.select_file(gists)
 
         # return False if no match if found
-        error = "[Error] No file named `{}` found in {}'s public Gists."
+        error = "[Error] No file named `{}` found in {}'s Gists."
         self.output(error.format(self.file_name, self.user))
         return False
 
@@ -140,14 +172,14 @@ class Gist(object):
 
     def query_api(self):
         """
-        Queries GitHub API looking for all public gists of a given user
+        Queries GitHub API looking for all gists of a given user
         :returns: (dict) dictionary converted version of the JSON response
         """
-        url = 'https://api.github.com/users/{}/gists'.format(self.user)
+        url = '{}/users/{}/gists'.format(self.api_url, self.user)
         contents = str(self.curl(url))
         if not contents:
             self.output('[Hint] Check if the entered user name is correct.')
-            return list()
+            return dict()
         return json.loads(contents)
 
     def select_file(self, files):
@@ -196,25 +228,32 @@ class Gist(object):
             self.output('Using `{}` Gist…'.format(selected['description']))
             return selected
 
-    def curl(self, url):
+    def curl(self, url, headers=dict()):
         """
         Mimics the curl command
         :param url: (string) the URL to be read
         :returns: (string) the contents of the given URL
         """
 
+        # include headers if authenticated
+        if self.auth and 'Authorization' not in headers:
+            headers['Authorization'] = 'token {}'.format(self.token)
+
         # try to connect
         self.output('Fetching {} …'.format(url))
         try:
-            request = urlopen(url)
-            status = request.getcode()
+            request = Request(url)
+            for key in headers.keys():
+                request.add_header(key, headers[key])
+            response = urlopen(request)
+            status = response.getcode()
         except HTTPError:
             self.output("[Error] Couldn't reach GitHub at {}.".format(url))
             return ''
 
         # if it works
         if status == 200:
-            contents = request.read()
+            contents = response.read()
             return contents.decode('utf-8')
 
         # in case of error
@@ -238,6 +277,7 @@ class MyGist(Gist):
 
     def __init__(self, file_name=False, assume_yes=False):
         user = self.get_user()
+        self.auth = None
         self.config(user, file_name, assume_yes)
         self.info = self.load_gist_info()
 

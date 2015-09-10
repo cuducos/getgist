@@ -1,5 +1,5 @@
 import os
-from config import config
+from config import config, MockAPI
 from getgist.__main__ import Gist, MyGist
 from re import search
 from unittest import TestCase
@@ -13,8 +13,13 @@ except ImportError:
 class TestDownload(TestCase):
 
     @patch('getgist.__main__.Gist.curl')
-    def setUp(self, mocked_curl):
-        mocked_curl.return_value = config['json']
+    @patch('getgist.__main__.Gist.query_api')
+    @patch('getgist.__main__.Gist.validate_token')
+    def setUp(self, validate_token, query_api, curl):
+        api = MockAPI()
+        validate_token.return_value = api.fail_auth()
+        query_api.return_value = config['json']
+        curl.return_value = 'test'
         self.gist = Gist(config['user'], config['file'])
 
     def tearDown(self):
@@ -32,7 +37,7 @@ class TestDownload(TestCase):
     @patch('getgist.__main__.Gist.curl')
     def test_download(self, mocked_curl, mocked_ask):
         mocked_ask.return_value = 'y'
-        mocked_curl.return_value = config['json']
+        mocked_curl.return_value = 'test'
         self.gist.save()
         self.assertTrue(os.path.exists(self.gist.local_path))
 
@@ -42,7 +47,7 @@ class TestDownload(TestCase):
 
         # mock input value
         mocked_ask.return_value = 'n'
-        mocked_curl.return_value = config['json']
+        mocked_curl.return_value = config['content']
 
         # backup filenames
         backup1 = '{}.bkp'.format(self.gist.local_path)
@@ -51,17 +56,17 @@ class TestDownload(TestCase):
         # 1st download
         self.gist.save()
         self.assertTrue(os.path.exists(self.gist.local_path))
-        self.assertEqual(config['json'], open(self.gist.local_path).read())
+        self.assertEqual(config['content'], open(self.gist.local_path).read())
 
         # 2nd download
         self.gist.save()
         self.assertTrue(os.path.exists(backup1))
-        self.assertEqual(config['json'], open(backup1).read())
+        self.assertEqual(config['content'], open(backup1).read())
 
         # 3rd download
         self.gist.save()
         self.assertTrue(os.path.exists(backup2))
-        self.assertEqual(config['json'], open(backup2).read())
+        self.assertEqual(config['content'], open(backup2).read())
 
         # 4th download
         self.gist.save()
@@ -71,9 +76,14 @@ class TestMyGist(TestCase):
 
     @patch('getgist.__main__.Gist.ask')
     @patch('getgist.__main__.Gist.curl')
-    def setUp(self, mocked_curl, mocked_ask):
-        mocked_curl.return_value = config['json']
-        mocked_ask.return_value = config['user']
+    @patch('getgist.__main__.Gist.query_api')
+    @patch('getgist.__main__.Gist.validate_token')
+    def setUp(self, validate_token, query_api, curl, ask):
+        api = MockAPI()
+        validate_token.return_value = api.fail_auth()
+        query_api.return_value = config['json']
+        curl.return_value = 'test'
+        ask.return_value = config['user']
         self.gist = MyGist(config['file'], True)
 
     def tearDown(self):
@@ -85,6 +95,6 @@ class TestMyGist(TestCase):
     @patch('getgist.__main__.Gist.curl')
     def test_mygist_download(self, mocked_curl, mocked_ask):
         mocked_ask.return_value = config['user']
-        mocked_curl.return_value = config['json']
+        mocked_curl.return_value = config['content']
         self.gist.save()
         self.assertTrue(os.path.exists(self.gist.local_path))

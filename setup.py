@@ -20,5 +20,5 @@ setup(author='Eduardo Cuducos',
       name='getgist',
       packages=['getgist'],
       url=url,
-      version='0.0.6',
+      version='0.0.7',
       zip_safe=False)

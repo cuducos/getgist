@@ -1,6 +1,6 @@
 # GetGist
 
-Easily download any file from a public [GitHub Gist](http://gist.github.com), with a one single command.
+Easily download any file from a [GitHub Gist](http://gist.github.com), with a one single command.
 
 [![Development Status: Alpha](https://img.shields.io/pypi/status/getgist.svg?style=flat)](https://pypi.python.org/pypi/getgist)
 [![Latest release](https://img.shields.io/pypi/v/getgist.svg?style=flat)](https://pypi.python.org/pypi/getgist)
@@ -31,10 +31,9 @@ Just run `getgist <user> <file>`. For example:
 
 ```
 $ getgist cuducos .vimrc
+  No access token set, looking for public Gists only.
   Fetching https://api.github.com/users/cuducos/gists …
-  Fetching https://gist.githubusercontent.com/cuducos/1a2b3c4d5e/raw/1a2b3c4d5e1a2b3c4d5e/.vimrc …
-  Replace existing .vimrc ? (y/n) y
-  Deleting existing .vimrc …
+  Fetching https://gist.githubusercontent.com/cuducos/409fac6ac23bf515f495/raw/a8f4431b2e219302f5adad761f1e880030da9b12/.vimrc …
   Saving new .vimrc …
   Saved as /home/cuducos/.vimrc
   Done!
@@ -60,16 +59,30 @@ $ getmy .vimrc
   Done!
 ```
 
+## Using OAuth authentication
+
+You can add your [personal access token](https://github.com/settings/tokens) as as enviroment variable to allow the download of private Gists.
+
+Just set an environment variable called `GETGIST_TOKEN` (e.g. add something like `export GETGIST_TOKEN='whatever1234'` to your `.bash_profile`).
+
+For example:
+
+```
+$ getgist cuducos .vimrc
+  Fetching https://api.github.com/user …
+  User authenticated.
+  Fetching https://api.github.com/users/cuducos/gists …
+  Fetching https://gist.githubusercontent.com/cuducos/409fac6ac23bf515f495/raw/a8f4431b2e219302f5adad761f1e880030da9b12/.vimrc …
+  Saving new .vimrc …
+  Saved as /home/cuducos/.vimrc
+  Done!
+```
+
 ## Contributing
 
 Feel free to [report an issue](http://github.com/cuducos/getgist/issues), [open a pull request](http://github.com/cuducos/getgist/pulls), or [drop a line](http://twitter.com/cuducos).
 
 Thank you very much [@ddboline](http://github.com/ddboline) and [/u/Sean1708](http://reddit.com/user/Sean1708) for the contributions!
-
-### To do list
-
-* Write tests for `entry_points`
-* Authenticate users to allow the possibility of getting private Gists
 
 ### Tests
 
@@ -83,6 +96,8 @@ In Python 2 you also need to install [mock](https://github.com/testing-cabal/moc
 
 ## Changelog
 
+* **0.0.7**
+  * Add personal access token (OAuth)
 * **0.0.6**
   * Add default user feature
 * **0.0.5**
