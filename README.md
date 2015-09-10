@@ -1,6 +1,6 @@
 # GetGist
 
-Easily download any file from a [GitHub Gist](http://gist.github.com), with a one single command.
+Easily download any file from a [GitHub Gist](http://gist.github.com), with _one single command_.
 
 [![Development Status: Alpha](https://img.shields.io/pypi/status/getgist.svg?style=flat)](https://pypi.python.org/pypi/getgist)
 [![Latest release](https://img.shields.io/pypi/v/getgist.svg?style=flat)](https://pypi.python.org/pypi/getgist)
@@ -23,7 +23,7 @@ $ pip install getgist
 
 *GetGist* works with Python 2.7+ or 3.4+ and is written only with Python core modules (no extra dependencies).
 
-To update just run `$ pip install -U getgist`.
+To **update** just run `$ pip install -U getgist`.
 
 ## Usage
 
@@ -31,7 +31,8 @@ Just run `getgist <user> <file>`. For example:
 
 ```
 $ getgist cuducos .vimrc
-  No access token set, looking for public Gists only.
+  No access token set.
+  Looking for public Gists only.
   Fetching https://api.github.com/users/cuducos/gists …
   Fetching https://gist.githubusercontent.com/cuducos/409fac6ac23bf515f495/raw/a8f4431b2e219302f5adad761f1e880030da9b12/.vimrc …
   Saving new .vimrc …
@@ -39,16 +40,20 @@ $ getgist cuducos .vimrc
   Done!
 ```
 
-If you decide not to delete your copy of the local file, it will be renamed with extensions such as `.bkp`, `.bkp.1`, `.bkp.2` etc.
+_GetGist_ asks you what to do when a local file (with the same name) exists. If you decide not to delete your local copy of the file, it will be renamed with extensions such as `.bkp`, `.bkp1`, `.bkp2` etc.
 
 ## Setting a default user
 
+### Why?
+
 You can set a default user to avoid typing your GitHub user name all the time.
+
+### How?
 
 1. Set an environment variable called `GETGIST_USER` (e.g. add something like `export GETGIST_USER='cuducos'` to your `.bash_profile`)
 2. Use the shortcut `getmy <file>`
 
-For example:
+### Example
 
 ```
 $ getmy .vimrc
@@ -61,11 +66,16 @@ $ getmy .vimrc
 
 ## Using OAuth authentication
 
+### Why?
+
 You can add your [personal access token](https://github.com/settings/tokens) as as enviroment variable to allow the download of private Gists.
 
-Just set an environment variable called `GETGIST_TOKEN` (e.g. add something like `export GETGIST_TOKEN='whatever1234'` to your `.bash_profile`).
+### How?
 
-For example:
+1. Get a personal access token with permission to manage your _gists_ from [GitHub settings](https://github.com/settings/tokens).
+2. Set an environment variable called `GETGIST_TOKEN` with your personal access token (e.g. add something like `export GETGIST_TOKEN='whatever1234'` to your `.bash_profile`).
+
+### Example
 
 ```
 $ getgist cuducos .vimrc
@@ -92,12 +102,13 @@ $ pip install nose
 $ nosetests
 ```
 
-In Python 2 you also need to install [mock](https://github.com/testing-cabal/mock) (e.g. `pip install mock`).
+If using Python 2 you also need to install [mock](https://github.com/testing-cabal/mock) (e.g. `pip install mock`).
 
 ## Changelog
 
-* **0.0.7**
+* **0.0.7 _(work in progress)_**
   * Add personal access token (OAuth)
+  * Allow the download of private Gists (when authenticated)
 * **0.0.6**
   * Add default user feature
 * **0.0.5**

@@ -111,36 +111,45 @@ class Gist(object):
         backup = os.path.join(self.local_dir, name)
         while os.path.exists(backup):
             count += 1
-            name = '{}.bkp.{}'.format(self.file_name, count)
+            name = '{}.bkp{}'.format(self.file_name, count)
             backup = os.path.join(self.local_dir, name)
         self.output('Moving existing {} to {}…'.format(self.file_name, name))
         os.rename(os.path.join(self.local_dir, self.file_name), backup)
 
     def authenticated(self):
-        """Check if access token is set and valid"""
-
-        # check if token is set
-        token = os.getenv('GETGIST_TOKEN')
-        if not token:
-            self.output('No access token set, looking for public Gists only.')
-
-        # check if token is valid
-        response = self.validate_token(token)
-        if response.get('login') != self.user:
-            if token:
-                self.output('Invalid token for user {}.'.format(self.user))
-                self.output('Looking for public Gists only.')
+        """Check if access token is set and valid (boolean)"""
+        self.token = self.get_token()
+        valid = self.validate_token()
+        if not self.token or not valid:
+            self.output('Looking for public Gists only.')
             return False
-
-        self.output('User authenticated.')
-        self.token = token
+        self.output('User `{}` authenticated.'.format(self.user))
         return True
 
-    def validate_token(self, token):
-        """Reach API with access token"""
-        headers = {'Authorization': 'token {}'.format(token)}
+    def get_token(self):
+        """Loads and returns personal access token from env. variable"""
+        token = os.getenv('GETGIST_TOKEN')
+        if not token:
+            self.output('No access token set.')
+        return token
+
+    def validate_token(self):
+        """Reach API with access token (boolean)"""
+
+        # if no token, return False
+        if not self.token:
+            return False
+
+        # reach API
+        headers = {'Authorization': 'token {}'.format(self.token)}
         url = '{}/user'.format(self.api_url)
-        return json.loads(self.curl(url, headers))
+        response = json.loads(self.curl(url, headers))
+
+        # validate
+        if response.get('login') != self.user:
+            self.output('Invalid token for user {}.'.format(self.user))
+            return False
+        return True
 
     def load_gist_info(self):
         """

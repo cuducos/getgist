@@ -3,8 +3,12 @@ import json
 sample = open('tests/gists.sample.json').read()
 config = {'user': 'cuducos',
           'file': '.vimrc',
-          'json': json.loads(sample),
+          'gists': json.loads(sample),
           'content': sample}
+
+
+def mock_auth(user='johndoe'):
+    return '{{ "login": "{}" }}'.format(user)
 
 
 class MockAPI(object):
@@ -30,11 +34,3 @@ class MockAPI(object):
                 'description': self.description.format(id),
                 'files': {self.name: {'filename': self.name,
                                       'raw_url': self.url.format(id)}}}
-
-    @staticmethod
-    def success_auth(user='johndoe'):
-        return {'login': user}
-
-    @staticmethod
-    def fail_auth():
-        return {'message': 'Bad credentials'}
