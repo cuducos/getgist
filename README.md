@@ -141,6 +141,6 @@ Don't forget to write and run tests: `pip setup.py test`.
 
 ## License
 
-Copyright (c) 2015 Eduardo Cuducos
+Copyright (c) 2016 Eduardo Cuducos
 
 Licensed under the [MIT License](LICENSE).
