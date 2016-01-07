@@ -1,7 +1,7 @@
 from decouple import config
-from requests import get, patch
 
 from . import GetGistCommons
+from .requests import GetGistRequests
 
 
 class GitHubTools(GetGistCommons):
@@ -14,30 +14,23 @@ class GitHubTools(GetGistCommons):
         self.headers = {'Accept': 'application/vnd.github.v3+json',
                         'User-Agent': 'GetGist-app'}
 
+        # intantiate GetGistRequests
+        self.requests = GetGistRequests(self.headers)
+
         # OAuth via token
         self.token = config('GETGIST_TOKEN', default=None)
         self.auth = self.validate_token()
 
     def api_url(self, *args):
         """Construct API entrypoints adding args separated by slashes"""
-        return self.api_root_url +  '/'.join(args)
-
-    def request(self, method, url, data=None, kwargs={}):
-        """Encapsulate requests lib to always send self.headers as headers"""
-
-        methods = dict(get=get, patch=patch)
-        return_method = methods.get(method)
-        if not return_method:
-            return False
-
-        return return_method(url, data=data, headers=self.headers, **kwargs)
+        return self.api_root_url + '/'.join(args)
 
     def get_gists(self):
 
         # fetch all gists
         url = self.api_url('users', self.user, 'gists')
         self.output('Fetching ' + url)
-        resp = self.request('get', url)
+        resp = self.requests.get(url)
 
         # parse response
         gists = list()
@@ -58,11 +51,11 @@ class GitHubTools(GetGistCommons):
         # reach api w/ the token
         self.headers['Authorization'] = 'token ' + self.token
         url = self.api_url('user')
-        raw_resp = self.request('get', url)
+        raw_resp = self.requests.get(url)
         resp = raw_resp.json()
 
         # validate
-        if resp.get('login') != self.user:
+        if resp.get('login', None) != self.user:
             self.output('Invalid token for user ' + self.user)
             self.headers.pop('Authorization')
             return False
