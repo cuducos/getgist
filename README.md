@@ -5,6 +5,7 @@ Easily download any file from a [GitHub Gist](http://gist.github.com), with _one
 [![Development Status: Alpha](https://img.shields.io/pypi/status/getgist.svg?style=flat)](https://pypi.python.org/pypi/getgist)
 [![Latest release](https://img.shields.io/pypi/v/getgist.svg?style=flat)](https://pypi.python.org/pypi/getgist)
 [![Travis CI](https://img.shields.io/travis/cuducos/getgist.svg?style=flat)](https://travis-ci.org/cuducos/getgist)
+[![Coveralls](https://img.shields.io/coveralls/github/cuducos/getgist.svg)](https://coveralls.io/github/cuducos/getgist?branch=master)
 [![Code Climate](https://img.shields.io/codeclimate/github/cuducos/getgist.svg?style=flat)](https://codeclimate.com/github/cuducos/getgist)
 [![Python Version](https://img.shields.io/pypi/pyversions/getgist.svg)](https://pypi.python.org/pypi/getgist) 
 [![Downloads](https://img.shields.io/pypi/dm/getgist.svg?style=flat)](https://pypi.python.org/pypi/getgist)
