@@ -60,3 +60,7 @@ class TestGetGists(GitHubToolsTests):
     def test_get_gist_authenticated(self):
         gists = self.github.get_gists()
         self.assertIn({'name': 'PrivateGist', 'files': ['test.txt']}, gists)
+
+    def test_no_gists_with_wrong_username(self):
+        oops = GitHubTools('not_janedoe')
+        self.assertFalse(list(oops.get_gists()))

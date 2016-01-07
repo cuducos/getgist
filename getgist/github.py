@@ -31,15 +31,15 @@ class GitHubTools(GetGistCommons):
         # fetch all gists
         url = self.api_url('users', self.user, 'gists')
         self.output('Fetching ' + url)
-        resp = self.requests.get(url)
+        raw_resp = self.requests.get(url)
 
-        # abort if not found
-        if resp.status_code != 200:
-            self.output('No gists found. Check if the username is correct.')
+        # abort if user not found
+        if raw_resp.status_code != 200:
+            self.output('User `{}` not found'.format(self.user))
             raise StopIteration
 
         # parse response
-        for gist in resp.json():
+        for gist in raw_resp.json():
             files = list(gist['files'].keys())
             name = gist['description'] if gist['description'] else files[0]
             yield dict(files=files, name=name)
