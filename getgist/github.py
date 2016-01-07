@@ -19,17 +19,13 @@ class GitHubTools(GetGistCommons):
 
         # OAuth via token
         self.token = config('GETGIST_TOKEN', default=None)
-        self.auth = self.validate_token()
-
-    def api_url(self, *args):
-        """Get entrypoints adding arguments separated by slashes"""
-        return self.api_root_url + '/'.join(args)
+        self.auth = self._validate_token()
 
     def get_gists(self):
         """List generator w/ dictionaries w/ Gists' `name` and `files`"""
 
         # fetch all gists
-        url = self.api_url('users', self.user, 'gists')
+        url = self._api_url('users', self.user, 'gists')
         self.output('Fetching ' + url)
         raw_resp = self.requests.get(url)
 
@@ -44,7 +40,11 @@ class GitHubTools(GetGistCommons):
             name = gist['description'] if gist['description'] else files[0]
             yield dict(files=files, name=name)
 
-    def validate_token(self):
+    def _api_url(self, *args):
+        """Get entrypoints adding arguments separated by slashes"""
+        return self.api_root_url + '/'.join(args)
+
+    def _validate_token(self):
         """Validate the token and add the proper headers for requests"""
 
         # abort if no token
@@ -53,7 +53,7 @@ class GitHubTools(GetGistCommons):
 
         # reach api w/ the token
         self.headers['Authorization'] = 'token ' + self.token
-        url = self.api_url('user')
+        url = self._api_url('user')
         raw_resp = self.requests.get(url)
         resp = raw_resp.json()
 

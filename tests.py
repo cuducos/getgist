@@ -13,13 +13,13 @@ class TestAuthentication(TestCase):
     def test_valid_token(self):
         yeah = GitHubTools(GETGIST_USER)
         with self.subTest():
-            self.assertTrue(yeah.validate_token())
+            self.assertTrue(yeah._validate_token())
             self.assertIn('Authorization', yeah.headers)
 
     def test_invalid_token(self):
         oops = GitHubTools('not_cuducos')
         with self.subTest():
-            self.assertFalse(oops.validate_token())
+            self.assertFalse(oops._validate_token())
             self.assertNotIn('Authorization', oops.headers)
 
     @patch('getgist.github.config')
@@ -28,7 +28,7 @@ class TestAuthentication(TestCase):
         oops = GitHubTools(GETGIST_USER)
         with self.subTest():
             self.assertFalse(oops.token)
-            self.assertFalse(oops.validate_token())
+            self.assertFalse(oops._validate_token())
             self.assertNotIn('Authorization', oops.headers)
 
 
@@ -41,7 +41,7 @@ class GitHubToolsTests(TestCase):
 class TestApiUrl(GitHubToolsTests):
 
     def test_api_url(self):
-        url = self.github.api_url('cuducos', 'gists')
+        url = self.github._api_url('cuducos', 'gists')
         expected = 'https://api.github.com/{}/gists'.format(GETGIST_USER)
         self.assertEqual(url, expected)
 
