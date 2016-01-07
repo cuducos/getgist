@@ -47,7 +47,7 @@ class GitHubTools(GetGistCommons):
     def validate_token(self):
         """Validate the token and add the proper headers for requests"""
 
-        # if no token, return False
+        # abort if no token
         if not self.token:
             return False
 
