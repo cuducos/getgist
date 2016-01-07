@@ -1,6 +1,13 @@
+# python
 *.pyc
 getgist.egg-info/
 build/
 dist/
+
+# python libraries
+.coverage
+cover/
+
+# os, ide & editor
 .DS_Store
 .ropeproject/
