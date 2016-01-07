@@ -1,4 +1,5 @@
 from decouple import config
+from pkg_resources import get_distribution
 
 from . import GetGistCommons
 from .requests import GetGistRequests
@@ -9,10 +10,11 @@ class GitHubTools(GetGistCommons):
     def __init__(self, user):
 
         # GitHub API main settings and entrypoints
+        self.version = get_distribution('getgist').version
         self.user = user
         self.api_root_url = 'https://api.github.com/'
         self.headers = {'Accept': 'application/vnd.github.v3+json',
-                        'User-Agent': 'GetGist-app'}
+                        'User-Agent': 'GetGist v' + self.version}
 
         # instantiate GetGistRequests
         self.requests = GetGistRequests(self.headers)

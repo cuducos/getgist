@@ -38,6 +38,17 @@ class GitHubToolsTests(TestCase):
         self.github = GitHubTools(GETGIST_USER)
 
 
+class TestMainHeaders(GitHubToolsTests):
+
+    def test_main_headers(self):
+        user_agent = self.github.headers.get('User-Agent')
+        user_agent_re = r'^(GetGist v)([\d]+).([\d]+)(.[\d]+)?$'
+        with self.subTest():
+            self.assertIn('Accept', self.github.headers)
+            self.assertIn('User-Agent', self.github.headers)
+            self.assertRegex(user_agent, user_agent_re)
+
+
 class TestApiUrl(GitHubToolsTests):
 
     def test_api_url(self):
@@ -49,7 +60,7 @@ class TestApiUrl(GitHubToolsTests):
 class TestGetGists(GitHubToolsTests):
 
     def test_get_gists_non_authenticated(self):
-        self.github.headers.pop('Authorization')
+        self.github.headers.pop('Authorization', None)
         gists = self.github.get_gists()
         with self.subTest():
             self.assertIn({'name': '.zshrc', 'files': ['.zshrc']}, gists)
