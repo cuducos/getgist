@@ -34,7 +34,13 @@ class GitHubTools(GetGistCommons):
         # abort if user not found
         if raw_resp.status_code != 200:
             self.output('User `{}` not found'.format(self.user))
-            raise StopIteration
+            return
+
+        # abort if there are no gists
+        resp = raw_resp.json()
+        if not resp:
+            self.output('No gists found for user `{}`'.format(self.user))
+            return
 
         # parse response
         for gist in raw_resp.json():
