@@ -12,24 +12,19 @@ class TestAuthentication(TestCase):
 
     def test_valid_token(self):
         yeah = GitHubTools(GETGIST_USER)
-        with self.subTest():
-            self.assertTrue(yeah._validate_token())
-            self.assertIn('Authorization', yeah.headers)
+        yeah._oauth()
+        self.assertIn('Authorization', yeah.headers)
 
     def test_invalid_token(self):
         oops = GitHubTools('not_cuducos')
-        with self.subTest():
-            self.assertFalse(oops._validate_token())
-            self.assertNotIn('Authorization', oops.headers)
+        oops._oauth()
+        self.assertNotIn('Authorization', oops.headers)
 
     @patch('getgist.github.config')
     def test_no_token_results_in_no_authentication(self, mock_config):
         mock_config.return_value = None
         oops = GitHubTools(GETGIST_USER)
-        with self.subTest():
-            self.assertFalse(oops.token)
-            self.assertFalse(oops._validate_token())
-            self.assertNotIn('Authorization', oops.headers)
+        self.assertNotIn('Authorization', oops.headers)
 
 
 class GitHubToolsTests(TestCase):
