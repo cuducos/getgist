@@ -12,6 +12,7 @@ class GitHubTools(GetGistCommons):
         # GitHub API main settings and entrypoints
         self.version = get_distribution('getgist').version
         self.user = user
+        self.is_authenticated = False
         self.api_root_url = 'https://api.github.com/'
         self.headers = {'Accept': 'application/vnd.github.v3+json',
                         'User-Agent': 'GetGist v' + self.version}
@@ -26,7 +27,10 @@ class GitHubTools(GetGistCommons):
         self._oauth()
 
         # fetch all gists
-        url = self._api_url('users', self.user, 'gists')
+        if self.is_authenticated:
+            url = self._api_url('gists')
+        else:
+            url = self._api_url('users', self.user, 'gists')
         self.output('Fetching ' + url)
         raw_resp = self.requests.get(url)
 
@@ -69,6 +73,8 @@ class GitHubTools(GetGistCommons):
         if resp.get('login', None) != self.user:
             self.output('Invalid token for user ' + self.user)
             self.headers.pop('Authorization')
+
+        self.is_authenticated = True
 
     @staticmethod
     def _get_token():
