@@ -16,15 +16,33 @@ class GitHubTools(GetGistCommons):
         self.api_root_url = 'https://api.github.com/'
         self.headers = {'Accept': 'application/vnd.github.v3+json',
                         'User-Agent': 'GetGist v' + self.version}
-
-        # instantiate GetGistRequests
         self.requests = GetGistRequests(self.headers)
+        self.add_oauth_header()
+
+    def add_oauth_header(self):
+        """Validate token and add the proper header for further requests"""
+
+        # abort if no token
+        oauth_token = self._get_token()
+        if not oauth_token:
+            return
+
+        # add oauth header & reach the api
+        self.headers['Authorization'] = 'token ' + oauth_token
+        url = self._api_url('user')
+        raw_resp = self.requests.get(url)
+        resp = raw_resp.json()
+
+        # abort & remove header if token is invalid
+        if resp.get('login', None) != self.user:
+            self.output('Invalid token for user ' + self.user)
+            self.headers.pop('Authorization')
+            return
+
+        self.is_authenticated = True
 
     def get_gists(self):
         """List generator w/ dictionaries w/ Gists' `name` and `files`"""
-
-        # add oauth header
-        self._oauth()
 
         # fetch all gists
         if self.is_authenticated:
@@ -54,27 +72,6 @@ class GitHubTools(GetGistCommons):
     def _api_url(self, *args):
         """Get entrypoints adding arguments separated by slashes"""
         return self.api_root_url + '/'.join(args)
-
-    def _oauth(self):
-        """Validate the OAuth token and add the proper headers for requests"""
-
-        # abort if no token
-        oauth_token = self._get_token()
-        if not oauth_token:
-            return
-
-        # add oauth header & try to reach the api
-        self.headers['Authorization'] = 'token ' + oauth_token
-        url = self._api_url('user')
-        raw_resp = self.requests.get(url)
-        resp = raw_resp.json()
-
-        # remove header if token is invalid
-        if resp.get('login', None) != self.user:
-            self.output('Invalid token for user ' + self.user)
-            self.headers.pop('Authorization')
-
-        self.is_authenticated = True
 
     @staticmethod
     def _get_token():

@@ -8,19 +8,14 @@ GETGIST_USER = 'janedoe'
 GETGIST_TOKEN = "Jane's token"
 
 
-class GitHubToolsTestCase(TestCase):
-
-    def setUp(self):
-        self.github = GitHubTools(GETGIST_USER)
-
-
-class TestAuthentication(GitHubToolsTestCase):
+class TestAuthentication(TestCase):
 
     @patch('getgist.github.GitHubTools._get_token')
     def test_no_token_results_in_no_authentication(self, mock_token):
-        mock_token.return_value = None
+        mock_token.return_value = False
         oops = GitHubTools(GETGIST_USER)
         self.assertNotIn('Authorization', oops.headers)
+        self.assertFalse(oops.is_authenticated)
 
     @patch('getgist.requests.GetGistRequests.get')
     @patch('getgist.github.GitHubTools._get_token')
@@ -28,8 +23,8 @@ class TestAuthentication(GitHubToolsTestCase):
         mock_token.return_value = GETGIST_TOKEN
         mock_get.return_value = request_mock('user', case=False)
         oops = GitHubTools(GETGIST_USER)
-        oops._oauth()
         self.assertNotIn('Authorization', oops.headers)
+        self.assertFalse(oops.is_authenticated)
 
     @patch('getgist.requests.GetGistRequests.get')
     @patch('getgist.github.GitHubTools._get_token')
@@ -37,8 +32,14 @@ class TestAuthentication(GitHubToolsTestCase):
         mock_token.return_value = GETGIST_TOKEN
         mock_get.return_value = request_mock('user')
         yeah = GitHubTools(GETGIST_USER)
-        yeah._oauth()
         self.assertIn('Authorization', yeah.headers)
+        self.assertTrue(yeah.is_authenticated)
+
+
+class GitHubToolsTestCase(TestCase):
+
+    def setUp(self):
+        self.github = GitHubTools(GETGIST_USER)
 
 
 class TestMainHeaders(GitHubToolsTestCase):
