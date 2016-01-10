@@ -65,13 +65,30 @@ class GitHubTools(GetGistCommons):
 
         # parse response
         for gist in raw_resp.json():
-            files = list(gist['files'].keys())
-            name = gist['description'] if gist['description'] else files[0]
-            yield dict(files=files, name=name)
+            yield self._parse_gist(gist)
 
     def _api_url(self, *args):
         """Get entrypoints adding arguments separated by slashes"""
         return self.api_root_url + '/'.join(args)
+
+    @staticmethod
+    def _parse_gist(gist):
+        """Receive a gist (dict, from json.loads()) and parse it to GetGist"""
+
+        # parse files
+        files = list()
+        file_names = sorted(filename for filename in gist['files'].keys())
+        for name in file_names:
+            files.append(dict(filename=name,
+                              raw_url=gist['files'][name].get('raw_url')))
+
+        # parse description
+        description = gist['description']
+        if not description:
+            names = sorted(f['filename'] for f in files)
+            description = names.pop(0)
+
+        return dict(files=files, description=description)
 
     @staticmethod
     def _get_token():

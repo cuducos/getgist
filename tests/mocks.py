@@ -41,3 +41,32 @@ def request_mock(uri, **kwargs):
                  case='success' if case else 'fail')
     with open('{path}/{name}.{case}.json'.format(**parts)) as handler:
         return MockResponse(handler.read(), status_code)
+
+
+def parse_mock(**kwargs):
+    """
+    Accepts as kwargs the following arguments to build a dictionary with
+    expected gist (dict) values: id (int), filename (str or list),
+    description (str) and user (str)
+    """
+
+    # filter the arguments
+    id = kwargs.get('id', 1)
+    filename = kwargs.get('filename', '.gist')
+    if not isinstance(filename, list):
+        filename = [filename]
+    filename = sorted(filename)
+    user = kwargs.get('user', 'janedoe')
+    description = kwargs.get('description')
+    if not description:
+        description = filename[0]
+
+    # build the file list
+    files = list()
+    receipe = '{base}{user}/id_gist_{id}/raw/hash_gist_{id}/{filename}'
+    base = 'https://gist.githubusercontent.com/'
+    for f in filename:
+        url = receipe.format(base=base, user=user, id=id, filename=f)
+        files.append(dict(filename=f, raw_url=url))
+
+    return dict(description=description, files=files)

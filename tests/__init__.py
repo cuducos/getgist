@@ -2,7 +2,7 @@ from unittest import TestCase
 from unittest.mock import patch
 
 from getgist.github import GitHubTools
-from tests.mocks import request_mock
+from tests.mocks import parse_mock, request_mock
 
 GETGIST_USER = 'janedoe'
 GETGIST_TOKEN = "Jane's token"
@@ -40,6 +40,12 @@ class GitHubToolsTestCase(TestCase):
 
     def setUp(self):
         self.github = GitHubTools(GETGIST_USER)
+        self.gist1 = parse_mock(id=1, user=GETGIST_USER, filename='.gist')
+        self.gist2 = parse_mock(id=2, user=GETGIST_USER, filename='.gist',
+                                description='Description of Gist 2')
+        self.gist3 = parse_mock(id=3, user=GETGIST_USER,
+                                filename=['.gist.sample', '.gist.dev'])
+        self.gist4 = parse_mock(id=4, user=GETGIST_USER, filename='.gist.prod')
 
 
 class TestMainHeaders(GitHubToolsTestCase):
@@ -61,29 +67,40 @@ class TestApiUrl(GitHubToolsTestCase):
         self.assertEqual(url, expected)
 
 
+class TestParseGist(GitHubToolsTestCase):
+
+    def test_parse_gist(self):
+        gist_raw = request_mock('gist/id_gist_1')
+        gist = gist_raw.json()
+        self.assertEqual(self.github._parse_gist(gist), self.gist1)
+
+
 class TestGetGists(GitHubToolsTestCase):
 
     @patch('getgist.requests.GetGistRequests.get')
-    def test_get_gists(self, mock_get):
+    @patch('getgist.github.GitHubTools.add_oauth_header')
+    def test_get_gists(self, mock_oauth, mock_get):
+        mock_oauth.return_value = None
         mock_get.return_value = request_mock('users/janedoe/gists')
-        self.github.headers.pop('Authorization', None)
         gists = list(self.github.get_gists())
         with self.subTest():
-            self.assertIn({'name': '.gist',
-                           'files': ['.gist']}, gists)
-            self.assertIn({'name': 'Description of Gist 2',
-                           'files': ['.gist']}, gists)
-            self.assertNotIn({'name': '.gist.prod',
-                              'files': ['gist.prod']}, gists)
+            self.assertIn(self.gist1, gists)
+            self.assertIn(self.gist2, gists)
+            self.assertNotIn(self.gist4, gists)
 
     @patch('getgist.requests.GetGistRequests.get')
-    def test_no_gists_with_wrong_username(self, mock_get):
+    @patch('getgist.github.GitHubTools.add_oauth_header')
+    def test_no_gists_with_wrong_username(self, mock_oauth, mock_get):
+        mock_oauth.return_value = None
         mock_get.return_value = request_mock('users/janedoe/gists',
                                              case=False, status_code=404)
         self.assertFalse(list(self.github.get_gists()))
 
     @patch('getgist.requests.GetGistRequests.get')
-    def test_authenticated_get_gists(self, mock_get):
+    @patch('getgist.github.GitHubTools.add_oauth_header')
+    def test_authenticated_get_gists(self, mock_oauth, mock_get):
+        mock_oauth.return_value = None
         mock_get.return_value = request_mock('gists')
         gists = list(self.github.get_gists())
-        self.assertIn({'name': '.gist.prod', 'files': ['.gist.prod']}, gists)
+        self.assertIn(self.gist3, gists)
+        self.assertIn(self.gist4, gists)
