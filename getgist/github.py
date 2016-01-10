@@ -73,7 +73,7 @@ class GitHubTools(GetGistCommons):
 
     @staticmethod
     def _parse_gist(gist):
-        """Receive a gist (dict, from json.loads()) and parse it to GetGist"""
+        """Receive a gist (dict) and parse it to GetGist"""
 
         # parse files
         files = list()
