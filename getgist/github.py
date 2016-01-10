@@ -67,6 +67,52 @@ class GitHubTools(GetGistCommons):
         for gist in raw_resp.json():
             yield self._parse_gist(gist)
 
+    def select_gist(self, filename):
+        """
+        Get a list of gists (from self.get_gists) and return the one that
+        contain the filename offered as an argument (str). If more than one
+        gist is found with the given filename, user is asked to choose.
+        Returns the dictionary of the selected gist
+        """
+
+        # pick up all macthing gists
+        matches = list()
+        for gist in self.get_gists():
+            for gist_file in gist.get('files'):
+                if filename == gist_file.get('filename'):
+                    matches.append(gist)
+
+        # abort if no match is found
+        if not matches:
+            msg = "No file named `{}` found in {}'s gists"
+            self.output(msg.format(filename, self.user))
+            return False
+
+        # return if there's is only one match
+        if len(matches) == 1:
+            return matches.pop()
+
+        return self._ask_which_gist(filename, matches)
+
+    def _ask_which_gist(self, filename, matches):
+
+        # ask user which gist to use
+        self.output('Use {} from which gist?'.format(filename))
+        for count, gist in enumerate(matches, 1):
+            self.output('[{}] {}'.format(count, gist.get('description')))
+
+        # get the gist index
+        selected = False
+        while not selected:
+            try:
+                gist_index = int(self.ask('Type the number: ')) - 1
+                selected = matches[gist_index]
+            except (ValueError, IndexError):
+                self.output('Invalid number, please try again.')
+
+        self.output('Using `{}` Gist'.format(selected['description']))
+        return selected
+
     def _api_url(self, *args):
         """Get entrypoints adding arguments separated by slashes"""
         return self.api_root_url + '/'.join(args)
