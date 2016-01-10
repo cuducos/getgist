@@ -5,15 +5,16 @@ from . import GetGistCommons
 
 class LocalTools(GetGistCommons):
 
-    def __init__(self, filename):
+    def __init__(self, filename, assume_yes=False):
         self.cwd = os.getcwd()
         self.filename = filename
+        self.assume_yes = assume_yes
         self.path = os.path.join(self.cwd, filename)
 
     def save(self, content):
 
         # backup existing file if needed
-        if os.path.exists(self.path):
+        if os.path.exists(self.path) and not self.assume_yes:
             message = 'Overwrite existing {}? (y/n) '
             confirm = self.ask(message.format(self.filename))
             if confirm.lower() != 'y':

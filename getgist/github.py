@@ -7,11 +7,12 @@ from .requests import GetGistRequests
 
 class GitHubTools(GetGistCommons):
 
-    def __init__(self, user):
+    def __init__(self, user, assume_yes=False):
 
         # GitHub API main settings and entrypoints
         self.version = get_distribution('getgist').version
         self.user = user
+        self.assume_yes = assume_yes
         self.is_authenticated = False
         self.api_root_url = 'https://api.github.com/'
         self.headers = {'Accept': 'application/vnd.github.v3+json',
@@ -93,8 +94,8 @@ class GitHubTools(GetGistCommons):
             return False
 
         # return if there's is only one match
-        if len(matches) == 1:
-            return matches.pop()
+        if len(matches) == 1 or self.assume_yes:
+            return matches.pop(0)
 
         return self._ask_which_gist(filename, matches)
 
