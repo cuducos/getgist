@@ -1,6 +1,6 @@
 import os
 
-from . import GetGistCommons
+from getgist import GetGistCommons
 
 
 class LocalTools(GetGistCommons):

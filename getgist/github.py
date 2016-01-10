@@ -1,8 +1,8 @@
 from decouple import config
 from pkg_resources import get_distribution
 
-from . import GetGistCommons
-from .requests import GetGistRequests
+from getgist import GetGistCommons
+from getgist.requests import GetGistRequests
 
 
 class GitHubTools(GetGistCommons):
