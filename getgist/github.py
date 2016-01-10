@@ -85,10 +85,10 @@ class GitHubTools(GetGistCommons):
         # parse description
         description = gist['description']
         if not description:
-            names = sorted(f['filename'] for f in files)
+            names = sorted(f.get('filename') for f in files)
             description = names.pop(0)
 
-        return dict(files=files, description=description)
+        return dict(description=description, id=gist.get('id'), files=files)
 
     @staticmethod
     def _get_token():

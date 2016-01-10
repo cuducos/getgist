@@ -51,7 +51,9 @@ def parse_mock(**kwargs):
     """
 
     # filter the arguments
-    id = kwargs.get('id', 1)
+    id_num = kwargs.get('id', 1)
+    id = 'id_gist_' + str(id_num)
+    hash = 'hash_gist_' + str(id_num)
     filename = kwargs.get('filename', '.gist')
     if not isinstance(filename, list):
         filename = [filename]
@@ -63,10 +65,10 @@ def parse_mock(**kwargs):
 
     # build the file list
     files = list()
-    receipe = '{base}{user}/id_gist_{id}/raw/hash_gist_{id}/{filename}'
+    struct = '{base}{user}/{id}/raw/{hash}/{filename}'
     base = 'https://gist.githubusercontent.com/'
     for f in filename:
-        url = receipe.format(base=base, user=user, id=id, filename=f)
+        url = struct.format(base=base, user=user, id=id, hash=hash, filename=f)
         files.append(dict(filename=f, raw_url=url))
 
-    return dict(description=description, files=files)
+    return dict(description=description, id=id, files=files)
