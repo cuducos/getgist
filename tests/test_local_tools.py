@@ -24,6 +24,52 @@ class LocalFileTestCase(TestCase):
             if filename.startswith(TEST_FILE):
                 os.remove(path)
 
+
+class TestReadFile(LocalFileTestCase):
+
+    def test_read(self):
+        with open(self.path, 'w') as handler:
+            handler.write('TestReadFile')
+        self.assertEqual(self.local.read(self.path), 'TestReadFile')
+
+
+class TestBackup(LocalFileTestCase):
+
+    def test_simple_backup(self):
+        with open(self.path, 'w') as handler:
+            handler.write('TestBackup')
+        self.local.backup()
+        path = str(self.path) + '.bkp'
+        with self.subTest():
+            self.assertTrue(os.path.exists(path))
+            self.assertEqual(self.local.read(path), 'TestBackup')
+
+    def test_two_backups(self):
+        with open(self.path, 'w') as handler:
+            handler.write('TestBackup')
+        path_bkp = str(self.path) + '.bkp'
+        with open(path_bkp, 'w') as handler:
+            handler.write('TestBackup.bkp')
+        self.local.backup()
+        path_bkp1 = path_bkp + '1'
+        with self.subTest():
+            self.assertTrue(os.path.exists(path_bkp1))
+            self.assertEqual(self.local.read(path_bkp1), 'TestBackup')
+
+    def test_multi_backups(self):
+        for ext in ['', '.bkp', '.bkp1', '.bkp2', '.bkp3']:
+            path = str(self.path) + ext
+            with open(path, 'w') as handler:
+                handler.write('TestBackup' + ext)
+        self.local.backup()
+        path_bkp = path[:-1] + '4'
+        with self.subTest():
+            self.assertTrue(os.path.exists(path_bkp))
+            self.assertEqual(self.local.read(path_bkp), 'TestBackup')
+
+
+class TestWriteFile(LocalFileTestCase):
+
     def test_write_file(self):
         self.assertFalse(os.path.exists(self.path))
         self.local.save(TEST_FILE_CONTENT)
