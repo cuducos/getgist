@@ -21,7 +21,9 @@ class LocalTools(GetGistCommons):
 
         # write file
         self.output('Saving ' + self.filename)
-        with open(self.path, 'w') as handler:
+        with open(self.path, 'wb') as handler:
+            if not isinstance(content, bytes):
+                content = bytes(content, 'utf-8')
             handler.write(content)
         self.yeah('Done!')
 
