@@ -35,11 +35,12 @@ class GitHubTools(GetGistCommons):
 
         # abort & remove header if token is invalid
         if resp.get('login', None) != self.user:
-            self.output('Invalid token for user ' + self.user)
+            self.oops('Invalid token for user ' + self.user)
             self.headers.pop('Authorization')
             return
 
         self.is_authenticated = True
+        self.yeah('User {} authenticated'.format(self.user))
 
     def get_gists(self):
         """List generator w/ dictionaries w/ Gists' `name` and `files`"""
@@ -54,13 +55,13 @@ class GitHubTools(GetGistCommons):
 
         # abort if user not found
         if raw_resp.status_code != 200:
-            self.output('User `{}` not found'.format(self.user))
+            self.oops('User `{}` not found'.format(self.user))
             return
 
         # abort if there are no gists
         resp = raw_resp.json()
         if not resp:
-            self.output('No gists found for user `{}`'.format(self.user))
+            self.oops('No gists found for user `{}`'.format(self.user))
             return
 
         # parse response
@@ -85,7 +86,10 @@ class GitHubTools(GetGistCommons):
         # abort if no match is found
         if not matches:
             msg = "No file named `{}` found in {}'s gists"
-            self.output(msg.format(filename, self.user))
+            self.oops(msg.format(filename, self.user))
+            if not self.is_authenticated:
+                self.warn('To access private gists set the GETGIST_TOKEN')
+                self.warn('(see `getgist --help` for details)')
             return False
 
         # return if there's is only one match
@@ -103,15 +107,16 @@ class GitHubTools(GetGistCommons):
                 url = f.get('raw_url')
                 break
         if url:
+            self.output('Reading {}'.format(url))
             response = self.requests.get(url)
             return response.content
 
     def _ask_which_gist(self, filename, matches):
 
         # ask user which gist to use
-        self.output('Use {} from which gist?'.format(filename))
+        self.hey('Use {} from which gist?'.format(filename))
         for count, gist in enumerate(matches, 1):
-            self.output('[{}] {}'.format(count, gist.get('description')))
+            self.hey('[{}] {}'.format(count, gist.get('description')))
 
         # get the gist index
         selected = False
@@ -120,7 +125,7 @@ class GitHubTools(GetGistCommons):
                 gist_index = int(self.ask('Type the number: ')) - 1
                 selected = matches[gist_index]
             except (ValueError, IndexError):
-                self.output('Invalid number, please try again.')
+                self.oops('Invalid number, please try again.')
 
         self.output('Using `{}` Gist'.format(selected['description']))
         return selected

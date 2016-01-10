@@ -23,7 +23,7 @@ class LocalTools(GetGistCommons):
         self.output('Saving ' + self.filename)
         with open(self.path, 'w') as handler:
             handler.write(content)
-        self.output('Done!')
+        self.yeah('Done!')
 
     def backup(self):
         count = 0
@@ -33,7 +33,7 @@ class LocalTools(GetGistCommons):
             count += 1
             name = '{}.bkp{}'.format(self.filename, count)
             backup = os.path.join(self.cwd, name)
-        self.output('Moving existing {} to {}'.format(self.filename, name))
+        self.hey('Moving existing {} to {}'.format(self.filename, name))
         os.rename(os.path.join(self.cwd, self.filename), backup)
 
     def read(self, filename=None):

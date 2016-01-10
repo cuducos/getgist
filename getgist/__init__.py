@@ -1,19 +1,31 @@
+from click import secho
+
+
 class GetGistCommons(object):
 
     indent_size = 2
     indent_char = ' '
 
-    def indent(self, message, indent_size=False):
-        """A helper to indent output/input messages"""
-        if not indent_size:
-            indent_size = self.indent_size
-        indent = self.indent_char * indent_size
+    def indent(self, message):
+        indent = self.indent_char * self.indent_size
         return indent + message
 
-    def output(self, message, indent_size=False):
+    def output(self, message, color=None):
         """A helper to indent print()"""
-        print(self.indent(message, indent_size))
+        secho(self.indent(message), fg=color)
 
-    def ask(self, message, indent_size):
+    def ask(self, message, color=None):
         """A helper to indent input()"""
-        return input(self.indent(message, indent_size))
+        return input(self.indent(message))
+
+    def oops(self, message):
+        return self.output(message, color='red')
+
+    def yeah(self, message):
+        return self.output(message, color='green')
+
+    def warn(self, message):
+        return self.output(message, color='yellow')
+
+    def hey(self, message):
+        return self.output(message, color='blue')
