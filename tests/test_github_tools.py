@@ -118,6 +118,20 @@ class TestGetGists(GitHubToolsTestCase):
             self.assertIn(self.gist4, gists)
 
 
+class TestAskWhichGist(GitHubToolsTestCase):
+
+    @patch('getgist.requests.GetGistRequests.get')
+    @patch('getgist.github.GitHubTools.add_oauth_header')
+    @patch('getgist.GetGistCommons.ask')
+    def test_select_gist_single_match(self, mock_ask, mock_oauth, mock_get):
+        mock_ask.return_value = 2
+        mock_oauth.return_value = None
+        mock_get.return_value = request_mock('users/janedoe/gists')
+        gists = list(self.github.get_gists())
+        self.assertEqual(self.github._ask_which_gist('.gist', gists),
+                         self.gist2)
+
+
 class TestSelectGist(GitHubToolsTestCase):
 
     @patch('getgist.requests.GetGistRequests.get')
