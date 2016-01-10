@@ -2,7 +2,7 @@ from unittest import TestCase
 from unittest.mock import patch
 
 from getgist.github import GitHubTools
-from tests.mocks import parse_mock, request_mock
+from tests.mocks import MockResponse, parse_mock, request_mock
 
 GETGIST_USER = 'janedoe'
 GETGIST_TOKEN = "Jane's token"
@@ -142,3 +142,16 @@ class TestSelectGist(GitHubToolsTestCase):
         mock_oauth.return_value = None
         mock_get.return_value = request_mock('users/janedoe/gists')
         self.assertEqual(self.github.select_gist('.gist'), self.gist2)
+
+
+class TestReadGist(GitHubToolsTestCase):
+
+    @patch('getgist.requests.GetGistRequests.get')
+    @patch('getgist.github.GitHubTools.add_oauth_header')
+    def test_read_gist(self, mock_oauth, mock_get):
+        mock_get.return_value = MockResponse('Hello, world!', 200)
+        mock_oauth.return_value = None
+        gist_raw = request_mock('gist/id_gist_1')
+        gist = self.github._parse_gist(gist_raw.json())
+        read = self.github.read_gist_file(gist, '.gist')
+        self.assertEqual(read, 'Hello, world!')

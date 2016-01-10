@@ -94,6 +94,18 @@ class GitHubTools(GetGistCommons):
 
         return self._ask_which_gist(filename, matches)
 
+    def read_gist_file(self, gist, filename):
+        """Return the contents of a gist"""
+        url = False
+        files = gist.get('files')
+        for f in files:
+            if f.get('filename') == filename:
+                url = f.get('raw_url')
+                break
+        if url:
+            response = self.requests.get(url)
+            return response.content
+
     def _ask_which_gist(self, filename, matches):
 
         # ask user which gist to use
