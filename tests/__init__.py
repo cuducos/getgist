@@ -116,3 +116,15 @@ class TestGetGists(GitHubToolsTestCase):
         with self.subTest():
             self.assertIn(self.gist3, gists)
             self.assertIn(self.gist4, gists)
+
+
+class TestSelectGist(GitHubToolsTestCase):
+
+    @patch('getgist.requests.GetGistRequests.get')
+    @patch('getgist.github.GitHubTools.add_oauth_header')
+    def test_select_gist_single_match(self, mock_oauth, mock_get):
+        mock_oauth.return_value = None
+        mock_get.return_value = request_mock('users/janedoe/gists')
+        self.assertEqual(self.github.select_gist('.gist.sample'), self.gist3)
+
+    # TODO: write test_select_gist_multiple_macthes

@@ -67,6 +67,18 @@ class GitHubTools(GetGistCommons):
         for gist in raw_resp.json():
             yield self._parse_gist(gist)
 
+    def select_gist(self, filename):
+        """
+        Get a list of gists (from self.get_gists) and return the one that
+        contain the filename offered as an argument (str). If more than one
+        gist is found with the given filename, user is asked to choose.
+        Returns the dictionary of the selected gist
+        """
+        for gist in self.get_gists():
+            for gist_file in gist.get('files'):
+                if filename == gist_file.get('filename'):
+                    return gist
+
     def _api_url(self, *args):
         """Get entrypoints adding arguments separated by slashes"""
         return self.api_root_url + '/'.join(args)
