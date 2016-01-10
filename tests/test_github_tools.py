@@ -133,9 +133,9 @@ class TestAskWhichGist(GitHubToolsTestCase):
 
     @patch('getgist.requests.GetGistRequests.get')
     @patch('getgist.github.GitHubTools.add_oauth_header')
-    @patch('getgist.GetGistCommons.ask')
-    def test_select_gist_multi_input(self, mock_ask, mock_oauth, mock_get):
-        mock_ask.side_effect = ['alpha', '', 2]
+    @patch('getgist.input')
+    def test_select_gist_multi_input(self, mock_input, mock_oauth, mock_get):
+        mock_input.side_effect = ['alpha', '', 2]
         mock_oauth.return_value = None
         mock_get.return_value = request_mock('users/janedoe/gists')
         gists = list(self.github.get_gists())
