@@ -14,7 +14,7 @@ class GetGistCommons(object):
         """A helper to indent print()"""
         secho(self.indent(message), fg=color)
 
-    def ask(self, message, color=None):
+    def ask(self, message):
         """A helper to indent input()"""
         return input(self.indent(message))
 

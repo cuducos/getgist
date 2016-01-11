@@ -4,7 +4,9 @@ import requests
 class GetGistRequests(object):
     """Encapsulate requests lib to always send self.headers as headers"""
 
-    def __init__(self, headers={}):
+    def __init__(self, headers=None):
+        if not headers:
+            headers = dict()
         self.headers = headers
 
     def add_headers(self, kwargs):

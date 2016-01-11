@@ -103,9 +103,9 @@ class GitHubTools(GetGistCommons):
         """Return the contents of a gist"""
         url = False
         files = gist.get('files')
-        for f in files:
-            if f.get('filename') == filename:
-                url = f.get('raw_url')
+        for gist_file in files:
+            if gist_file.get('filename') == filename:
+                url = gist_file.get('raw_url')
                 break
         if url:
             self.output('Reading {}'.format(url))
