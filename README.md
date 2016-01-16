@@ -90,12 +90,14 @@ $ getgist cuducos .vimrc
 
 ## Contributing
 
+
+I'm working on version 0.1.0 ([on it's own branch](https://github.com/cuducos/getgist/tree/0.1.0)), re-writing the whole project and adding new features.
+
 Feel free to [report an issue](http://github.com/cuducos/getgist/issues), [open a pull request](http://github.com/cuducos/getgist/pulls), or [drop a line](http://twitter.com/cuducos).
 
 Thank you very much [@ddboline](http://github.com/ddboline) and [/u/Sean1708](http://reddit.com/user/Sean1708) for the contributions!
 
 ### Tests
-
 
 ```
 $ pip install nose
@@ -106,9 +108,6 @@ If using Python 2 you also need to install [mock](https://github.com/testing-cab
 
 ## Changelog
 
-* **0.0.7 _(work in progress)_**
-  * Add personal access token (OAuth)
-  * Allow the download of private Gists (when authenticated)
 * **0.0.6**
   * Add default user feature
 * **0.0.5**
