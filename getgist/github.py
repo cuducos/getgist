@@ -81,7 +81,7 @@ class GitHubTools(GetGistCommons):
         for gist in raw_resp.json():
             yield self._parse_gist(gist)
 
-    def select_gist(self, filename):
+    def select_gist(self, filename, allow_none=False):
         """
         Get a list of gists (from self.get_gists) and return the one that
         contain the filename offered as an argument (str). If more than one
@@ -98,12 +98,15 @@ class GitHubTools(GetGistCommons):
 
         # abort if no match is found
         if not matches:
-            msg = "No file named `{}` found in {}'s gists"
-            self.oops(msg.format(filename, self.user))
-            if not self.is_authenticated:
-                self.warn('To access private gists set the GETGIST_TOKEN')
-                self.warn('(see `getgist --help` for details)')
-            return False
+            if allow_none:
+                return None
+            else:
+                msg = "No file named `{}` found in {}'s gists"
+                self.oops(msg.format(filename, self.user))
+                if not self.is_authenticated:
+                    self.warn('To access private gists set the GETGIST_TOKEN')
+                    self.warn('(see `getgist --help` for details)')
+                return False
 
         # return if there's is only one match
         if len(matches) == 1 or self.assume_yes:
