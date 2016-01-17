@@ -182,6 +182,39 @@ class TestReadGist(GitHubToolsTestCase):
         self.assertEqual(read, 'Hello, world!')
 
 
+class TestUpdateGist(TestCase):
+
+    @patch('getgist.github.GitHubTools._get_token')
+    def test_update_gist_without_authorization(self, mock_token):
+        mock_token.return_value = None
+        gist = parse_mock(id=1, user=GETGIST_USER, filename='.gist')
+        oops = GitHubTools(GETGIST_USER)
+        self.assertFalse(oops.update(gist, '.gist.sample', '42'))
+
+    @patch('getgist.requests.GetGistRequests.get')
+    @patch('getgist.requests.GetGistRequests.patch')
+    @patch('getgist.github.GitHubTools._get_token')
+    def test_update_gist(self, mock_token, mock_patch, mock_get):
+        mock_token.return_value = GETGIST_TOKEN
+        mock_patch.return_value = request_mock('gist/id_gist_1')
+        mock_get.return_value = request_mock('user')
+        gist = parse_mock(id=1, user=GETGIST_USER, filename='.gist')
+        yeah = GitHubTools(GETGIST_USER)
+        self.assertTrue(yeah.update(gist, '.gist', '42'))
+
+    @patch('getgist.requests.GetGistRequests.get')
+    @patch('getgist.requests.GetGistRequests.patch')
+    @patch('getgist.github.GitHubTools._get_token')
+    def test_failed_update_gist(self, mock_token, mock_patch, mock_get):
+        mock_token.return_value = GETGIST_TOKEN
+        mock_patch.return_value = request_mock('gist/id_gist_1', case=False,
+                                               status_code=404)
+        mock_get.return_value = request_mock('user')
+        gist = parse_mock(id=1, user=GETGIST_USER, filename='.gist')
+        yeah = GitHubTools(GETGIST_USER)
+        self.assertFalse(yeah.update(gist, '.gist', '42'))
+
+
 class TestCreateGist(TestCase):
 
     @patch('getgist.github.GitHubTools._get_token')

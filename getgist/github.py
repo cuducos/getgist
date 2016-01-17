@@ -124,6 +124,24 @@ class GitHubTools(GetGistCommons):
             response = self.requests.get(url)
             return response.content
 
+    @oauth_only
+    def update(self, gist, filename, content):
+
+        # request
+        url = self._api_url('gists', gist.get('id'))
+        data = {'files': {filename: {'content': content}}}
+        self.output('Sending contents of {} to {}'.format(filename, url))
+        response = self.requests.patch(url, data=dumps(data))
+
+        # error
+        if response.status_code != 200:
+            self.oops('Could not update ' + gist.get('description'))
+            self.oops('PATCH request returned ' + str(response.status_code))
+            return False
+
+        # success
+        self.yeah('Done!')
+        return True
 
     @oauth_only
     def create(self, filename, content, **kwargs):
