@@ -228,7 +228,8 @@ class TestCreateGist(TestCase):
     @patch('getgist.github.GitHubTools._get_token')
     def test_create_gist(self, mock_token, mock_post, mock_get):
         mock_token.return_value = GETGIST_TOKEN
-        mock_post.return_value = request_mock('gist/id_gist_1')
+        mock_post.return_value = request_mock('gist/id_gist_1',
+                                              status_code=201)
         mock_get.return_value = request_mock('user')
         yeah = GitHubTools(GETGIST_USER)
         self.assertTrue(yeah.create('.gist.sample', '42', public=False))
