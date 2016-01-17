@@ -43,8 +43,26 @@ PUTMY_DESC = """
 
 
 class GetGist(object):
+    """
+    Main GetGist objects linking inputs from the CLI to the helpers from
+    GitHubTools (to deal with the API) and LocalTools (to deal with the local
+    file system.
+    """
 
     def __init__(self, **kwargs):
+        """
+        Instantiate GitHubTools & LocalTools, and set the variables required
+        to get, create or update gists (filename and public/private flag)
+        :param user: (str) GitHub username
+        :param filename: (str) name of file from any Gist or local file system
+        :param allow_none: (bool) flag to use GitHubTools.select_gist
+        differently with `getgist` and `putgist` commands (if no gist/filename
+        is found it raises an error for `getgist`, or sets `putgist` to create
+        a new gist).
+        :param create_private: (bool) create a new gist as private
+        :param assume_yes: (bool) assume yes (or first option) for all prompts
+        :return: (None)
+        """
 
         # get arguments
         user = kwargs.get('user')
@@ -86,6 +104,7 @@ class GetGist(object):
 @argument('user')
 @argument('filename')
 def run_getgist(filename, user, **kwargs):
+    """Passes user inputs to GetGist() and calls get()"""
     assume_yes = kwargs.get('yes_to_all')
     getgist = GetGist(user=user, filename=filename, assume_yes=assume_yes)
     getgist.get()
@@ -95,6 +114,7 @@ def run_getgist(filename, user, **kwargs):
 @option('--yes-to-all', '-y', is_flag=True, help='Assume yes to all prompts.')
 @argument('filename')
 def run_getmy(filename, **kwargs):
+    """Shortcut for run_getgist() reading username from env var"""
     assume_yes = kwargs.get('yes_to_all')
     user = config('GETGIST_USER', default=None)
     getgist = GetGist(user=user, filename=filename, assume_yes=assume_yes)
@@ -107,6 +127,7 @@ def run_getmy(filename, **kwargs):
 @argument('user')
 @argument('filename')
 def run_putgist(filename, user, **kwargs):
+    """Passes user inputs to GetGist() and calls put()"""
     assume_yes = kwargs.get('yes_to_all')
     private = kwargs.get('private')
     getgist = GetGist(user=user, filename=filename, assume_yes=assume_yes,
@@ -119,6 +140,7 @@ def run_putgist(filename, user, **kwargs):
 @option('--private', '-p', is_flag=True, help='Crete new gist as private')
 @argument('filename')
 def run_putmy(filename, **kwargs):
+    """Shortcut for run_putgist() reading username from env var"""
     assume_yes = kwargs.get('yes_to_all')
     private = kwargs.get('private')
     user = config('GETGIST_USER', default=None)

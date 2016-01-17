@@ -1,6 +1,7 @@
-from decouple import config
 from json import dumps
 from pkg_resources import get_distribution
+
+from decouple import config
 
 from getgist import GetGistCommons
 from getgist.requests import GetGistRequests
@@ -9,6 +10,10 @@ from getgist.requests import GetGistRequests
 def oauth_only(function):
     """Decorator to restrict some GitHubTools methods to run only with OAuth"""
     def check_for_oauth(self, *args, **kwargs):
+        """
+        Returns False if GitHubTools instance is not authenticated, or return
+        the decorated fucntion if it is.
+        """
         if not self.is_authenticated:
             self.oops('To use putgist you have to set your GETGIST_TOKEN')
             self.oops('(see `putgist --help` for details)')
@@ -43,8 +48,10 @@ class GitHubTools(GetGistCommons):
         self.add_oauth_header()
 
     def add_oauth_header(self):
-        """Validate token and add the proper header for further requests"""
-
+        """
+        Validate token and add the proper header for further requests.
+        :return: (None)
+        """
         # abort if no token
         oauth_token = self._get_token()
         if not oauth_token:
@@ -66,8 +73,11 @@ class GitHubTools(GetGistCommons):
         self.yeah('User {} authenticated'.format(self.user))
 
     def get_gists(self):
-        """List generator w/ dictionaries w/ Gists' `name` and `files`"""
-
+        """
+        List generator containing dictionaries gists' relevant information
+        (such as id, description, filenames and raw URL).
+        :return: (None)
+        """
         # fetch all gists
         if self.is_authenticated:
             url = self._api_url('gists')
@@ -93,10 +103,12 @@ class GitHubTools(GetGistCommons):
 
     def select_gist(self, allow_none=False):
         """
-        Get a list of gists (from self.get_gists) and return the one that
-        contain the filename offered as an argument (str). If more than one
-        gist is found with the given filename, user is asked to choose.
-        Returns the dictionary of the selected gist
+        Given the requested filename, it selects the proper gist; if more than
+        one gist is found with the given filename, user is asked to choose.
+        :allow_none: (bool) for `getgist` it should raise error if no gist is
+        found, but setting this argument to True avoid this error, which is
+        useful when `putgist` is calling this method
+        :return: (dict) selected gist
         """
         # pick up all macthing gists
         matches = list()
@@ -124,7 +136,11 @@ class GitHubTools(GetGistCommons):
         return self._ask_which_gist(matches)
 
     def read_gist_file(self, gist):
-        """Return the contents of a gist"""
+        """
+        Returns the contents of file hosted inside a gist at GitHub.
+        :param gist: (dict) gist parsed by GitHubTools._parse()
+        :return: (bytes) content of a gist loaded from GitHub
+        """
         url = False
         files = gist.get('files')
         for gist_file in files:
@@ -138,6 +154,12 @@ class GitHubTools(GetGistCommons):
 
     @oauth_only
     def update(self, gist, content):
+        """
+        Updates the contents of file hosted inside a gist at GitHub.
+        :param gist: (dict) gist parsed by GitHubTools._parse()
+        :param content: (str or bytes) to be written
+        :return: (bool) indicatind the success or failure of the update
+        """
 
         # request
         url = self._api_url('gists', gist.get('id'))
@@ -157,6 +179,13 @@ class GitHubTools(GetGistCommons):
 
     @oauth_only
     def create(self, content, **kwargs):
+        """
+        Create a new gist.
+        :param gist: (dict) gist parsed by GitHubTools._parse()
+        :param content: (str or bytes) to be written
+        :param public: (bool) defines if the gist is public or private
+        :return: (bool) indicatind the success or failure of the creation
+        """
 
         # set new gist
         public = bool(kwargs.get('public', True))
@@ -179,7 +208,12 @@ class GitHubTools(GetGistCommons):
         return True
 
     def _ask_which_gist(self, matches):
-
+        """
+        Asks user which gist to use in case of more than one gist matching the
+        instance filename.
+        :param matches: (list) of dictioaries generated within select_gists()
+        :return: (dict) of the selected gist
+        """
         # ask user which gist to use
         self.hey('Use {} from which gist?'.format(self.filename))
         for count, gist in enumerate(matches, 1):
@@ -222,4 +256,5 @@ class GitHubTools(GetGistCommons):
 
     @staticmethod
     def _get_token():
+        """Retrieve username from env var"""
         return config('GETGIST_TOKEN', default=None)
