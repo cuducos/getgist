@@ -1,4 +1,5 @@
 from click import secho
+from sys import stderr, stdout
 
 
 class GetGistCommons(object):
@@ -12,7 +13,8 @@ class GetGistCommons(object):
 
     def output(self, message, color=None):
         """A helper to indent print()"""
-        secho(self.indent(message), fg=color)
+        output_to = stderr if color == 'red' else stdout
+        secho(self.indent(message), fg=color, file=output_to)
 
     def ask(self, message):
         """A helper to indent input()"""
