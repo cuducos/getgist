@@ -1,7 +1,6 @@
 from unittest import TestCase
 
-from getgist.local import LocalTools
-from getgist.requests import GetGistRequests
+from getgist.request import GetGistRequests
 
 
 class TestGetGistRequestsInit(TestCase):

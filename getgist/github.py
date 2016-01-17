@@ -4,7 +4,7 @@ from pkg_resources import get_distribution
 from decouple import config
 
 from getgist import GetGistCommons
-from getgist.requests import GetGistRequests
+from getgist.request import GetGistRequests
 
 
 def oauth_only(function):
@@ -25,6 +25,13 @@ def oauth_only(function):
 class GitHubTools(GetGistCommons):
     """Helpers to deal with GitHub API and manipulate gists"""
 
+    version = get_distribution('getgist').version
+    api_root_url = 'https://api.github.com/'
+    headers = {'Accept': 'application/vnd.github.v3+json',
+               'User-Agent': 'GetGist v' + version}
+    requests = GetGistRequests(headers)
+    is_authenticated = False
+
     def __init__(self, user, filename, assume_yes=False):
         """
         Save basic variables to all methods, instantiate GetGistrequests and
@@ -35,16 +42,9 @@ class GitHubTools(GetGistCommons):
         :param assume_yes: (bool) assume yes (or first option) for all prompts
         :return: (None)
         """
-        # GitHub API main settings and entrypoints
-        self.version = get_distribution('getgist').version
         self.user = user
         self.filename = filename
         self.assume_yes = assume_yes
-        self.is_authenticated = False
-        self.api_root_url = 'https://api.github.com/'
-        self.headers = {'Accept': 'application/vnd.github.v3+json',
-                        'User-Agent': 'GetGist v' + self.version}
-        self.requests = GetGistRequests(self.headers)
         self.add_oauth_header()
 
     def add_oauth_header(self):
