@@ -50,11 +50,11 @@ class GetGist(object):
         user = kwargs.get('user')
         allow_none = kwargs.get('allow_none', False)
         assume_yes = kwargs.get('assume_yes', False)
-        self.filename = kwargs.get('filename')
+        filename = kwargs.get('filename')
         self.public = not kwargs.get('create_private', False)
 
         # instantiate local tools & check for user
-        self.local = LocalTools(self.filename, assume_yes)
+        self.local = LocalTools(filename, assume_yes)
         if not user:
             message = """
                 No default user set yet. To avoid this prompt set an
@@ -64,19 +64,21 @@ class GetGist(object):
 
         # instantiate filename, guthub tools and fetch gist
         self.github = GitHubTools(user, assume_yes)
-        self.gist = self.github.select_gist(self.filename, allow_none)
+        self.gist = self.github.select_gist(allow_none)
 
     def get(self):
+        """Reads the remote file from Gist and save it locally"""
         if self.gist:
-            content = self.github.read_gist_file(self.gist, self.filename)
+            content = self.github.read_gist_file(self.gist)
             self.local.save(content)
 
     def put(self):
-        content = self.local.read(self.filename)
+        """ Reads local file & update the remote gist (or create a new one)"""
+        content = self.local.read(self.github.filename)
         if self.gist:
-            self.github.update(self.gist, self.filename, content)
+            self.github.update(self.gist, content)
         else:
-            self.github.create(self.filename, content, public=self.public)
+            self.github.create(content, public=self.public)
 
 
 @command(help=GETGIST_DESC)

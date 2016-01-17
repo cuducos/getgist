@@ -13,7 +13,7 @@ class TestAuthentication(TestCase):
     @patch('getgist.github.GitHubTools._get_token')
     def test_no_token_results_in_no_authentication(self, mock_token):
         mock_token.return_value = False
-        oops = GitHubTools(GETGIST_USER)
+        oops = GitHubTools(GETGIST_USER, '.gist')
         with self.subTest():
             self.assertNotIn('Authorization', oops.headers)
             self.assertFalse(oops.is_authenticated)
@@ -23,7 +23,7 @@ class TestAuthentication(TestCase):
     def test_invalid_token(self, mock_token, mock_get):
         mock_token.return_value = GETGIST_TOKEN
         mock_get.return_value = request_mock('user', case=False)
-        oops = GitHubTools(GETGIST_USER)
+        oops = GitHubTools(GETGIST_USER, '.gist')
         with self.subTest():
             self.assertNotIn('Authorization', oops.headers)
             self.assertFalse(oops.is_authenticated)
@@ -33,7 +33,7 @@ class TestAuthentication(TestCase):
     def test_valid_token(self, mock_token, mock_get):
         mock_token.return_value = GETGIST_TOKEN
         mock_get.return_value = request_mock('user')
-        yeah = GitHubTools(GETGIST_USER)
+        yeah = GitHubTools(GETGIST_USER, '.gist')
         with self.subTest():
             self.assertIn('Authorization', yeah.headers)
             self.assertTrue(yeah.is_authenticated)
@@ -42,7 +42,7 @@ class TestAuthentication(TestCase):
 class GitHubToolsTestCase(TestCase):
 
     def setUp(self):
-        self.github = GitHubTools(GETGIST_USER)
+        self.github = GitHubTools(GETGIST_USER, '.gist')
         self.gist1 = parse_mock(id=1, user=GETGIST_USER, filename='.gist')
         self.gist2 = parse_mock(id=2, user=GETGIST_USER, filename='.gist',
                                 description='Description of Gist 2')
@@ -111,7 +111,7 @@ class TestGetGists(GitHubToolsTestCase):
     def test_authenticated_get_gists(self, mock_token, mock_get):
         mock_token.return_value = GETGIST_TOKEN
         mock_get.side_effect = [request_mock('user'), request_mock('gists')]
-        yeah = GitHubTools(GETGIST_USER)
+        yeah = GitHubTools(GETGIST_USER, '.gist')
         gists = list(yeah.get_gists())
         with self.subTest():
             self.assertIn(self.gist3, gists)
@@ -127,9 +127,9 @@ class TestAskWhichGist(GitHubToolsTestCase):
         mock_ask.return_value = 2
         mock_oauth.return_value = None
         mock_get.return_value = request_mock('users/janedoe/gists')
+        self.github.filename = '.gist'
         gists = list(self.github.get_gists())
-        self.assertEqual(self.github._ask_which_gist('.gist', gists),
-                         self.gist2)
+        self.assertEqual(self.github._ask_which_gist(gists), self.gist2)
 
     @patch('getgist.requests.GetGistRequests.get')
     @patch('getgist.github.GitHubTools.add_oauth_header')
@@ -138,9 +138,9 @@ class TestAskWhichGist(GitHubToolsTestCase):
         mock_input.side_effect = ['alpha', '', 2]
         mock_oauth.return_value = None
         mock_get.return_value = request_mock('users/janedoe/gists')
+        self.github.filename = '.gist'
         gists = list(self.github.get_gists())
-        self.assertEqual(self.github._ask_which_gist('.gist', gists),
-                         self.gist2)
+        self.assertEqual(self.github._ask_which_gist(gists), self.gist2)
 
 
 class TestSelectGist(GitHubToolsTestCase):
@@ -150,14 +150,16 @@ class TestSelectGist(GitHubToolsTestCase):
     def test_select_gist_single_match(self, mock_oauth, mock_get):
         mock_oauth.return_value = None
         mock_get.return_value = request_mock('users/janedoe/gists')
-        self.assertEqual(self.github.select_gist('.gist.sample'), self.gist3)
+        self.github.filename = '.gist.sample'
+        self.assertEqual(self.github.select_gist(), self.gist3)
 
     @patch('getgist.requests.GetGistRequests.get')
     @patch('getgist.github.GitHubTools.add_oauth_header')
     def test_select_gist_no_match(self, mock_oauth, mock_get):
         mock_oauth.return_value = None
         mock_get.return_value = request_mock('users/janedoe/gists')
-        self.assertFalse(self.github.select_gist('.no_gist'))
+        self.github.filename = '.no_gist'
+        self.assertFalse(self.github.select_gist())
 
     @patch('getgist.requests.GetGistRequests.get')
     @patch('getgist.github.GitHubTools.add_oauth_header')
@@ -166,7 +168,8 @@ class TestSelectGist(GitHubToolsTestCase):
         mock_ask.return_value = 2
         mock_oauth.return_value = None
         mock_get.return_value = request_mock('users/janedoe/gists')
-        self.assertEqual(self.github.select_gist('.gist'), self.gist2)
+        self.github.filename = '.gist'
+        self.assertEqual(self.github.select_gist(), self.gist2)
 
 
 class TestReadGist(GitHubToolsTestCase):
@@ -178,7 +181,7 @@ class TestReadGist(GitHubToolsTestCase):
         mock_oauth.return_value = None
         gist_raw = request_mock('gist/id_gist_1')
         gist = self.github._parse_gist(gist_raw.json())
-        read = self.github.read_gist_file(gist, '.gist')
+        read = self.github.read_gist_file(gist)
         self.assertEqual(read, 'Hello, world!')
 
 
@@ -188,8 +191,8 @@ class TestUpdateGist(TestCase):
     def test_update_gist_without_authorization(self, mock_token):
         mock_token.return_value = None
         gist = parse_mock(id=1, user=GETGIST_USER, filename='.gist')
-        oops = GitHubTools(GETGIST_USER)
-        self.assertFalse(oops.update(gist, '.gist.sample', '42'))
+        oops = GitHubTools(GETGIST_USER, '.gist.sample')
+        self.assertFalse(oops.update(gist, '42'))
 
     @patch('getgist.requests.GetGistRequests.get')
     @patch('getgist.requests.GetGistRequests.patch')
@@ -199,8 +202,8 @@ class TestUpdateGist(TestCase):
         mock_patch.return_value = request_mock('gist/id_gist_1')
         mock_get.return_value = request_mock('user')
         gist = parse_mock(id=1, user=GETGIST_USER, filename='.gist')
-        yeah = GitHubTools(GETGIST_USER)
-        self.assertTrue(yeah.update(gist, '.gist', '42'))
+        yeah = GitHubTools(GETGIST_USER, '.gist')
+        self.assertTrue(yeah.update(gist, '42'))
 
     @patch('getgist.requests.GetGistRequests.get')
     @patch('getgist.requests.GetGistRequests.patch')
@@ -211,8 +214,8 @@ class TestUpdateGist(TestCase):
                                                status_code=404)
         mock_get.return_value = request_mock('user')
         gist = parse_mock(id=1, user=GETGIST_USER, filename='.gist')
-        yeah = GitHubTools(GETGIST_USER)
-        self.assertFalse(yeah.update(gist, '.gist', '42'))
+        yeah = GitHubTools(GETGIST_USER, '.gist')
+        self.assertFalse(yeah.update(gist, '42'))
 
 
 class TestCreateGist(TestCase):
@@ -220,8 +223,8 @@ class TestCreateGist(TestCase):
     @patch('getgist.github.GitHubTools._get_token')
     def test_create_gist_without_authorization(self, mock_token):
         mock_token.return_value = None
-        oops = GitHubTools(GETGIST_USER)
-        self.assertFalse(oops.create('.gist.sample', '42'))
+        oops = GitHubTools(GETGIST_USER, '.gist.sample')
+        self.assertFalse(oops.create('42'))
 
     @patch('getgist.requests.GetGistRequests.get')
     @patch('getgist.requests.GetGistRequests.post')
@@ -231,8 +234,8 @@ class TestCreateGist(TestCase):
         mock_post.return_value = request_mock('gist/id_gist_1',
                                               status_code=201)
         mock_get.return_value = request_mock('user')
-        yeah = GitHubTools(GETGIST_USER)
-        self.assertTrue(yeah.create('.gist.sample', '42', public=False))
+        yeah = GitHubTools(GETGIST_USER, '.gist.sample')
+        self.assertTrue(yeah.create('42', public=False))
 
     @patch('getgist.requests.GetGistRequests.get')
     @patch('getgist.requests.GetGistRequests.post')
@@ -242,5 +245,5 @@ class TestCreateGist(TestCase):
         mock_post.return_value = request_mock('gist/id_gist_1', case=False,
                                               status_code=404)
         mock_get.return_value = request_mock('user')
-        yeah = GitHubTools(GETGIST_USER)
-        self.assertFalse(yeah.create('.gist.sample', '42', public=False))
+        yeah = GitHubTools(GETGIST_USER, '.gist.sample')
+        self.assertFalse(yeah.create('42', public=False))
