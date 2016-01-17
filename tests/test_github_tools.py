@@ -180,3 +180,33 @@ class TestReadGist(GitHubToolsTestCase):
         gist = self.github._parse_gist(gist_raw.json())
         read = self.github.read_gist_file(gist, '.gist')
         self.assertEqual(read, 'Hello, world!')
+
+
+class TestCreateGist(TestCase):
+
+    @patch('getgist.github.GitHubTools._get_token')
+    def test_create_gist_without_authorization(self, mock_token):
+        mock_token.return_value = None
+        oops = GitHubTools(GETGIST_USER)
+        self.assertFalse(oops.create('.gist.sample', '42'))
+
+    @patch('getgist.requests.GetGistRequests.get')
+    @patch('getgist.requests.GetGistRequests.post')
+    @patch('getgist.github.GitHubTools._get_token')
+    def test_create_gist(self, mock_token, mock_post, mock_get):
+        mock_token.return_value = GETGIST_TOKEN
+        mock_post.return_value = request_mock('gist/id_gist_1')
+        mock_get.return_value = request_mock('user')
+        yeah = GitHubTools(GETGIST_USER)
+        self.assertTrue(yeah.create('.gist.sample', '42', public=False))
+
+    @patch('getgist.requests.GetGistRequests.get')
+    @patch('getgist.requests.GetGistRequests.post')
+    @patch('getgist.github.GitHubTools._get_token')
+    def test_failed_create_gist(self, mock_token, mock_post, mock_get):
+        mock_token.return_value = GETGIST_TOKEN
+        mock_post.return_value = request_mock('gist/id_gist_1', case=False,
+                                              status_code=404)
+        mock_get.return_value = request_mock('user')
+        yeah = GitHubTools(GETGIST_USER)
+        self.assertFalse(yeah.create('.gist.sample', '42', public=False))

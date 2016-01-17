@@ -1,8 +1,20 @@
 from decouple import config
+from json import dumps
 from pkg_resources import get_distribution
 
 from getgist import GetGistCommons
 from getgist.requests import GetGistRequests
+
+
+def oauth_only(function):
+    """Decorator to restrict some GitHubTools methods to run only with OAuth"""
+    def check_for_oauth(self, *args, **kwargs):
+        if not self.is_authenticated:
+            self.oops('To use putgist you have to set your GETGIST_TOKEN')
+            self.oops('(see `putgist --help` for details)')
+            return False
+        return function(self, *args, **kwargs)
+    return check_for_oauth
 
 
 class GitHubTools(GetGistCommons):
@@ -111,6 +123,30 @@ class GitHubTools(GetGistCommons):
             self.output('Reading {}'.format(url))
             response = self.requests.get(url)
             return response.content
+
+
+    @oauth_only
+    def create(self, filename, content, **kwargs):
+
+        # set new gist
+        public = bool(kwargs.get('public', True))
+        data = {'description': filename, 'public': public,
+                'files': {filename: {'content': content}}}
+
+        # send request
+        url = self._api_url('gists')
+        self.output('Sending contents of {} to {}'.format(filename, url))
+        response = self.requests.post(url, data=dumps(data))
+
+        # error
+        if response.status_code != 201:
+            self.oops('Could not create ' + filename)
+            self.oops('POST request returned ' + str(response.status_code))
+            return False
+
+        # success
+        self.yeah('Done!')
+        return True
 
     def _ask_which_gist(self, filename, matches):
 

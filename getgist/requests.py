@@ -19,3 +19,6 @@ class GetGistRequests(object):
 
     def patch(self, url, data=None, **kwargs):
         return requests.patch(url, data=data, **self.add_headers(kwargs))
+
+    def post(self, url, data=None, **kwargs):
+        return requests.post(url, data=data, **self.add_headers(kwargs))
