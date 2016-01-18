@@ -37,6 +37,12 @@ class TestReadFile(LocalFileTestCase):
             handler.write('TestReadFile')
         self.assertEqual(self.local.read(self.path), 'TestReadFile')
 
+    def test_read_non_existet_file(self):
+        self.assertFalse(self.local.read('.no_gist'))
+
+    def test_read_directory(self):
+        self.assertFalse(self.local.read(os.getcwd()))
+
 
 class TestBackup(LocalFileTestCase):
 
