@@ -45,7 +45,9 @@ class TestAuthentication(TestCase):
 
 class GitHubToolsTestCase(TestCase):
 
-    def setUp(self):
+    @patch('getgist.github.GitHubTools.add_oauth_header')
+    def setUp(self, mock_oauth):
+        mock_oauth.return_value = None
         self.github = GitHubTools(GETGIST_USER, '.gist')
         self.gist1 = parse_mock(id=1, user=GETGIST_USER, filename='.gist')
         self.gist2 = parse_mock(id=2, user=GETGIST_USER, filename='.gist',
@@ -85,9 +87,7 @@ class TestParseGist(GitHubToolsTestCase):
 class TestGetGists(GitHubToolsTestCase):
 
     @patch('getgist.request.GetGistRequests.get')
-    @patch('getgist.github.GitHubTools.add_oauth_header')
-    def test_get_gists(self, mock_oauth, mock_get):
-        mock_oauth.return_value = None
+    def test_get_gists(self, mock_get):
         mock_get.return_value = request_mock('users/janedoe/gists')
         gists = list(self.github.get_gists())
         with self.subTest():
@@ -96,17 +96,13 @@ class TestGetGists(GitHubToolsTestCase):
             self.assertNotIn(self.gist4, gists)
 
     @patch('getgist.request.GetGistRequests.get')
-    @patch('getgist.github.GitHubTools.add_oauth_header')
-    def test_no_gists_with_wrong_username(self, mock_oauth, mock_get):
-        mock_oauth.return_value = None
+    def test_no_gists_with_wrong_username(self, mock_get):
         mock_get.return_value = request_mock('users/janedoe/gists',
                                              case=False, status_code=404)
         self.assertFalse(list(self.github.get_gists()))
 
     @patch('getgist.request.GetGistRequests.get')
-    @patch('getgist.github.GitHubTools.add_oauth_header')
-    def test_user_with_no_gists(self, mock_oauth, mock_get):
-        mock_oauth.return_value = None
+    def test_user_with_no_gists(self, mock_get):
         mock_get.return_value = request_mock('users/casper/gists')
         self.assertFalse(list(self.github.get_gists()))
 
@@ -125,22 +121,18 @@ class TestGetGists(GitHubToolsTestCase):
 class TestAskWhichGist(GitHubToolsTestCase):
 
     @patch('getgist.request.GetGistRequests.get')
-    @patch('getgist.github.GitHubTools.add_oauth_header')
     @patch('getgist.GetGistCommons.ask')
-    def test_select_gist_single_input(self, mock_ask, mock_oauth, mock_get):
+    def test_select_gist_single_input(self, mock_ask, mock_get):
         mock_ask.return_value = 2
-        mock_oauth.return_value = None
         mock_get.return_value = request_mock('users/janedoe/gists')
         self.github.filename = '.gist'
         gists = list(self.github.get_gists())
         self.assertEqual(self.github._ask_which_gist(gists), self.gist2)
 
     @patch('getgist.request.GetGistRequests.get')
-    @patch('getgist.github.GitHubTools.add_oauth_header')
     @patch('getgist.input_method')
-    def test_select_gist_multi_input(self, mock_input, mock_oauth, mock_get):
+    def test_select_gist_multi_input(self, mock_input, mock_get):
         mock_input.side_effect = ['alpha', '', 2]
-        mock_oauth.return_value = None
         mock_get.return_value = request_mock('users/janedoe/gists')
         self.github.filename = '.gist'
         gists = list(self.github.get_gists())
@@ -150,32 +142,27 @@ class TestAskWhichGist(GitHubToolsTestCase):
 class TestSelectGist(GitHubToolsTestCase):
 
     @patch('getgist.request.GetGistRequests.get')
-    @patch('getgist.github.GitHubTools.add_oauth_header')
-    def test_select_gist_single_match(self, mock_oauth, mock_get):
-        mock_oauth.return_value = None
+    def test_select_gist_single_match(self, mock_get):
         mock_get.return_value = request_mock('users/janedoe/gists')
         self.github.filename = '.gist.sample'
         self.assertEqual(self.github.select_gist(), self.gist3)
 
     @patch('getgist.request.GetGistRequests.get')
-    @patch('getgist.github.GitHubTools.add_oauth_header')
-    def test_select_gist_no_match(self, mock_oauth, mock_get):
-        mock_oauth.return_value = None
+    def test_select_gist_no_match_default(self, mock_get):
         mock_get.return_value = request_mock('users/janedoe/gists')
         self.github.filename = '.no_gist'
         self.assertFalse(self.github.select_gist())
 
     @patch('getgist.request.GetGistRequests.get')
-    @patch('getgist.github.GitHubTools.add_oauth_header')
     def test_select_gist_no_match_allow_none(self, mock_get):
         mock_get.return_value = request_mock('users/janedoe/gists')
         self.github.filename = '.no_gist'
         self.assertIsNone(self.github.select_gist(allow_none=True))
 
+    @patch('getgist.request.GetGistRequests.get')
     @patch('getgist.GetGistCommons.ask')
-    def test_select_gist_multi_matches(self, mock_ask, mock_oauth, mock_get):
+    def test_select_gist_multi_matches(self, mock_ask, mock_get):
         mock_ask.return_value = 2
-        mock_oauth.return_value = None
         mock_get.return_value = request_mock('users/janedoe/gists')
         self.github.filename = '.gist'
         self.assertEqual(self.github.select_gist(), self.gist2)
@@ -184,10 +171,8 @@ class TestSelectGist(GitHubToolsTestCase):
 class TestReadGist(GitHubToolsTestCase):
 
     @patch('getgist.request.GetGistRequests.get')
-    @patch('getgist.github.GitHubTools.add_oauth_header')
-    def test_read_gist(self, mock_oauth, mock_get):
+    def test_read_gist(self, mock_get):
         mock_get.return_value = MockResponse('Hello, world!', 200)
-        mock_oauth.return_value = None
         gist_raw = request_mock('gist/id_gist_1')
         gist = self.github._parse_gist(gist_raw.json())
         read = self.github.read_gist_file(gist)
