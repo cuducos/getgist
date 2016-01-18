@@ -159,6 +159,9 @@ class GitHubTools(GetGistCommons):
         :param content: (str or bytes) to be written
         :return: (bool) indicatind the success or failure of the update
         """
+        # abort if content is False
+        if content is False:
+            return False
 
         # request
         url = self._api_url('gists', gist.get('id'))
@@ -185,6 +188,9 @@ class GitHubTools(GetGistCommons):
         :param public: (bool) defines if the gist is public or private
         :return: (bool) indicatind the success or failure of the creation
         """
+        # abort if content is False
+        if content is False:
+            return False
 
         # set new gist
         public = bool(kwargs.get('public', True))
@@ -193,7 +199,7 @@ class GitHubTools(GetGistCommons):
 
         # send request
         url = self._api_url('gists')
-        self.output('sending contents of {} to {}'.format(self.filename, url))
+        self.output('Sending contents of {} to {}'.format(self.filename, url))
         response = self.requests.post(url, data=dumps(data))
 
         # error

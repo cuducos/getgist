@@ -52,8 +52,23 @@ class LocalTools(GetGistCommons):
         os.rename(os.path.join(self.cwd, self.filename), backup)
 
     def read(self, filename=None):
-        """Read the contents of a file and returns it as string"""
+        """
+        Read the contents of a file.
+        :param filename: (str) path to a file in the local file system
+        :return: (str) contents of the file, or (False) if not found/not file
+        """
         if not filename:
             filename = self.path
+
+        # abort if the file path does not exist
+        if not os.path.exists(filename):
+            self.oops('Sorry, but {} does not exist locally'.format(filename))
+            return False
+
+        # abort if the file path is not a file
+        if not os.path.isfile(filename):
+            self.oops('Sorry, but {} is not a file'.format(filename))
+            return False
+
         with open(filename) as handler:
             return handler.read()
