@@ -167,6 +167,11 @@ class TestSelectGist(GitHubToolsTestCase):
 
     @patch('getgist.request.GetGistRequests.get')
     @patch('getgist.github.GitHubTools.add_oauth_header')
+    def test_select_gist_no_match_allow_none(self, mock_get):
+        mock_get.return_value = request_mock('users/janedoe/gists')
+        self.github.filename = '.no_gist'
+        self.assertIsNone(self.github.select_gist(allow_none=True))
+
     @patch('getgist.GetGistCommons.ask')
     def test_select_gist_multi_matches(self, mock_ask, mock_oauth, mock_get):
         mock_ask.return_value = 2
