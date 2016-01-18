@@ -226,6 +226,15 @@ class TestUpdateGist(TestCase):
         yeah = GitHubTools(GETGIST_USER, '.gist')
         self.assertFalse(yeah.update(gist, '42'))
 
+    @patch('getgist.request.GetGistRequests.get')
+    @patch('getgist.github.GitHubTools._get_token')
+    def test_create_gist_with_no_file(self, mock_token, mock_get):
+        mock_token.return_value = GETGIST_TOKEN
+        mock_get.return_value = request_mock('user')
+        gist = parse_mock(id=1, user=GETGIST_USER, filename='.gist')
+        yeah = GitHubTools(GETGIST_USER, '.gist')
+        self.assertFalse(yeah.update(gist, False))
+
 
 class TestCreateGist(TestCase):
 
@@ -256,3 +265,11 @@ class TestCreateGist(TestCase):
         mock_get.return_value = request_mock('user')
         yeah = GitHubTools(GETGIST_USER, '.gist.sample')
         self.assertFalse(yeah.create('42', public=False))
+
+    @patch('getgist.request.GetGistRequests.get')
+    @patch('getgist.github.GitHubTools._get_token')
+    def test_create_gist_with_no_file(self, mock_token, mock_get):
+        mock_token.return_value = GETGIST_TOKEN
+        mock_get.return_value = request_mock('user')
+        yeah = GitHubTools(GETGIST_USER, '.gist')
+        self.assertFalse(yeah.create(False))
