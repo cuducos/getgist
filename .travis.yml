@@ -4,6 +4,11 @@ python:
   - "3.2"
   - "3.3"
   - "3.4"
+  - "3.5"
   - "nightly"
-install: "python setup.py install"
-script: nosetests
+install:
+  pip install coveralls
+script:
+  coverage run --source=getgist setup.py test
+after_success:
+  coveralls
