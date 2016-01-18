@@ -1,5 +1,9 @@
-from unittest import TestCase
-from unittest.mock import patch
+try:
+    from unittest import TestCase
+    from unittest.mock import patch
+except ImportError:
+    from unittest2 import TestCase
+    from mock import patch
 
 from getgist.github import GitHubTools
 from tests.mocks import MockResponse, parse_mock, request_mock
@@ -133,7 +137,7 @@ class TestAskWhichGist(GitHubToolsTestCase):
 
     @patch('getgist.request.GetGistRequests.get')
     @patch('getgist.github.GitHubTools.add_oauth_header')
-    @patch('getgist.input')
+    @patch('getgist.input_method')
     def test_select_gist_multi_input(self, mock_input, mock_oauth, mock_get):
         mock_input.side_effect = ['alpha', '', 2]
         mock_oauth.return_value = None

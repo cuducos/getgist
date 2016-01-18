@@ -1,6 +1,10 @@
-from sys import stderr, stdout
+from sys import stderr, stdout, version_info
 
 from click import secho
+
+input_method = input
+if version_info < (3, 0):
+    input_method = raw_input
 
 
 class GetGistCommons(object):
@@ -35,7 +39,7 @@ class GetGistCommons(object):
         :param message: (str)
         :return: (str) the user input
         """
-        return input(self.indent(message))
+        return input_method(self.indent(message))
 
     def oops(self, message):
         """Helper to colorize error messages"""

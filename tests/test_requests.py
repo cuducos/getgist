@@ -1,4 +1,7 @@
-from unittest import TestCase
+try:
+    from unittest import TestCase
+except ImportError:
+    from unittest2 import TestCase
 
 from getgist.request import GetGistRequests
 

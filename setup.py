@@ -1,6 +1,11 @@
+from sys import version_info
 from setuptools import setup
 
 REPO_URL = 'http://github.com/cuducos/getgist'
+
+tests_require = ['nose>=1.3.7']
+if version_info < (3, 3):
+    tests_require.extend(['mock>=1.3.0', 'unittest2>=1.1.0'])
 
 setup(author='Eduardo Cuducos',
       author_email='cuducos@gmail.com',
@@ -23,7 +28,7 @@ setup(author='Eduardo Cuducos',
       long_description='Check `GetGist at GitHub <{}>`_.'.format(REPO_URL),
       name='getgist',
       packages=['getgist'],
-      tests_require=['nose>=1.3.7'],
+      tests_require=tests_require,
       test_suite='nose.collector',
       url=REPO_URL,
       version='0.1.0',

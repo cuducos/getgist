@@ -128,6 +128,7 @@ Don't forget to write and run tests: `pip setup.py test`.
   * Add personal access token (OAuth)
   * Allow the update of existing Gists at GitHub (when authenticated)
   * Allow the download of private Gists (when authenticated)  
+  * Fix bug when getting gists with non standard encoding (UnicodeEncodeError)
 * **0.0.6**
   * Add default user feature
 * **0.0.5**

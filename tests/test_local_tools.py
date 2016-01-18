@@ -1,7 +1,12 @@
 import os
-from unittest import TestCase
-from unittest.mock import patch
 from uuid import uuid4
+
+try:
+    from unittest import TestCase
+    from unittest.mock import patch
+except ImportError:
+    from unittest2 import TestCase
+    from mock import patch
 
 from getgist.local import LocalTools
 
