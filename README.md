@@ -2,15 +2,14 @@
 
 Easily download any file from a [GitHub Gist](http://gist.github.com), with _one single command_.
 
-[![Development Status: Alpha](https://img.shields.io/pypi/status/getgist.svg?style=flat)](https://pypi.python.org/pypi/getgist)
 [![Latest release](https://img.shields.io/pypi/v/getgist.svg?style=flat)](https://pypi.python.org/pypi/getgist)
-[![Python Version](https://img.shields.io/pypi/pyversions/getgist.svg)](https://pypi.python.org/pypi/getgist) 
+[![Python Version](https://img.shields.io/pypi/pyversions/getgist.svg?style=flat)](https://pypi.python.org/pypi/getgist) 
 [![Downloads](https://img.shields.io/pypi/dm/getgist.svg?style=flat)](https://pypi.python.org/pypi/getgist)
 [![License](https://img.shields.io/pypi/l/getgist.svg?style=flat)](https://pypi.python.org/pypi/getgist)
 
 [![Travis CI](https://img.shields.io/travis/cuducos/getgist.svg?style=flat)](https://travis-ci.org/cuducos/getgist)
-[![Code Climate](https://img.shields.io/codeclimate/github/cuducos/getgist.svg?style=flat)](https://codeclimate.com/github/cuducos/getgist)
-[![Code Health](https://landscape.io/github/cuducos/getgist/0.1.0/landscape.svg?style=flat)](https://landscape.io/github/cuducos/getgist/0.1.0)
+[![Covearge](https://img.shields.io/coveralls/cuducos/getgist.svg?style=flat)](https://coveralls.io/github/cuducos/getgist)
+[![Code Health](https://landscape.io/github/cuducos/getgist/master/landscape.svg?style=flat)](https://landscape.io/github/cuducos/getgist/master)
 
 ## Why?
 

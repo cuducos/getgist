@@ -3,9 +3,9 @@ from setuptools import setup
 
 REPO_URL = 'http://github.com/cuducos/getgist'
 
-tests_require = ['nose>=1.3.7']
+tests_require = ['nose']
 if version_info < (3, 3):
-    tests_require.extend(['mock>=1.3.0', 'unittest2>=1.1.0'])
+    tests_require.extend(['mock', 'unittest2'])
 
 setup(author='Eduardo Cuducos',
       author_email='cuducos@gmail.com',
