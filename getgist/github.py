@@ -1,7 +1,6 @@
 from json import dumps
+from os import getenv
 from pkg_resources import get_distribution
-
-from decouple import config
 
 from getgist import GetGistCommons
 from getgist.request import GetGistRequests
@@ -257,4 +256,4 @@ class GitHubTools(GetGistCommons):
     @staticmethod
     def _get_token():
         """Retrieve username from env var"""
-        return config('GETGIST_TOKEN', default=None)
+        return getenv('GETGIST_TOKEN')

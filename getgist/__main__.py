@@ -1,5 +1,6 @@
+from os import getenv
+
 from click import argument, command, option
-from decouple import config
 
 from getgist.github import GitHubTools
 from getgist.local import LocalTools
@@ -116,7 +117,7 @@ def run_getgist(filename, user, **kwargs):
 def run_getmy(filename, **kwargs):
     """Shortcut for run_getgist() reading username from env var"""
     assume_yes = kwargs.get('yes_to_all')
-    user = config('GETGIST_USER', default=None)
+    user = getenv('GETGIST_USER')
     getgist = GetGist(user=user, filename=filename, assume_yes=assume_yes)
     getgist.get()
 
@@ -143,7 +144,7 @@ def run_putmy(filename, **kwargs):
     """Shortcut for run_putgist() reading username from env var"""
     assume_yes = kwargs.get('yes_to_all')
     private = kwargs.get('private')
-    user = config('GETGIST_USER', default=None)
+    user = getenv('GETGIST_USER')
     getgist = GetGist(user=user, filename=filename, assume_yes=assume_yes,
                       create_private=private, allow_none=True)
     getgist.put()
