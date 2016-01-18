@@ -82,7 +82,7 @@ class GetGist(object):
             self.local.oops(message)
 
         # instantiate filename, guthub tools and fetch gist
-        self.github = GitHubTools(user, assume_yes)
+        self.github = GitHubTools(user, filename, assume_yes)
         self.gist = self.github.select_gist(allow_none)
 
     def get(self):
