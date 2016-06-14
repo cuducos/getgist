@@ -113,7 +113,7 @@ Feel free to [report an issue](http://github.com/cuducos/getgist/issues), [open 
 
 Thank you very much [@ddboline](http://github.com/ddboline) and [/u/Sean1708](http://reddit.com/user/Sean1708) for the contributions!
 
-Don't forget to write and run tests: `pip setup.py test`.
+Don't forget to write and run tests: `python setup.py test`.
 
 ## Changelog
 
