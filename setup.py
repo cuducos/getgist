@@ -1,11 +1,7 @@
-from sys import version_info
 from setuptools import setup
 
 REPO_URL = 'http://github.com/cuducos/getgist'
 
-tests_require = ['nose']
-if version_info < (3, 3):
-    tests_require.extend(['mock', 'unittest2'])
 
 setup(author='Eduardo Cuducos',
       author_email='cuducos@gmail.com',
@@ -22,14 +18,13 @@ setup(author='Eduardo Cuducos',
                                         'putgist=getgist.__main__:run_putgist',
                                         'putmy=getgist.__main__:run_putmy']},
       include_package_data=True,
-      install_requires=['click>=6.2', 'requests>=2.9.1'],
+      install_requires=['click>=5.1', 'requests>=2.10.0'],
       keywords='gist, command-line, github, dotfiles',
       license='MIT',
       long_description='Check `GetGist at GitHub <{}>`_.'.format(REPO_URL),
       name='getgist',
       packages=['getgist'],
-      tests_require=tests_require,
-      test_suite='nose.collector',
+      setup_requires=['tox-setuptools'],
       url=REPO_URL,
       version='0.1.0',
       zip_safe=False)
