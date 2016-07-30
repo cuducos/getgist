@@ -26,5 +26,5 @@ setup(author='Eduardo Cuducos',
       packages=['getgist'],
       setup_requires=['tox-setuptools'],
       url=REPO_URL,
-      version='0.1.0',
+      version='0.1.1',
       zip_safe=False)
