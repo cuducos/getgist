@@ -55,6 +55,7 @@ def parse_mock(**kwargs):
     id_ = 'id_gist_' + str(id_num)
     hash_ = 'hash_gist_' + str(id_num)
     filename = kwargs.get('filename', '.gist')
+    gist_url = kwargs.get('url')
     if not isinstance(filename, list):
         filename = [filename]
     filename = sorted(filename)
@@ -72,4 +73,4 @@ def parse_mock(**kwargs):
                             filename=name)
         files.append(dict(filename=name, raw_url=url))
 
-    return dict(description=description, id=id_, files=files)
+    return dict(description=description, id=id_, files=files, url=gist_url)

@@ -155,7 +155,7 @@ class GitHubTools(GetGistCommons):
     def update(self, gist, content):
         """
         Updates the contents of file hosted inside a gist at GitHub.
-        :param gist: (dict) gist parsed by GitHubTools._parse()
+        :param gist: (dict) gist parsed by GitHubTools._parse_gist()
         :param content: (str or bytes) to be written
         :return: (bool) indicatind the success or failure of the update
         """
@@ -177,6 +177,7 @@ class GitHubTools(GetGistCommons):
 
         # success
         self.yeah('Done!')
+        self.hey('The URL to this Gist is: {}'.format(gist['url']))
         return True
 
     @oauth_only
@@ -208,8 +209,12 @@ class GitHubTools(GetGistCommons):
             self.oops('POST request returned ' + str(response.status_code))
             return False
 
+        # parse created gist
+        gist = self._parse_gist(response.json())
+
         # success
         self.yeah('Done!')
+        self.hey('The URL to this Gist is: {}'.format(gist['url']))
         return True
 
     def _ask_which_gist(self, matches):
@@ -257,7 +262,10 @@ class GitHubTools(GetGistCommons):
             names = sorted(f.get('filename') for f in files)
             description = names.pop(0)
 
-        return dict(description=description, id=gist.get('id'), files=files)
+        return dict(description=description,
+                    id=gist.get('id'),
+                    files=files,
+                    url=gist.get('html_url'))
 
     @staticmethod
     def _get_token():

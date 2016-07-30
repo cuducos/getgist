@@ -53,6 +53,7 @@ $ putgist cuducos .vimrc
   Fetching https://api.github.com/gists
   Sending contents of .vimrc to https://api.github.com/gists/409fac6ac23bf515f495
   Done!
+  The URL to this Gist is: https://gist.github.com/cuducos/409fac6ac23bf515f495
 ```
 
 _GetGist_ asks you what to do when it finds the different files with the same name in different Gists.
@@ -81,6 +82,7 @@ $ getgist cuducos .vimrc
   Reading https://gist.githubusercontent.com/cuducos/409fac6ac23bf515f495/raw/666d7d01a0058e4fd898ff752db66160f10a60bb/.vimrc
   Saving .vimrc
   Done!
+  The URL to this Gist is: https://gist.github.com/cuducos/409fac6ac23bf515f495
 ```
 
 This will work even if the file you are trying to download is a private gist (surely the user name has to macth the `GETGIST_TOKEN` account).
@@ -105,6 +107,7 @@ $ getmy .vimrc
   Reading https://gist.githubusercontent.com/cuducos/409fac6ac23bf515f495/raw/666d7d01a0058e4fd898ff752db66160f10a60bb/.vimrc
   Saving .vimrc
   Done!
+  The URL to this Gist is: https://gist.github.com/cuducos/409fac6ac23bf515f495
 ```
 
 ## Contributing

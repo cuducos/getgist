@@ -49,12 +49,23 @@ class GitHubToolsTestCase(TestCase):
     def setUp(self, mock_oauth):
         mock_oauth.return_value = None
         self.github = GitHubTools(GETGIST_USER, '.gist')
-        self.gist1 = parse_mock(id=1, user=GETGIST_USER, filename='.gist')
-        self.gist2 = parse_mock(id=2, user=GETGIST_USER, filename='.gist',
-                                description='Description of Gist 2')
-        self.gist3 = parse_mock(id=3, user=GETGIST_USER,
-                                filename=['.gist.sample', '.gist.dev'])
-        self.gist4 = parse_mock(id=4, user=GETGIST_USER, filename='.gist.prod')
+        self.gist1 = parse_mock(id=1,
+                                user=GETGIST_USER,
+                                filename='.gist',
+                                url='https://gist.github.com/id_gist_1')
+        self.gist2 = parse_mock(id=2,
+                                user=GETGIST_USER,
+                                filename='.gist',
+                                description='Description of Gist 2',
+                                url='https://gist.github.com/id_gist_2')
+        self.gist3 = parse_mock(id=3,
+                                user=GETGIST_USER,
+                                filename=['.gist.sample', '.gist.dev'],
+                                url='https://gist.github.com/id_gist_3')
+        self.gist4 = parse_mock(id=4,
+                                user=GETGIST_USER,
+                                filename='.gist.prod',
+                                url='https://gist.github.com/id_gist_4')
 
 
 class TestMainHeaders(GitHubToolsTestCase):
@@ -184,7 +195,7 @@ class TestUpdateGist(TestCase):
     @patch('getgist.github.GitHubTools._get_token')
     def test_update_gist_without_authorization(self, mock_token):
         mock_token.return_value = None
-        gist = parse_mock(id=1, user=GETGIST_USER, filename='.gist')
+        gist = parse_mock(id=1, user=GETGIST_USER, filename='.gist', url='')
         oops = GitHubTools(GETGIST_USER, '.gist.sample')
         self.assertFalse(oops.update(gist, '42'))
 
@@ -195,7 +206,7 @@ class TestUpdateGist(TestCase):
         mock_token.return_value = GETGIST_TOKEN
         mock_patch.return_value = request_mock('gist/id_gist_1')
         mock_get.return_value = request_mock('user')
-        gist = parse_mock(id=1, user=GETGIST_USER, filename='.gist')
+        gist = parse_mock(id=1, user=GETGIST_USER, filename='.gist', url='')
         yeah = GitHubTools(GETGIST_USER, '.gist')
         self.assertTrue(yeah.update(gist, '42'))
 
@@ -207,7 +218,7 @@ class TestUpdateGist(TestCase):
         mock_patch.return_value = request_mock('gist/id_gist_1', case=False,
                                                status_code=404)
         mock_get.return_value = request_mock('user')
-        gist = parse_mock(id=1, user=GETGIST_USER, filename='.gist')
+        gist = parse_mock(id=1, user=GETGIST_USER, filename='.gist', url='')
         yeah = GitHubTools(GETGIST_USER, '.gist')
         self.assertFalse(yeah.update(gist, '42'))
 
@@ -216,7 +227,7 @@ class TestUpdateGist(TestCase):
     def test_create_gist_with_no_file(self, mock_token, mock_get):
         mock_token.return_value = GETGIST_TOKEN
         mock_get.return_value = request_mock('user')
-        gist = parse_mock(id=1, user=GETGIST_USER, filename='.gist')
+        gist = parse_mock(id=1, user=GETGIST_USER, filename='.gist', url='')
         yeah = GitHubTools(GETGIST_USER, '.gist')
         self.assertFalse(yeah.update(gist, False))
 
