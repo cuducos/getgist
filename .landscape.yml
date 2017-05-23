@@ -1,3 +1,4 @@
+strictness: veryhigh
 python-targets:
     - 2
     - 3
