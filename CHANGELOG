@@ -1,27 +1,21 @@
 # Changelog
 
-* **0.1.1**
+**0.1.1**
   * Show gist URL after creating or updating
-
-* **0.1.0**
+**0.1.0**
   * Complete re-write
   * Add personal access token (OAuth)
   * Allow the update of existing Gists at GitHub (when authenticated)
   * Allow the download of private Gists (when authenticated)  
   * Fix bug when getting gists with non standard encoding (`UnicodeEncodeError`)
-
-* **0.0.6**
+**0.0.6**
   * Add default user feature
-
-* **0.0.5**
+**0.0.5**
   * Ask user which Gist to use if more than one file is found
   * General code improvements
-
-* **0.0.4**
+**0.0.4**
   * Use `entry_points` instead of `scripts`
-
-* **0.0.3**
+**0.0.3**
   * Fix a bug related to the directory where the file was being saved
-
-* **0.0.2**
+**0.0.2**
   * Fix a bug related to the installation, path and import
