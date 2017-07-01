@@ -1,5 +1,7 @@
 # Changelog
 
+**0.1.2**
+  * Allow the usage of file paths and not only filenames
 **0.1.1**
   * Show gist URL after creating or updating
 **0.1.0**

@@ -1,5 +1,5 @@
+import os
 from json import dumps
-from os import getenv
 from pkg_resources import get_distribution
 
 from getgist import GetGistCommons
@@ -27,22 +27,23 @@ class GitHubTools(GetGistCommons):
     version = get_distribution('getgist').version
     api_root_url = 'https://api.github.com/'
     headers = {'Accept': 'application/vnd.github.v3+json',
-               'User-Agent': 'GetGist v' + version}
+               'User-Agent': 'GetGist v{}'.format(version)}
     requests = GetGistRequests(headers)
     is_authenticated = False
 
-    def __init__(self, user, filename, assume_yes=False):
+    def __init__(self, user, file_path, assume_yes=False):
         """
         Save basic variables to all methods, instantiate GetGistrequests and
         calls the OAuth method.
         :param user: (str) GitHub username
-        :param filename: (str) filename to be saved (locally), created or
+        :param file_path: (str) file_path to be saved (locally), created or
         updated (remotelly)
         :param assume_yes: (bool) assume yes (or first option) for all prompts
         :return: (None)
         """
         self.user = user
-        self.filename = filename
+        self.file_path = file_path
+        self.filename = os.path.basename(file_path)
         self.assume_yes = assume_yes
         self.add_oauth_header()
 
@@ -73,9 +74,8 @@ class GitHubTools(GetGistCommons):
 
     def get_gists(self):
         """
-        List generator containing dictionaries gists' relevant information
-        (such as id, description, filenames and raw URL).
-        :return: (None)
+        List generator containing gist relevant information
+        such as id, description, filenames and raw URL (dict).
         """
         # fetch all gists
         if self.is_authenticated:
@@ -122,7 +122,7 @@ class GitHubTools(GetGistCommons):
                 return None
             else:
                 msg = "No file named `{}` found in {}'s gists"
-                self.oops(msg.format(self.filename, self.user))
+                self.oops(msg.format(self.file_path, self.user))
                 if not self.is_authenticated:
                     self.warn('To access private gists set the GETGIST_TOKEN')
                     self.warn('(see `getgist --help` for details)')
@@ -166,7 +166,7 @@ class GitHubTools(GetGistCommons):
         # request
         url = self._api_url('gists', gist.get('id'))
         data = {'files': {self.filename: {'content': content}}}
-        self.output('Sending contents of {} to {}'.format(self.filename, url))
+        self.output('Sending contents of {} to {}'.format(self.file_path, url))
         response = self.requests.patch(url, data=dumps(data))
 
         # error
@@ -200,7 +200,7 @@ class GitHubTools(GetGistCommons):
 
         # send request
         url = self._api_url('gists')
-        self.output('Sending contents of {} to {}'.format(self.filename, url))
+        self.output('Sending contents of {} to {}'.format(self.file_path, url))
         response = self.requests.post(url, data=dumps(data))
 
         # error
@@ -270,4 +270,4 @@ class GitHubTools(GetGistCommons):
     @staticmethod
     def _get_token():
         """Retrieve username from env var"""
-        return getenv('GETGIST_TOKEN')
+        return os.getenv('GETGIST_TOKEN')
