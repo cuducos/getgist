@@ -119,6 +119,6 @@ Thank you very much [@ddboline](http://github.com/ddboline) and [/u/Sean1708](ht
 Don't forget to write and run tests:
 
 ```console
-$ python -m pip install tox
-$ python setup.py test
+$ pip install tox
+$ tox
 ```

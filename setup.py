@@ -25,7 +25,6 @@ setup(author='Eduardo Cuducos',
       long_description='Check `GetGist at GitHub <{}>`_.'.format(REPO_URL),
       name='getgist',
       packages=['getgist'],
-      setup_requires=['tox-setuptools'],
       url=REPO_URL,
       version='0.1.1',
       zip_safe=False)
