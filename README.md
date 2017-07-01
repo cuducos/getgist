@@ -122,9 +122,3 @@ Don't forget to write and run tests:
 $ python -m pip install tox
 $ python setup.py test
 ```
-
-## License
-
-Copyright (c) 2016 Eduardo Cuducos
-
-Licensed under the [MIT License](LICENSE).
