@@ -7,12 +7,12 @@ def test_no_header():
 
 
 def test_update_header():
-    requests = GetGistRequests({'foo': 'bar'})
-    assert requests.headers['foo'] == 'bar'
+    requests = GetGistRequests({"foo": "bar"})
+    assert requests.headers["foo"] == "bar"
 
 
 def test_add_header():
-    requests = GetGistRequests({'foo': 'bar'})
-    new_headers = requests.add_headers({'headers': {'bar': 'foo'}})
-    assert new_headers == {'headers': {'foo': 'bar', 'bar': 'foo'}}
+    requests = GetGistRequests({"foo": "bar"})
+    new_headers = requests.add_headers({"headers": {"bar": "foo"}})
+    assert new_headers == {"headers": {"foo": "bar", "bar": "foo"}}
     # TODO new API for add_headers to avoid the repetitive usage of `header`

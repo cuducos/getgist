@@ -66,11 +66,11 @@ class GetGist(object):
         """
 
         # get arguments
-        user = kwargs.get('user')
-        allow_none = kwargs.get('allow_none', False)
-        assume_yes = kwargs.get('assume_yes', False)
-        filename = kwargs.get('filename')
-        self.public = not kwargs.get('create_private', False)
+        user = kwargs.get("user")
+        allow_none = kwargs.get("allow_none", False)
+        assume_yes = kwargs.get("assume_yes", False)
+        filename = kwargs.get("filename")
+        self.public = not kwargs.get("create_private", False)
 
         # instantiate local tools & check for user
         self.local = LocalTools(filename, assume_yes)
@@ -101,50 +101,60 @@ class GetGist(object):
 
 
 @command(help=GETGIST_DESC)
-@option('--yes-to-all', '-y', is_flag=True, help='Assume yes to all prompts.')
-@argument('user')
-@argument('filename')
+@option("--yes-to-all", "-y", is_flag=True, help="Assume yes to all prompts.")
+@argument("user")
+@argument("filename")
 def run_getgist(filename, user, **kwargs):
     """Passes user inputs to GetGist() and calls get()"""
-    assume_yes = kwargs.get('yes_to_all')
+    assume_yes = kwargs.get("yes_to_all")
     getgist = GetGist(user=user, filename=filename, assume_yes=assume_yes)
     getgist.get()
 
 
 @command(help=GETMY_DESC)
-@option('--yes-to-all', '-y', is_flag=True, help='Assume yes to all prompts.')
-@argument('filename')
+@option("--yes-to-all", "-y", is_flag=True, help="Assume yes to all prompts.")
+@argument("filename")
 def run_getmy(filename, **kwargs):
     """Shortcut for run_getgist() reading username from env var"""
-    assume_yes = kwargs.get('yes_to_all')
-    user = getenv('GETGIST_USER')
+    assume_yes = kwargs.get("yes_to_all")
+    user = getenv("GETGIST_USER")
     getgist = GetGist(user=user, filename=filename, assume_yes=assume_yes)
     getgist.get()
 
 
 @command(help=PUTGIST_DESC)
-@option('--yes-to-all', '-y', is_flag=True, help='Assume yes to all prompts.')
-@option('--private', '-p', is_flag=True, help='Crete new gist as private')
-@argument('user')
-@argument('filename')
+@option("--yes-to-all", "-y", is_flag=True, help="Assume yes to all prompts.")
+@option("--private", "-p", is_flag=True, help="Crete new gist as private")
+@argument("user")
+@argument("filename")
 def run_putgist(filename, user, **kwargs):
     """Passes user inputs to GetGist() and calls put()"""
-    assume_yes = kwargs.get('yes_to_all')
-    private = kwargs.get('private')
-    getgist = GetGist(user=user, filename=filename, assume_yes=assume_yes,
-                      create_private=private, allow_none=True)
+    assume_yes = kwargs.get("yes_to_all")
+    private = kwargs.get("private")
+    getgist = GetGist(
+        user=user,
+        filename=filename,
+        assume_yes=assume_yes,
+        create_private=private,
+        allow_none=True,
+    )
     getgist.put()
 
 
 @command(help=PUTMY_DESC)
-@option('--yes-to-all', '-y', is_flag=True, help='Assume yes to all prompts.')
-@option('--private', '-p', is_flag=True, help='Crete new gist as private')
-@argument('filename')
+@option("--yes-to-all", "-y", is_flag=True, help="Assume yes to all prompts.")
+@option("--private", "-p", is_flag=True, help="Crete new gist as private")
+@argument("filename")
 def run_putmy(filename, **kwargs):
     """Shortcut for run_putgist() reading username from env var"""
-    assume_yes = kwargs.get('yes_to_all')
-    private = kwargs.get('private')
-    user = getenv('GETGIST_USER')
-    getgist = GetGist(user=user, filename=filename, assume_yes=assume_yes,
-                      create_private=private, allow_none=True)
+    assume_yes = kwargs.get("yes_to_all")
+    private = kwargs.get("private")
+    user = getenv("GETGIST_USER")
+    getgist = GetGist(
+        user=user,
+        filename=filename,
+        assume_yes=assume_yes,
+        create_private=private,
+        allow_none=True,
+    )
     getgist.put()

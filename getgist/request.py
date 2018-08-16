@@ -20,8 +20,8 @@ class GetGistRequests(object):
         :param kwargs: (dict)
         :return: (dict) containing an item with `headers` as key
         """
-        kwargs['headers'] = kwargs.get('headers', {})
-        kwargs['headers'].update(self.headers)
+        kwargs["headers"] = kwargs.get("headers", {})
+        kwargs["headers"].update(self.headers)
         return kwargs
 
     def get(self, url, params=None, **kwargs):

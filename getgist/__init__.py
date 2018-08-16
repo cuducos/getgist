@@ -11,7 +11,7 @@ class GetGistCommons(object):
     """Basic output methods used to print messages on users' terminal"""
 
     indent_size = 2
-    indent_char = ' '
+    indent_char = " "
 
     def indent(self, message):
         """
@@ -30,7 +30,7 @@ class GetGistCommons(object):
         :param color: (str) check click.secho() documentation
         :return: (None) prints to sys.stdout or sys.stderr
         """
-        output_to = stderr if color == 'red' else stdout
+        output_to = stderr if color == "red" else stdout
         secho(self.indent(message), fg=color, file=output_to)
 
     def ask(self, message):
@@ -43,16 +43,16 @@ class GetGistCommons(object):
 
     def oops(self, message):
         """Helper to colorize error messages"""
-        return self.output(message, color='red')
+        return self.output(message, color="red")
 
     def yeah(self, message):
         """Helper to colorize success messages"""
-        return self.output(message, color='green')
+        return self.output(message, color="green")
 
     def warn(self, message):
         """Helper to colorize warning messages"""
-        return self.output(message, color='yellow')
+        return self.output(message, color="yellow")
 
     def hey(self, message):
         """Helper to colorize highlihghted messages"""
-        return self.output(message, color='blue')
+        return self.output(message, color="blue")

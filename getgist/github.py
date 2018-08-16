@@ -8,26 +8,30 @@ from getgist.request import GetGistRequests
 
 def oauth_only(function):
     """Decorator to restrict some GitHubTools methods to run only with OAuth"""
+
     def check_for_oauth(self, *args, **kwargs):
         """
         Returns False if GitHubTools instance is not authenticated, or return
         the decorated fucntion if it is.
         """
         if not self.is_authenticated:
-            self.oops('To use putgist you have to set your GETGIST_TOKEN')
-            self.oops('(see `putgist --help` for details)')
+            self.oops("To use putgist you have to set your GETGIST_TOKEN")
+            self.oops("(see `putgist --help` for details)")
             return False
         return function(self, *args, **kwargs)
+
     return check_for_oauth
 
 
 class GitHubTools(GetGistCommons):
     """Helpers to deal with GitHub API and manipulate gists"""
 
-    version = get_distribution('getgist').version
-    api_root_url = 'https://api.github.com/'
-    headers = {'Accept': 'application/vnd.github.v3+json',
-               'User-Agent': 'GetGist v{}'.format(version)}
+    version = get_distribution("getgist").version
+    api_root_url = "https://api.github.com/"
+    headers = {
+        "Accept": "application/vnd.github.v3+json",
+        "User-Agent": "GetGist v{}".format(version),
+    }
     requests = GetGistRequests(headers)
     is_authenticated = False
 
@@ -58,19 +62,19 @@ class GitHubTools(GetGistCommons):
             return
 
         # add oauth header & reach the api
-        self.headers['Authorization'] = 'token ' + oauth_token
-        url = self._api_url('user')
+        self.headers["Authorization"] = "token " + oauth_token
+        url = self._api_url("user")
         raw_resp = self.requests.get(url)
         resp = raw_resp.json()
 
         # abort & remove header if token is invalid
-        if resp.get('login', None) != self.user:
-            self.oops('Invalid token for user ' + self.user)
-            self.headers.pop('Authorization')
+        if resp.get("login", None) != self.user:
+            self.oops("Invalid token for user " + self.user)
+            self.headers.pop("Authorization")
             return
 
         self.is_authenticated = True
-        self.yeah('User {} authenticated'.format(self.user))
+        self.yeah("User {} authenticated".format(self.user))
 
     def get_gists(self):
         """
@@ -79,21 +83,21 @@ class GitHubTools(GetGistCommons):
         """
         # fetch all gists
         if self.is_authenticated:
-            url = self._api_url('gists')
+            url = self._api_url("gists")
         else:
-            url = self._api_url('users', self.user, 'gists')
-        self.output('Fetching ' + url)
+            url = self._api_url("users", self.user, "gists")
+        self.output("Fetching " + url)
         raw_resp = self.requests.get(url)
 
         # abort if user not found
         if raw_resp.status_code != 200:
-            self.oops('User `{}` not found'.format(self.user))
+            self.oops("User `{}` not found".format(self.user))
             return
 
         # abort if there are no gists
         resp = raw_resp.json()
         if not resp:
-            self.oops('No gists found for user `{}`'.format(self.user))
+            self.oops("No gists found for user `{}`".format(self.user))
             return
 
         # parse response
@@ -112,8 +116,8 @@ class GitHubTools(GetGistCommons):
         # pick up all macthing gists
         matches = list()
         for gist in self.get_gists():
-            for gist_file in gist.get('files'):
-                if self.filename == gist_file.get('filename'):
+            for gist_file in gist.get("files"):
+                if self.filename == gist_file.get("filename"):
                     matches.append(gist)
 
         # abort if no match is found
@@ -124,8 +128,8 @@ class GitHubTools(GetGistCommons):
                 msg = "No file named `{}` found in {}'s gists"
                 self.oops(msg.format(self.file_path, self.user))
                 if not self.is_authenticated:
-                    self.warn('To access private gists set the GETGIST_TOKEN')
-                    self.warn('(see `getgist --help` for details)')
+                    self.warn("To access private gists set the GETGIST_TOKEN")
+                    self.warn("(see `getgist --help` for details)")
                 return False
 
         # return if there's is only one match
@@ -141,13 +145,13 @@ class GitHubTools(GetGistCommons):
         :return: (bytes) content of a gist loaded from GitHub
         """
         url = False
-        files = gist.get('files')
+        files = gist.get("files")
         for gist_file in files:
-            if gist_file.get('filename') == self.filename:
-                url = gist_file.get('raw_url')
+            if gist_file.get("filename") == self.filename:
+                url = gist_file.get("raw_url")
                 break
         if url:
-            self.output('Reading {}'.format(url))
+            self.output("Reading {}".format(url))
             response = self.requests.get(url)
             return response.content
 
@@ -164,20 +168,20 @@ class GitHubTools(GetGistCommons):
             return False
 
         # request
-        url = self._api_url('gists', gist.get('id'))
-        data = {'files': {self.filename: {'content': content}}}
-        self.output('Sending contents of {} to {}'.format(self.file_path, url))
+        url = self._api_url("gists", gist.get("id"))
+        data = {"files": {self.filename: {"content": content}}}
+        self.output("Sending contents of {} to {}".format(self.file_path, url))
         response = self.requests.patch(url, data=dumps(data))
 
         # error
         if response.status_code != 200:
-            self.oops('Could not update ' + gist.get('description'))
-            self.oops('PATCH request returned ' + str(response.status_code))
+            self.oops("Could not update " + gist.get("description"))
+            self.oops("PATCH request returned " + str(response.status_code))
             return False
 
         # success
-        self.yeah('Done!')
-        self.hey('The URL to this Gist is: {}'.format(gist['url']))
+        self.yeah("Done!")
+        self.hey("The URL to this Gist is: {}".format(gist["url"]))
         return True
 
     @oauth_only
@@ -194,27 +198,30 @@ class GitHubTools(GetGistCommons):
             return False
 
         # set new gist
-        public = bool(kwargs.get('public', True))
-        data = {'description': self.filename, 'public': public,
-                'files': {self.filename: {'content': content}}}
+        public = bool(kwargs.get("public", True))
+        data = {
+            "description": self.filename,
+            "public": public,
+            "files": {self.filename: {"content": content}},
+        }
 
         # send request
-        url = self._api_url('gists')
-        self.output('Sending contents of {} to {}'.format(self.file_path, url))
+        url = self._api_url("gists")
+        self.output("Sending contents of {} to {}".format(self.file_path, url))
         response = self.requests.post(url, data=dumps(data))
 
         # error
         if response.status_code != 201:
-            self.oops('Could not create ' + self.filename)
-            self.oops('POST request returned ' + str(response.status_code))
+            self.oops("Could not create " + self.filename)
+            self.oops("POST request returned " + str(response.status_code))
             return False
 
         # parse created gist
         gist = self._parse_gist(response.json())
 
         # success
-        self.yeah('Done!')
-        self.hey('The URL to this Gist is: {}'.format(gist['url']))
+        self.yeah("Done!")
+        self.hey("The URL to this Gist is: {}".format(gist["url"]))
         return True
 
     def _ask_which_gist(self, matches):
@@ -225,25 +232,25 @@ class GitHubTools(GetGistCommons):
         :return: (dict) of the selected gist
         """
         # ask user which gist to use
-        self.hey('Use {} from which gist?'.format(self.filename))
+        self.hey("Use {} from which gist?".format(self.filename))
         for count, gist in enumerate(matches, 1):
-            self.hey('[{}] {}'.format(count, gist.get('description')))
+            self.hey("[{}] {}".format(count, gist.get("description")))
 
         # get the gist index
         selected = False
         while not selected:
             try:
-                gist_index = int(self.ask('Type the number: ')) - 1
+                gist_index = int(self.ask("Type the number: ")) - 1
                 selected = matches[gist_index]
             except (ValueError, IndexError):
-                self.oops('Invalid number, please try again.')
+                self.oops("Invalid number, please try again.")
 
-        self.output('Using `{}` Gist'.format(selected['description']))
+        self.output("Using `{}` Gist".format(selected["description"]))
         return selected
 
     def _api_url(self, *args):
         """Get entrypoints adding arguments separated by slashes"""
-        return self.api_root_url + '/'.join(args)
+        return self.api_root_url + "/".join(args)
 
     @staticmethod
     def _parse_gist(gist):
@@ -251,23 +258,26 @@ class GitHubTools(GetGistCommons):
 
         # parse files
         files = list()
-        file_names = sorted(filename for filename in gist['files'].keys())
+        file_names = sorted(filename for filename in gist["files"].keys())
         for name in file_names:
-            files.append(dict(filename=name,
-                              raw_url=gist['files'][name].get('raw_url')))
+            files.append(
+                dict(filename=name, raw_url=gist["files"][name].get("raw_url"))
+            )
 
         # parse description
-        description = gist['description']
+        description = gist["description"]
         if not description:
-            names = sorted(f.get('filename') for f in files)
+            names = sorted(f.get("filename") for f in files)
             description = names.pop(0)
 
-        return dict(description=description,
-                    id=gist.get('id'),
-                    files=files,
-                    url=gist.get('html_url'))
+        return dict(
+            description=description,
+            id=gist.get("id"),
+            files=files,
+            url=gist.get("html_url"),
+        )
 
     @staticmethod
     def _get_token():
         """Retrieve username from env var"""
-        return os.getenv('GETGIST_TOKEN')
+        return os.getenv("GETGIST_TOKEN")

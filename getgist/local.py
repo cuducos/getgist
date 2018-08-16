@@ -26,29 +26,29 @@ class LocalTools(GetGistCommons):
         """
         # backup existing file if needed
         if os.path.exists(self.file_path) and not self.assume_yes:
-            message = 'Overwrite existing {}? (y/n) '
+            message = "Overwrite existing {}? (y/n) "
             confirm = self.ask(message.format(self.filename))
-            if confirm.lower() != 'y':
+            if confirm.lower() != "y":
                 self.backup()
 
         # write file
-        self.output('Saving ' + self.filename)
-        with open(self.file_path, 'wb') as handler:
+        self.output("Saving " + self.filename)
+        with open(self.file_path, "wb") as handler:
             if not isinstance(content, bytes):
-                content = bytes(content, 'utf-8')
+                content = bytes(content, "utf-8")
             handler.write(content)
-        self.yeah('Done!')
+        self.yeah("Done!")
 
     def backup(self):
         """Backups files with the same name of the instance filename"""
         count = 0
-        name = '{}.bkp'.format(self.filename)
+        name = "{}.bkp".format(self.filename)
         backup = os.path.join(self.cwd, name)
         while os.path.exists(backup):
             count += 1
-            name = '{}.bkp{}'.format(self.filename, count)
+            name = "{}.bkp{}".format(self.filename, count)
             backup = os.path.join(self.cwd, name)
-        self.hey('Moving existing {} to {}'.format(self.filename, name))
+        self.hey("Moving existing {} to {}".format(self.filename, name))
         os.rename(os.path.join(self.cwd, self.filename), backup)
 
     def read(self, file_path=None):
@@ -62,12 +62,12 @@ class LocalTools(GetGistCommons):
 
         # abort if the file path does not exist
         if not os.path.exists(file_path):
-            self.oops('Sorry, but {} does not exist'.format(file_path))
+            self.oops("Sorry, but {} does not exist".format(file_path))
             return False
 
         # abort if the file path is not a file
         if not os.path.isfile(file_path):
-            self.oops('Sorry, but {} is not a file'.format(file_path))
+            self.oops("Sorry, but {} is not a file".format(file_path))
             return False
 
         with open(file_path) as handler:
