@@ -151,7 +151,7 @@ line <http://twitter.com/cuducos>`__.
 Thank you very much `@ddboline <http://github.com/ddboline>`_ and
 `/u/Sean1708 <http://reddit.com/user/Sean1708>`_ for the contributions!
 
-Don't forget to write and run tests:
+Don't forget to format your code with `Black <https://github.com/ambv/black>`_, and to write and run tests:
 
 .. code:: console
 

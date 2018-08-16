@@ -10,7 +10,6 @@ dist/
 .pytest_cache/
 .python-version
 .tox/
-cover/
 
 # os, ide & editor
 .DS_Store
