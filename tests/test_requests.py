@@ -1,25 +1,18 @@
-try:
-    from unittest import TestCase
-except ImportError:
-    from unittest2 import TestCase
-
 from getgist.request import GetGistRequests
 
 
-class TestGetGistRequestsInit(TestCase):
-
-    def test_no_header(self):
-        requests = GetGistRequests()
-        self.assertIsInstance(requests.headers, dict)
-
-    def test_update_header(self):
-        requests = GetGistRequests({'foo': 'bar'})
-        self.assertEqual(requests.headers['foo'], 'bar')
+def test_no_header():
+    requests = GetGistRequests()
+    assert isinstance(requests.headers, dict)
 
 
-class TestGetGistRequestsAddHeader(TestCase):
+def test_update_header():
+    requests = GetGistRequests({'foo': 'bar'})
+    assert requests.headers['foo'] == 'bar'
 
-    def test_add_header(self):
-        requests = GetGistRequests({'foo': 'bar'})
-        got = requests.add_headers({'headers': {'bar': 'foo'}})
-        self.assertEqual({'headers': {'foo': 'bar', 'bar': 'foo'}}, got)
+
+def test_add_header():
+    requests = GetGistRequests({'foo': 'bar'})
+    new_headers = requests.add_headers({'headers': {'bar': 'foo'}})
+    assert new_headers == {'headers': {'foo': 'bar', 'bar': 'foo'}}
+    # TODO new API for add_headers to avoid the repetitive usage of `header`

@@ -1,136 +1,112 @@
 import os
-from uuid import uuid4
 
-try:
-    from unittest import TestCase
-    from unittest.mock import patch
-except ImportError:
-    from unittest2 import TestCase
-    from mock import patch
-
-from getgist.local import LocalTools
-
-TEST_FILE = '.test-{}'.format(uuid4())
-TEST_FILE_CONTENT = 'Hello, world!'
+from tests.conftest import TEST_FILE_CONTENTS
 
 
-class LocalFileTestCase(TestCase):
-
-    def setUp(self):
-        self.local = LocalTools(TEST_FILE)
-        self.cwd = os.getcwd()
-        self.file_path = os.path.join(self.cwd, TEST_FILE)
-
-    def tearDown(self):
-        files = [f for f in os.listdir(self.cwd) if os.path.isfile(f)]
-        for f in files:
-            path = os.path.join(self.cwd, f)
-            filename = os.path.basename(path)
-            if filename.startswith(TEST_FILE):
-                os.remove(path)
+def test_read_file_without_argument(local):
+    assert local.read() == TEST_FILE_CONTENTS
 
 
-class TestReadFile(LocalFileTestCase):
-
-    def test_read(self):
-        with open(self.file_path, 'w') as handler:
-            handler.write('TestReadFile')
-        self.assertEqual(self.local.read(self.file_path), 'TestReadFile')
-
-    def test_read_non_existet_file(self):
-        self.assertFalse(self.local.read('.no_gist'))
-
-    def test_read_directory(self):
-        self.assertFalse(self.local.read(os.getcwd()))
+def test_read_file_with_argument(local):
+    assert local.read(local.file_path) == TEST_FILE_CONTENTS
 
 
-class TestBackup(LocalFileTestCase):
-
-    def test_simple_backup(self):
-        with open(self.file_path, 'w') as handler:
-            handler.write('TestBackup')
-        self.local.backup()
-        path = str(self.file_path) + '.bkp'
-        with self.subTest():
-            self.assertTrue(os.path.exists(path))
-            self.assertEqual(self.local.read(path), 'TestBackup')
-
-    def test_two_backups(self):
-        with open(self.file_path, 'w') as handler:
-            handler.write('TestBackup')
-        path_bkp = str(self.file_path) + '.bkp'
-        with open(path_bkp, 'w') as handler:
-            handler.write('TestBackup.bkp')
-        self.local.backup()
-        path_bkp1 = path_bkp + '1'
-        with self.subTest():
-            self.assertTrue(os.path.exists(path_bkp1))
-            self.assertEqual(self.local.read(path_bkp1), 'TestBackup')
-
-    def test_multi_backups(self):
-        for ext in ['', '.bkp', '.bkp1', '.bkp2', '.bkp3']:
-            path = str(self.file_path) + ext
-            with open(path, 'w') as handler:
-                handler.write('TestBackup' + ext)
-        self.local.backup()
-        path_bkp = path[:-1] + '4'
-        with self.subTest():
-            self.assertTrue(os.path.exists(path_bkp))
-            self.assertEqual(self.local.read(path_bkp), 'TestBackup')
+def test_read_non_existet_file(local):
+    assert not local.read('.no_gist')  # TODO raise exception
 
 
-class TestWriteFile(LocalFileTestCase):
+def test_read_directory(local):
+    assert not local.read(os.getcwd())  # TODO raise exception
 
-    def test_write_file(self):
-        self.assertFalse(os.path.exists(self.file_path))
-        self.local.save(TEST_FILE_CONTENT)
-        with self.subTest():
-            self.assertTrue(os.path.exists(self.file_path))
-            self.assertEqual(self.local.read(), TEST_FILE_CONTENT)
 
-    @patch('getgist.local.LocalTools.ask')
-    def test_write_file_overwrite(self, mock_ask):
-        mock_ask.return_value = 'y'
-        with open(self.file_path, 'w') as handler:
-            handler.write(TEST_FILE_CONTENT.replace('o', '0'))
-        with self.subTest():
-            self.assertTrue(os.path.exists(self.file_path))
-            self.assertIn('Hell0', self.local.read())
-        self.local.save(TEST_FILE_CONTENT)
-        with self.subTest():
-            self.assertTrue(os.path.exists(self.file_path))
-            self.assertEqual(self.local.read(), TEST_FILE_CONTENT)
-            self.assertFalse(os.path.exists(str(self.file_path) + '.bkp1'))
+def test_read_file_inside_directory(local):
+    # TODO assert nested_local.read(NESTED_TEST_FILE) == NESTED_TEST_FILE_CONTENTS
+    pass
 
-    @patch('getgist.local.LocalTools.ask')
-    def test_write_file_with_backup(self, mock_ask):
-        mock_ask.return_value = 'n'
-        mock_content = TEST_FILE_CONTENT.replace('o', '0')
-        with open(self.file_path, 'w') as handler:
-            handler.write(mock_content)
-        self.assertTrue(os.path.exists(self.file_path))
-        self.local.save(TEST_FILE_CONTENT)
-        with self.subTest():
-            self.assertTrue(os.path.exists(self.file_path))
-            self.assertEqual(self.local.read(), TEST_FILE_CONTENT)
-            self.assertTrue(os.path.exists(str(self.file_path) + '.bkp'))
-            self.assertEqual(self.local.read(str(self.file_path) + '.bkp'),
-                             mock_content)
 
-    @patch('getgist.local.LocalTools.ask')
-    def test_write_file_with_multiple_backup(self, mock_ask):
-        mock_ask.return_value = 'n'
-        for bkp in ['', '.bkp', '.bkp1', '.bkp2']:
-            with open(self.file_path + bkp, 'w') as handler:
-                marker = bkp if bkp else 'marker'
-                handler.write(TEST_FILE_CONTENT + marker)
-        self.local.save(TEST_FILE_CONTENT)
-        with self.subTest():
-            self.assertTrue(os.path.exists(self.file_path))
-            self.assertEqual(self.local.read(), TEST_FILE_CONTENT)
-            self.assertTrue(os.path.exists(str(self.file_path) + '.bkp'))
-            self.assertTrue(os.path.exists(str(self.file_path) + '.bkp1'))
-            self.assertTrue(os.path.exists(str(self.file_path) + '.bkp2'))
-            self.assertTrue(os.path.exists(str(self.file_path) + '.bkp3'))
-            self.assertEqual(self.local.read(str(self.file_path) + '.bkp3'),
-                             TEST_FILE_CONTENT + 'marker')
+def test_simple_backup(local):
+    backup = '{}.bkp'.format(local.file_path)
+
+    local.backup()
+    assert os.path.exists(backup)
+    assert local.read(backup) == TEST_FILE_CONTENTS
+
+
+def test_two_backups(local):
+    backup = '{}.bkp'.format(local.file_path)
+    with open(backup, 'w') as fobj:
+        fobj.write('first backup')
+
+    new_backup = '{}1'.format(backup)
+    local.backup()
+    assert os.path.exists(new_backup)
+    assert local.read(new_backup) == TEST_FILE_CONTENTS
+
+
+def test_multi_backups(local):
+    for ext in ('', '.bkp', '.bkp1', '.bkp2', '.bkp3'):
+        backup = '{}{}'.format(local.file_path, ext)
+        with open(backup, 'w') as fobj:
+            fobj.write(ext or TEST_FILE_CONTENTS)
+
+    new_backup = '{}.bkp4'.format(local.file_path)
+    local.backup()
+    assert os.path.exists(new_backup)
+    assert local.read(new_backup) == TEST_FILE_CONTENTS
+
+
+def test_write_file(local):
+    os.remove(local.file_path)
+    assert not os.path.exists(local.file_path)
+
+    local.save(TEST_FILE_CONTENTS)
+    assert os.path.exists(local.file_path)
+    assert local.read() == TEST_FILE_CONTENTS
+
+
+def test_write_file_overwrite(local, mocker):
+    ask = mocker.patch('getgist.local.LocalTools.ask')
+    ask.return_value = 'y'
+
+    with open(local.file_path, 'w') as fobj:
+        fobj.write('nope')
+
+    assert os.path.exists(local.file_path)
+    assert local.read() == 'nope'
+
+    local.save(TEST_FILE_CONTENTS)
+    assert os.path.exists(local.file_path)
+    assert local.read() == TEST_FILE_CONTENTS
+    assert not os.path.exists('{}.bkp1'.format(local.file_path))
+
+
+def test_write_file_with_backup(local, mocker):
+    ask = mocker.patch('getgist.local.LocalTools.ask')
+    ask.return_value = 'n'
+    local.save(TEST_FILE_CONTENTS)
+
+    assert os.path.exists(local.file_path)
+    assert local.read() == TEST_FILE_CONTENTS
+
+    backup = '{}.bkp1'.format(local.file_path)
+    local.save('new contents')
+    assert os.path.exists(local.file_path)
+    assert os.path.exists(backup)
+    assert local.read() == 'new contents'
+    assert local.read(backup) == TEST_FILE_CONTENTS
+
+
+def test_write_file_with_multiple_backup(local, mocker):
+    for ext in ('', '.bkp', '.bkp1', '.bkp2', '.bkp3'):
+        backup = '{}{}'.format(local.file_path, ext)
+        with open(backup, 'w') as fobj:
+            fobj.write(ext)
+
+    ask = mocker.patch('getgist.local.LocalTools.ask')
+    ask.return_value = 'n'
+
+    local.save(TEST_FILE_CONTENTS)
+    assert local.read() == TEST_FILE_CONTENTS
+    for ext in ('', '.bkp', '.bkp1', '.bkp2', '.bkp3', '.bkp4'):
+        backup = '{}{}'.format(local.file_path, ext)
+        assert os.path.exists(backup)

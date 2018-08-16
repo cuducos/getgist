@@ -1,271 +1,237 @@
-try:
-    from unittest import TestCase
-    from unittest.mock import patch
-except ImportError:
-    from unittest2 import TestCase
-    from mock import patch
+from re import search
 
 from getgist.github import GitHubTools
-from tests.mocks import MockResponse, parse_mock, request_mock
-
-GETGIST_USER = 'janedoe'
-GETGIST_TOKEN = "Jane's token"
+from tests.conftest import MockResponse, GETGIST_TOKEN, GETGIST_USER
 
 
-class TestAuthentication(TestCase):
 
-    @patch('getgist.github.GitHubTools._get_token')
-    def test_no_token_results_in_no_authentication(self, mock_token):
-        mock_token.return_value = False
-        oops = GitHubTools(GETGIST_USER, '.gist')
-        with self.subTest():
-            self.assertNotIn('Authorization', oops.headers)
-            self.assertFalse(oops.is_authenticated)
+def test_no_token_results_in_no_authentication(mocker):
+    token = mocker.patch('getgist.github.GitHubTools._get_token')
+    token.return_value = False
 
-    @patch('getgist.request.GetGistRequests.get')
-    @patch('getgist.github.GitHubTools._get_token')
-    def test_invalid_token(self, mock_token, mock_get):
-        mock_token.return_value = GETGIST_TOKEN
-        mock_get.return_value = request_mock('user', case=False)
-        oops = GitHubTools(GETGIST_USER, '.gist')
-        with self.subTest():
-            self.assertNotIn('Authorization', oops.headers)
-            self.assertFalse(oops.is_authenticated)
-
-    @patch('getgist.request.GetGistRequests.get')
-    @patch('getgist.github.GitHubTools._get_token')
-    def test_valid_token(self, mock_token, mock_get):
-        mock_token.return_value = GETGIST_TOKEN
-        mock_get.return_value = request_mock('user')
-        yeah = GitHubTools(GETGIST_USER, '.gist')
-        with self.subTest():
-            self.assertIn('Authorization', yeah.headers)
-            self.assertTrue(yeah.is_authenticated)
+    github = GitHubTools(GETGIST_USER, '.gist')
+    assert 'Authorization' not in github.headers
+    assert not github.is_authenticated
 
 
-class GitHubToolsTestCase(TestCase):
+def test_invalid_token(mocker, response):
+    get = mocker.patch('getgist.request.GetGistRequests.get')
+    token = mocker.patch('getgist.github.GitHubTools._get_token')
+    get.return_value = response('user', case=False)
+    token.return_value = GETGIST_TOKEN
 
-    @patch('getgist.github.GitHubTools.add_oauth_header')
-    def setUp(self, mock_oauth):
-        mock_oauth.return_value = None
-        self.github = GitHubTools(GETGIST_USER, '.gist')
-        self.gist1 = parse_mock(id=1,
-                                user=GETGIST_USER,
-                                filename='.gist',
-                                url='https://gist.github.com/id_gist_1')
-        self.gist2 = parse_mock(id=2,
-                                user=GETGIST_USER,
-                                filename='.gist',
-                                description='Description of Gist 2',
-                                url='https://gist.github.com/id_gist_2')
-        self.gist3 = parse_mock(id=3,
-                                user=GETGIST_USER,
-                                filename=['.gist.sample', '.gist.dev'],
-                                url='https://gist.github.com/id_gist_3')
-        self.gist4 = parse_mock(id=4,
-                                user=GETGIST_USER,
-                                filename='.gist.prod',
-                                url='https://gist.github.com/id_gist_4')
+    github = GitHubTools(GETGIST_USER, '.gist')
+    assert 'Authorization' not in github.headers
+    assert not github.is_authenticated
 
 
-class TestMainHeaders(GitHubToolsTestCase):
+def test_valid_token(mocker, response):
+    get = mocker.patch('getgist.request.GetGistRequests.get')
+    token = mocker.patch('getgist.github.GitHubTools._get_token')
+    get.return_value = response('user')
+    token.return_value = GETGIST_TOKEN
 
-    def test_main_headers(self):
-        user_agent = self.github.headers.get('User-Agent')
-        user_agent_re = r'^(GetGist v)([\d]+).([\d]+)(.[\d]+)?$'
-        with self.subTest():
-            self.assertIn('Accept', self.github.headers)
-            self.assertIn('User-Agent', self.github.headers)
-            self.assertRegex(user_agent, user_agent_re)
-
-
-class TestApiUrl(GitHubToolsTestCase):
-
-    def test_api_url(self):
-        url = self.github._api_url('janedoe', 'gists')
-        expected = 'https://api.github.com/{}/gists'.format(GETGIST_USER)
-        self.assertEqual(url, expected)
+    github = GitHubTools(GETGIST_USER, '.gist')
+    assert 'Authorization' in github.headers
+    assert github.is_authenticated
 
 
-class TestParseGist(GitHubToolsTestCase):
+def test_main_headers(authenticated_github):
+    assert 'Accept' in authenticated_github.headers
+    assert 'User-Agent' in authenticated_github.headers
 
-    def test_parse_gist(self):
-        gist_raw = request_mock('gist/id_gist_1')
-        gist = gist_raw.json()
-        self.assertEqual(self.github._parse_gist(gist), self.gist1)
-
-
-class TestGetGists(GitHubToolsTestCase):
-
-    @patch('getgist.request.GetGistRequests.get')
-    def test_get_gists(self, mock_get):
-        mock_get.return_value = request_mock('users/janedoe/gists')
-        gists = list(self.github.get_gists())
-        with self.subTest():
-            self.assertIn(self.gist1, gists)
-            self.assertIn(self.gist2, gists)
-            self.assertNotIn(self.gist4, gists)
-
-    @patch('getgist.request.GetGistRequests.get')
-    def test_no_gists_with_wrong_username(self, mock_get):
-        mock_get.return_value = request_mock('users/janedoe/gists',
-                                             case=False, status_code=404)
-        self.assertFalse(list(self.github.get_gists()))
-
-    @patch('getgist.request.GetGistRequests.get')
-    def test_user_with_no_gists(self, mock_get):
-        mock_get.return_value = request_mock('users/casper/gists')
-        self.assertFalse(list(self.github.get_gists()))
-
-    @patch('getgist.request.GetGistRequests.get')
-    @patch('getgist.github.GitHubTools._get_token')
-    def test_authenticated_get_gists(self, mock_token, mock_get):
-        mock_token.return_value = GETGIST_TOKEN
-        mock_get.side_effect = [request_mock('user'), request_mock('gists')]
-        yeah = GitHubTools(GETGIST_USER, '.gist')
-        gists = list(yeah.get_gists())
-        with self.subTest():
-            self.assertIn(self.gist3, gists)
-            self.assertIn(self.gist4, gists)
+    user_agent = authenticated_github.headers.get('User-Agent')
+    user_agent_re = r'^(GetGist v)([\d]+).([\d]+)(.[\d]+)?$'
+    assert search(user_agent_re, user_agent)
 
 
-class TestAskWhichGist(GitHubToolsTestCase):
-
-    @patch('getgist.request.GetGistRequests.get')
-    @patch('getgist.GetGistCommons.ask')
-    def test_select_gist_single_input(self, mock_ask, mock_get):
-        mock_ask.return_value = 2
-        mock_get.return_value = request_mock('users/janedoe/gists')
-        self.github.filename = '.gist'
-        gists = list(self.github.get_gists())
-        self.assertEqual(self.github._ask_which_gist(gists), self.gist2)
-
-    @patch('getgist.request.GetGistRequests.get')
-    @patch('getgist.input_method')
-    def test_select_gist_multi_input(self, mock_input, mock_get):
-        mock_input.side_effect = ['alpha', '', 2]
-        mock_get.return_value = request_mock('users/janedoe/gists')
-        self.github.filename = '.gist'
-        gists = list(self.github.get_gists())
-        self.assertEqual(self.github._ask_which_gist(gists), self.gist2)
+def test_api_url(authenticated_github):
+    url = authenticated_github._api_url(GETGIST_USER, 'gists')
+    expected = 'https://api.github.com/{}/gists'.format(GETGIST_USER)
+    assert url == expected
 
 
-class TestSelectGist(GitHubToolsTestCase):
-
-    @patch('getgist.request.GetGistRequests.get')
-    def test_select_gist_single_match(self, mock_get):
-        mock_get.return_value = request_mock('users/janedoe/gists')
-        self.github.filename = '.gist.sample'
-        self.assertEqual(self.github.select_gist(), self.gist3)
-
-    @patch('getgist.request.GetGistRequests.get')
-    def test_select_gist_no_match_default(self, mock_get):
-        mock_get.return_value = request_mock('users/janedoe/gists')
-        self.github.filename = '.no_gist'
-        self.assertFalse(self.github.select_gist())
-
-    @patch('getgist.request.GetGistRequests.get')
-    def test_select_gist_no_match_allow_none(self, mock_get):
-        mock_get.return_value = request_mock('users/janedoe/gists')
-        self.github.filename = '.no_gist'
-        self.assertIsNone(self.github.select_gist(allow_none=True))
-
-    @patch('getgist.request.GetGistRequests.get')
-    @patch('getgist.GetGistCommons.ask')
-    def test_select_gist_multi_matches(self, mock_ask, mock_get):
-        mock_ask.return_value = 2
-        mock_get.return_value = request_mock('users/janedoe/gists')
-        self.github.filename = '.gist'
-        self.assertEqual(self.github.select_gist(), self.gist2)
+def test_parse_gist(authenticated_github, response, gists):
+    gist_raw = response('gist/id_gist_1')
+    assert authenticated_github._parse_gist(gist_raw.json()) == gists[0]
 
 
-class TestReadGist(GitHubToolsTestCase):
-
-    @patch('getgist.request.GetGistRequests.get')
-    def test_read_gist(self, mock_get):
-        mock_get.return_value = MockResponse('Hello, world!', 200)
-        gist_raw = request_mock('gist/id_gist_1')
-        gist = self.github._parse_gist(gist_raw.json())
-        read = self.github.read_gist_file(gist)
-        self.assertEqual(read, 'Hello, world!')
+def test_get_gists(mocker, response, gists, authenticated_github):
+    get = mocker.patch('getgist.request.GetGistRequests.get')
+    get.return_value = response('users/janedoe/gists')
+    fetched_gists = tuple(authenticated_github.get_gists())
+    assert gists[0] in fetched_gists
+    assert gists[1] in fetched_gists
+    assert gists[3] not in fetched_gists
 
 
-class TestUpdateGist(TestCase):
-
-    @patch('getgist.github.GitHubTools._get_token')
-    def test_update_gist_without_authorization(self, mock_token):
-        mock_token.return_value = None
-        gist = parse_mock(id=1, user=GETGIST_USER, filename='.gist', url='')
-        oops = GitHubTools(GETGIST_USER, '.gist.sample')
-        self.assertFalse(oops.update(gist, '42'))
-
-    @patch('getgist.request.GetGistRequests.get')
-    @patch('getgist.request.GetGistRequests.patch')
-    @patch('getgist.github.GitHubTools._get_token')
-    def test_update_gist(self, mock_token, mock_patch, mock_get):
-        mock_token.return_value = GETGIST_TOKEN
-        mock_patch.return_value = request_mock('gist/id_gist_1')
-        mock_get.return_value = request_mock('user')
-        gist = parse_mock(id=1, user=GETGIST_USER, filename='.gist', url='')
-        yeah = GitHubTools(GETGIST_USER, '.gist')
-        self.assertTrue(yeah.update(gist, '42'))
-
-    @patch('getgist.request.GetGistRequests.get')
-    @patch('getgist.request.GetGistRequests.patch')
-    @patch('getgist.github.GitHubTools._get_token')
-    def test_failed_update_gist(self, mock_token, mock_patch, mock_get):
-        mock_token.return_value = GETGIST_TOKEN
-        mock_patch.return_value = request_mock('gist/id_gist_1', case=False,
-                                               status_code=404)
-        mock_get.return_value = request_mock('user')
-        gist = parse_mock(id=1, user=GETGIST_USER, filename='.gist', url='')
-        yeah = GitHubTools(GETGIST_USER, '.gist')
-        self.assertFalse(yeah.update(gist, '42'))
-
-    @patch('getgist.request.GetGistRequests.get')
-    @patch('getgist.github.GitHubTools._get_token')
-    def test_create_gist_with_no_file(self, mock_token, mock_get):
-        mock_token.return_value = GETGIST_TOKEN
-        mock_get.return_value = request_mock('user')
-        gist = parse_mock(id=1, user=GETGIST_USER, filename='.gist', url='')
-        yeah = GitHubTools(GETGIST_USER, '.gist')
-        self.assertFalse(yeah.update(gist, False))
+def test_no_gists_with_wrong_username(mocker, response, authenticated_github):
+    get = mocker.patch('getgist.request.GetGistRequests.get')
+    get.return_value = response(
+        'users/janedoe/gists',
+        case=False,
+        status_code=404
+    )
+    assert not tuple(authenticated_github.get_gists())
 
 
-class TestCreateGist(TestCase):
+def test_user_with_no_gists(mocker, response, authenticated_github):
+    get = mocker.patch('getgist.request.GetGistRequests.get')
+    get.return_value = response('users/casper/gists')
+    assert not tuple(authenticated_github.get_gists())
 
-    @patch('getgist.github.GitHubTools._get_token')
-    def test_create_gist_without_authorization(self, mock_token):
-        mock_token.return_value = None
-        oops = GitHubTools(GETGIST_USER, '.gist.sample')
-        self.assertFalse(oops.create('42'))
 
-    @patch('getgist.request.GetGistRequests.get')
-    @patch('getgist.request.GetGistRequests.post')
-    @patch('getgist.github.GitHubTools._get_token')
-    def test_create_gist(self, mock_token, mock_post, mock_get):
-        mock_token.return_value = GETGIST_TOKEN
-        mock_post.return_value = request_mock('gist/id_gist_1',
-                                              status_code=201)
-        mock_get.return_value = request_mock('user')
-        yeah = GitHubTools(GETGIST_USER, '.gist.sample')
-        self.assertTrue(yeah.create('42', public=False))
+def test_authenticated_get_gists(mocker, response, gists):
+    get = mocker.patch('getgist.request.GetGistRequests.get')
+    token = mocker.patch('getgist.github.GitHubTools._get_token')
+    token.return_value = GETGIST_TOKEN
+    get.side_effect = (response('user'), response('gists'))
 
-    @patch('getgist.request.GetGistRequests.get')
-    @patch('getgist.request.GetGistRequests.post')
-    @patch('getgist.github.GitHubTools._get_token')
-    def test_failed_create_gist(self, mock_token, mock_post, mock_get):
-        mock_token.return_value = GETGIST_TOKEN
-        mock_post.return_value = request_mock('gist/id_gist_1', case=False,
-                                              status_code=404)
-        mock_get.return_value = request_mock('user')
-        yeah = GitHubTools(GETGIST_USER, '.gist.sample')
-        self.assertFalse(yeah.create('42', public=False))
+    github = GitHubTools(GETGIST_USER, '.gist')
+    gists = tuple(github.get_gists())
+    assert gists[2] in gists
+    assert gists[3] in gists
 
-    @patch('getgist.request.GetGistRequests.get')
-    @patch('getgist.github.GitHubTools._get_token')
-    def test_create_gist_with_no_file(self, mock_token, mock_get):
-        mock_token.return_value = GETGIST_TOKEN
-        mock_get.return_value = request_mock('user')
-        yeah = GitHubTools(GETGIST_USER, '.gist')
-        self.assertFalse(yeah.create(False))
+
+def test_select_gist_one_input(mocker, response, gists, authenticated_github):
+    get = mocker.patch('getgist.request.GetGistRequests.get')
+    ask = mocker.patch('getgist.GetGistCommons.ask')
+    ask.return_value = 2
+    get.return_value = response('users/janedoe/gists')
+
+    authenticated_github.filename = '.gist'
+    gists = tuple(authenticated_github.get_gists())
+    assert authenticated_github._ask_which_gist(gists) == gists[1]
+
+
+def test_select_gist_multi_input(mocker, response, gists, authenticated_github):
+    get = mocker.patch('getgist.request.GetGistRequests.get')
+    input_method = mocker.patch('getgist.input_method')
+    get.return_value = response('users/janedoe/gists')
+    input_method.side_effect = ('alpha', '', 2)
+
+    authenticated_github.filename = '.gist'
+    gists = tuple(authenticated_github.get_gists())
+    assert authenticated_github._ask_which_gist(gists) == gists[1]
+
+
+def test_select_gist_single_match(mocker, response, gists, authenticated_github):
+    get = mocker.patch('getgist.request.GetGistRequests.get')
+    get.return_value = response('users/janedoe/gists')
+    authenticated_github.filename = '.gist.sample'
+    assert authenticated_github.select_gist() == gists[2]
+
+
+def test_select_gist_no_match_default(mocker, response, gists, authenticated_github):
+    get = mocker.patch('getgist.request.GetGistRequests.get')
+    get.return_value = response('users/janedoe/gists')
+    authenticated_github.filename = '.no_gist'
+    assert not authenticated_github.select_gist()
+
+
+def test_select_gist_no_match_allow_none(mocker, response, gists, authenticated_github):
+    get = mocker.patch('getgist.request.GetGistRequests.get')
+    get.return_value = response('users/janedoe/gists')
+    authenticated_github.filename = '.no_gist'
+    assert not authenticated_github.select_gist(allow_none=True)
+
+
+def test_select_gist_multi_matches(mocker, response, gists, authenticated_github):
+    get = mocker.patch('getgist.request.GetGistRequests.get')
+    ask = mocker.patch('getgist.GetGistCommons.ask')
+    get.return_value = response('users/janedoe/gists')
+    ask.return_value = 2
+    authenticated_github.filename = '.gist'
+    assert authenticated_github.select_gist() == gists[1]
+
+
+def test_read_gist(mocker, response, gists, authenticated_github):
+    get = mocker.patch('getgist.request.GetGistRequests.get')
+    get.return_value = MockResponse('Hello, world!', 200)
+    gist_raw = response('gist/id_gist_1')
+    gist = authenticated_github._parse_gist(gist_raw.json())
+    assert authenticated_github.read_gist_file(gist) == 'Hello, world!'
+
+
+def test_update_gist_without_authorization(mocker, parse):
+    token = mocker.patch('getgist.github.GitHubTools._get_token')
+    token.return_value = None
+    gist = parse(id=1, user=GETGIST_USER, filename='.gist', url='')
+    github = GitHubTools(GETGIST_USER, '.gist.sample')
+    assert not github.update(gist, '42')
+
+
+def test_update_gist(mocker, response, parse):
+    get = mocker.patch('getgist.request.GetGistRequests.get')
+    patch = mocker.patch('getgist.request.GetGistRequests.patch')
+    token = mocker.patch('getgist.github.GitHubTools._get_token')
+    get.return_value = response('user')
+    patch.return_value = response('gist/id_gist_1')
+    token.return_value = GETGIST_TOKEN
+    gist = parse(id=1, user=GETGIST_USER, filename='.gist', url='')
+    github = GitHubTools(GETGIST_USER, '.gist')
+    assert github.update(gist, '42')
+
+
+def test_failed_update_gist(mocker, response, parse):
+    get = mocker.patch('getgist.request.GetGistRequests.get')
+    token = mocker.patch('getgist.github.GitHubTools._get_token')
+    patch = mocker.patch('getgist.request.GetGistRequests.patch')
+    get.return_value = response('user')
+    token.return_value = GETGIST_TOKEN
+    patch.return_value = response(
+        'gist/id_gist_1',
+        case=False,
+        status_code=404
+    )
+    gist = parse(id=1, user=GETGIST_USER, filename='.gist', url='')
+    github = GitHubTools(GETGIST_USER, '.gist')
+    assert not github.update(gist, '42')
+
+
+def test_update_gist_with_no_file(mocker, response, parse):
+    get = mocker.patch('getgist.request.GetGistRequests.get')
+    token = mocker.patch('getgist.github.GitHubTools._get_token')
+    get.return_value = response('user')
+    token.return_value = GETGIST_TOKEN
+    gist = parse(id=1, user=GETGIST_USER, filename='.gist', url='')
+    github = GitHubTools(GETGIST_USER, '.gist')
+    assert not github.update(gist, False)
+
+
+def test_create_gist_without_authorization(mocker):
+    token = mocker.patch('getgist.github.GitHubTools._get_token')
+    token.return_value = None
+    github = GitHubTools(GETGIST_USER, '.gist.sample')
+    assert not github.create('42')
+
+
+def test_create_gist(mocker, response):
+    get = mocker.patch('getgist.request.GetGistRequests.get')
+    post = mocker.patch('getgist.request.GetGistRequests.post')
+    token = mocker.patch('getgist.github.GitHubTools._get_token')
+    get.return_value = response('user')
+    post.return_value = response('gist/id_gist_1', status_code=201)
+    token.return_value = GETGIST_TOKEN
+    github = GitHubTools(GETGIST_USER, '.gist.sample')
+    assert github.create('42', public=False)
+
+
+def test_failed_create_gist(mocker, response):
+    get = mocker.patch('getgist.request.GetGistRequests.get')
+    post = mocker.patch('getgist.request.GetGistRequests.post')
+    token = mocker.patch('getgist.github.GitHubTools._get_token')
+    get.return_value = response('user')
+    post.return_value = response('gist/id_gist_1', case=False, status_code=404)
+    token.return_value = GETGIST_TOKEN
+    github = GitHubTools(GETGIST_USER, '.gist.sample')
+    assert not github.create('42', public=False)
+
+
+def test_create_gist_with_no_file(mocker, response):
+    get = mocker.patch('getgist.request.GetGistRequests.get')
+    token = mocker.patch('getgist.github.GitHubTools._get_token')
+    get.return_value = response('user')
+    token.return_value = GETGIST_TOKEN
+    github = GitHubTools(GETGIST_USER, '.gist')
+    assert not github.create(False)
