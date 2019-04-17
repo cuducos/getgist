@@ -93,7 +93,7 @@ class GetGist(object):
 
     def put(self):
         """ Reads local file & update the remote gist (or create a new one)"""
-        content = self.local.read(self.github.filename)
+        content = self.local.read()
         if self.gist:
             self.github.update(self.gist, content)
         else:

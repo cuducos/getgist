@@ -16,7 +16,7 @@ class LocalTools(GetGistCommons):
         return: (None)
         """
         self.cwd = os.getcwd()
-        self.file_path = filename
+        self.file_path = os.path.expanduser(filename)
         self.filename = os.path.basename(filename)
         self.assume_yes = assume_yes
 
