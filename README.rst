@@ -2,8 +2,8 @@
    :target: https://travis-ci.org/cuducos/getgist
 .. image:: https://img.shields.io/coveralls/cuducos/getgist.svg?style=flat
    :target: https://coveralls.io/github/cuducos/getgist
-..  image:: https://landscape.io/github/cuducos/getgist/master/landscape.svg?style=flat
-   :target: https://landscape.io/github/cuducos/getgist/master
+.. image:: https://img.shields.io/codeclimate/maintainability-percentage/cuducos/getgist.svg
+   :target: https://codeclimate.com/github/cuducos/getgist
 .. image:: https://img.shields.io/pypi/v/getgist.svg?style=flat
    :target: https://pypi.python.org/pypi/getgist
 .. image:: https://img.shields.io/pypi/pyversions/getgist.svg?style=flat
