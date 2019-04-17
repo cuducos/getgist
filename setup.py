@@ -35,6 +35,6 @@ with open("README.rst") as readme:
         name="getgist",
         packages=["getgist"],
         url="http://github.com/cuducos/getgist",
-        version="0.1.2",
+        version="0.1.3",
         zip_safe=False,
     )
