@@ -1,4 +1,4 @@
-from sys import stderr, stdout, version_info
+from sys import stderr, stdout
 
 from click import secho
 
