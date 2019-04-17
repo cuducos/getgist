@@ -1,5 +1,6 @@
 import os
 
+from getgist import GetGistCommons
 from tests.conftest import TEST_FILE_CONTENTS
 
 
@@ -11,12 +12,17 @@ def test_read_file_with_argument(local):
     assert local.read(local.file_path) == TEST_FILE_CONTENTS
 
 
-def test_read_non_existet_file(local):
-    assert not local.read(".no_gist")  # TODO raise exception
+def test_read_non_existet_file(mocker, local):
+    oops = mocker.patch.object(GetGistCommons, "oops")
+    assert not local.read(".no_gist")
+    oops.assert_called_once_with("Sorry, but .no_gist does not exist")
 
 
-def test_read_directory(local):
-    assert not local.read(os.getcwd())  # TODO raise exception
+def test_read_directory(mocker, local):
+    oops = mocker.patch.object(GetGistCommons, "oops")
+    cwd = os.getcwd()
+    assert not local.read(cwd)
+    oops.assert_called_once_with("Sorry, but {} is not a file".format(cwd))
 
 
 def test_read_file_inside_directory(temporary_file):

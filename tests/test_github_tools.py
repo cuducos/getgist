@@ -226,3 +226,9 @@ def test_create_gist_with_no_file(mocker, response):
     token.return_value = GETGIST_TOKEN
     github = GitHubTools(GETGIST_USER, ".gist")
     assert not github.create(False)
+
+
+def test_get_token(mocker):
+    getenv = mocker.patch("getgist.github.os.getenv")
+    GitHubTools._get_token()
+    getenv.assert_called_once_with("GETGIST_TOKEN")
