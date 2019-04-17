@@ -2,6 +2,8 @@ import os
 from json import dumps
 from pkg_resources import get_distribution
 
+from click import prompt
+
 from getgist import GetGistCommons
 from getgist.request import GetGistRequests
 
@@ -239,10 +241,10 @@ class GitHubTools(GetGistCommons):
         # get the gist index
         selected = False
         while not selected:
+            gist_index = prompt("Type the number: ", type=int) - 1
             try:
-                gist_index = int(self.ask("Type the number: ")) - 1
                 selected = matches[gist_index]
-            except (ValueError, IndexError):
+            except IndexError:
                 self.oops("Invalid number, please try again.")
 
         self.output("Using `{}` Gist".format(selected["description"]))

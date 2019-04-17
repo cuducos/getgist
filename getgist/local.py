@@ -1,5 +1,7 @@
 import os
 
+from click import confirm
+
 from getgist import GetGistCommons
 
 
@@ -27,8 +29,7 @@ class LocalTools(GetGistCommons):
         # backup existing file if needed
         if os.path.exists(self.file_path) and not self.assume_yes:
             message = "Overwrite existing {}? (y/n) "
-            confirm = self.ask(message.format(self.filename))
-            if confirm.lower() != "y":
+            if not confirm(message.format(self.filename)):
                 self.backup()
 
         # write file

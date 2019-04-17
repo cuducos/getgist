@@ -90,8 +90,8 @@ def test_authenticated_get_gists(mocker, response, gists):
 
 def test_select_gist_one_input(mocker, response, gists, authenticated_github):
     get = mocker.patch("getgist.request.GetGistRequests.get")
-    ask = mocker.patch("getgist.GetGistCommons.ask")
-    ask.return_value = 2
+    prompt = mocker.patch("getgist.github.prompt")
+    prompt.return_value = 2
     get.return_value = response("users/janedoe/gists")
 
     authenticated_github.filename = ".gist"
@@ -101,9 +101,9 @@ def test_select_gist_one_input(mocker, response, gists, authenticated_github):
 
 def test_select_gist_multi_input(mocker, response, gists, authenticated_github):
     get = mocker.patch("getgist.request.GetGistRequests.get")
-    input_method = mocker.patch("getgist.input_method")
     get.return_value = response("users/janedoe/gists")
-    input_method.side_effect = ("alpha", "", 2)
+    prompt = mocker.patch("getgist.github.prompt")
+    prompt.side_effect = (42, 2)
 
     authenticated_github.filename = ".gist"
     gists = tuple(authenticated_github.get_gists())
@@ -133,9 +133,9 @@ def test_select_gist_no_match_allow_none(mocker, response, gists, authenticated_
 
 def test_select_gist_multi_matches(mocker, response, gists, authenticated_github):
     get = mocker.patch("getgist.request.GetGistRequests.get")
-    ask = mocker.patch("getgist.GetGistCommons.ask")
     get.return_value = response("users/janedoe/gists")
-    ask.return_value = 2
+    prompt = mocker.patch("getgist.github.prompt")
+    prompt.return_value = 2
     authenticated_github.filename = ".gist"
     assert authenticated_github.select_gist() == gists[1]
 

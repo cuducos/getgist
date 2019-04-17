@@ -2,10 +2,6 @@ from sys import stderr, stdout, version_info
 
 from click import secho
 
-input_method = input
-if version_info < (3, 0):
-    input_method = raw_input
-
 
 class GetGistCommons(object):
     """Basic output methods used to print messages on users' terminal"""
@@ -32,14 +28,6 @@ class GetGistCommons(object):
         """
         output_to = stderr if color == "red" else stdout
         secho(self.indent(message), fg=color, file=output_to)
-
-    def ask(self, message):
-        """
-        A helper to indent input()
-        :param message: (str)
-        :return: (str) the user input
-        """
-        return input_method(self.indent(message))
 
     def oops(self, message):
         """Helper to colorize error messages"""

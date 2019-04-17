@@ -65,8 +65,8 @@ def test_write_file(local):
 
 
 def test_write_file_overwrite(local, mocker):
-    ask = mocker.patch("getgist.local.LocalTools.ask")
-    ask.return_value = "y"
+    confirm = mocker.patch("getgist.local.confirm")
+    confirm.return_value = True
 
     with open(local.file_path, "w") as fobj:
         fobj.write("nope")
@@ -81,8 +81,8 @@ def test_write_file_overwrite(local, mocker):
 
 
 def test_write_file_with_backup(local, mocker):
-    ask = mocker.patch("getgist.local.LocalTools.ask")
-    ask.return_value = "n"
+    confirm = mocker.patch("getgist.local.confirm")
+    confirm.return_value = False
     local.save(TEST_FILE_CONTENTS)
 
     assert os.path.exists(local.file_path)
@@ -102,8 +102,8 @@ def test_write_file_with_multiple_backup(local, mocker):
         with open(backup, "w") as fobj:
             fobj.write(ext)
 
-    ask = mocker.patch("getgist.local.LocalTools.ask")
-    ask.return_value = "n"
+    confirm = mocker.patch("getgist.local.confirm")
+    confirm.return_value = False
 
     local.save(TEST_FILE_CONTENTS)
     assert local.read() == TEST_FILE_CONTENTS
