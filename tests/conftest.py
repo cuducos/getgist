@@ -1,6 +1,7 @@
 import json
 import os
 from glob import glob
+from tempfile import NamedTemporaryFile
 from uuid import uuid4
 
 import pytest
@@ -95,6 +96,14 @@ def local():
 
     for path in glob("{}*".format(TEST_FILE)):
         os.remove(path)
+
+
+@pytest.fixture
+def temporary_file():
+    with NamedTemporaryFile(mode="w") as fobj:
+        fobj.write(TEST_FILE_CONTENTS)
+        fobj.seek(0)
+        yield LocalTools(fobj.name)
 
 
 @pytest.fixture

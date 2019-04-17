@@ -19,9 +19,8 @@ def test_read_directory(local):
     assert not local.read(os.getcwd())  # TODO raise exception
 
 
-def test_read_file_inside_directory(local):
-    # TODO assert nested_local.read(NESTED_TEST_FILE) == NESTED_TEST_FILE_CONTENTS
-    pass
+def test_read_file_inside_directory(temporary_file):
+    assert temporary_file.read() == TEST_FILE_CONTENTS
 
 
 def test_simple_backup(local):
