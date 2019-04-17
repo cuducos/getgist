@@ -6,7 +6,7 @@ build/
 dist/
 
 # python libraries
-.coverage
+.coverage*
 .pytest_cache/
 .python-version
 .tox/
