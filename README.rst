@@ -94,8 +94,7 @@ How?
    from `GitHub settings <https://github.com/settings/tokens>`__
 2. Set an environment variable called ``GETGIST_TOKEN`` with your personal access token
 
-
->This `article <https://www.serverlab.ca/tutorials/linux/administration-linux/how-to-set-environment-variables-in-linux/>`__ might help you create an environment >variable in a Unix-based operational system with Bash, but feel free to search alternatives for other systems and shells.
+This `article <https://www.serverlab.ca/tutorials/linux/administration-linux/how-to-set-environment-variables-in-linux/>`__ might help you create an environment variable in a Unix-based operational system with Bash, but feel free to search alternatives for other systems and shells.
 
 Example
 ~~~~~~~
