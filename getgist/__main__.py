@@ -79,7 +79,7 @@ class GetGist(object):
                 No default user set yet. To avoid this prompt set an
                 environmental variable called  `GETGIST_USER`.'
             """
-            self.local.oops(message)
+            self.local.error_message(message)
 
         # instantiate filename, guthub tools and fetch gist
         self.github = GitHubTools(user, filename, assume_yes)

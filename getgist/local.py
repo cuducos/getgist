@@ -38,7 +38,7 @@ class LocalTools(GetGistCommons):
             if not isinstance(content, bytes):
                 content = bytes(content, "utf-8")
             handler.write(content)
-        self.yeah("Done!")
+        self.success_message("Done!")
 
     def backup(self):
         """Backups files with the same name of the instance filename"""
@@ -49,7 +49,7 @@ class LocalTools(GetGistCommons):
             count += 1
             name = "{}.bkp{}".format(self.filename, count)
             backup = os.path.join(self.cwd, name)
-        self.hey("Moving existing {} to {}".format(self.filename, name))
+        self.highlighted_message("Moving existing {} to {}".format(self.filename, name))
         os.rename(os.path.join(self.cwd, self.filename), backup)
 
     def read(self, file_path=None):
@@ -63,12 +63,12 @@ class LocalTools(GetGistCommons):
 
         # abort if the file path does not exist
         if not os.path.exists(file_path):
-            self.oops("Sorry, but {} does not exist".format(file_path))
+            self.error_message("Sorry, but {} does not exist".format(file_path))
             return False
 
         # abort if the file path is not a file
         if not os.path.isfile(file_path):
-            self.oops("Sorry, but {} is not a file".format(file_path))
+            self.error_message("Sorry, but {} is not a file".format(file_path))
             return False
 
         with open(file_path) as handler:

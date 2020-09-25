@@ -13,16 +13,16 @@ def test_read_file_with_argument(local):
 
 
 def test_read_non_existet_file(mocker, local):
-    oops = mocker.patch.object(GetGistCommons, "oops")
+    error_message = mocker.patch.object(GetGistCommons, "error_message")
     assert not local.read(".no_gist")
-    oops.assert_called_once_with("Sorry, but .no_gist does not exist")
+    error_message.assert_called_once_with("Sorry, but .no_gist does not exist")
 
 
 def test_read_directory(mocker, local):
-    oops = mocker.patch.object(GetGistCommons, "oops")
+    error_message = mocker.patch.object(GetGistCommons, "error_message")
     cwd = os.getcwd()
     assert not local.read(cwd)
-    oops.assert_called_once_with("Sorry, but {} is not a file".format(cwd))
+    error_message.assert_called_once_with("Sorry, but {} is not a file".format(cwd))
 
 
 def test_read_file_inside_directory(temporary_file):

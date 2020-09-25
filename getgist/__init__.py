@@ -20,7 +20,7 @@ class GetGistCommons(object):
 
     def output(self, message, color=None):
         """
-        A helper to used like print() or click's secho() tunneling all the
+        A helper to be used like print() or click's secho() tunneling all the
         outputs to sys.stdout or sys.stderr
         :param message: (str)
         :param color: (str) check click.secho() documentation
@@ -29,18 +29,18 @@ class GetGistCommons(object):
         output_to = stderr if color == "red" else stdout
         secho(self.indent(message), fg=color, file=output_to)
 
-    def oops(self, message):
+    def error_message(self, message):
         """Helper to colorize error messages"""
         return self.output(message, color="red")
 
-    def yeah(self, message):
+    def success_message(self, message):
         """Helper to colorize success messages"""
         return self.output(message, color="green")
 
-    def warn(self, message):
+    def warning_message(self, message):
         """Helper to colorize warning messages"""
         return self.output(message, color="yellow")
 
-    def hey(self, message):
-        """Helper to colorize highlihghted messages"""
+    def highlighted_message(self, message):
+        """Helper to colorize highlighted messages"""
         return self.output(message, color="blue")
