@@ -210,7 +210,7 @@ class GitHubTools(GetGistCommons):
         # send request
         url = self._api_url("gists")
         self.output("Sending contents of {} to {}".format(self.file_path, url))
-        resp = self.requests.post(url, data=dumps(data))
+        response = self.requests.post(url, data=dumps(data))
 
         # error
         if response.status_code != 201:
