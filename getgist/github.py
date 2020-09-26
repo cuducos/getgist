@@ -66,11 +66,11 @@ class GitHubTools(GetGistCommons):
         # add oauth header & reach the api
         self.headers["Authorization"] = "token " + oauth_token
         url = self._api_url("user")
-        raw_response = self.requests.get(url)
-        response = raw_response.json()
+        raw_resp = self.requests.get(url)
+        resp = raw_resp.json()
 
         # abort & remove header if token is invalid
-        if response.get("login", None) != self.user:
+        if resp.get("login", None) != self.user:
             self.oops("Invalid token for user " + self.user)
             self.headers.pop("Authorization")
             return
@@ -89,21 +89,21 @@ class GitHubTools(GetGistCommons):
         else:
             url = self._api_url("users", self.user, "gists")
         self.output("Fetching " + url)
-        raw_response = self.requests.get(url)
+        raw_resp = self.requests.get(url)
 
         # abort if user not found
-        if raw_response.status_code != 200:
+        if raw_resp.status_code != 200:
             self.oops("User `{}` not found".format(self.user))
             return
 
         # abort if there are no gists
-        response = raw_response.json()
-        if not response:
+        resp = raw_resp.json()
+        if not resp:
             self.oops("No gists found for user `{}`".format(self.user))
             return
 
         # parse response
-        for gist in raw_response.json():
+        for gist in raw_resp.json():
             yield self._parse_gist(gist)
 
     def select_gist(self, allow_none=False):
@@ -127,8 +127,8 @@ class GitHubTools(GetGistCommons):
             if allow_none:
                 return None
             else:
-                message = "No file named `{}` found in {}'s gists"
-                self.oops(message.format(self.file_path, self.user))
+                msg = "No file named `{}` found in {}'s gists"
+                self.oops(msg.format(self.file_path, self.user))
                 if not self.is_authenticated:
                     self.warn("To access private gists set the GETGIST_TOKEN")
                     self.warn("(see `getgist --help` for details)")
@@ -154,8 +154,8 @@ class GitHubTools(GetGistCommons):
                 break
         if url:
             self.output("Reading {}".format(url))
-            response = self.requests.get(url)
-            return response.content
+            resp = self.requests.get(url)
+            return resp.content
 
     @oauth_only
     def update(self, gist, content):
@@ -173,12 +173,12 @@ class GitHubTools(GetGistCommons):
         url = self._api_url("gists", gist.get("id"))
         data = {"files": {self.filename: {"content": content}}}
         self.output("Sending contents of {} to {}".format(self.file_path, url))
-        response = self.requests.patch(url, data=dumps(data))
+        resp = self.requests.patch(url, data=dumps(data))
 
         # error
-        if response.status_code != 200:
+        if resp.status_code != 200:
             self.oops("Could not update " + gist.get("description"))
-            self.oops("PATCH request returned " + str(response.status_code))
+            self.oops("PATCH request returned " + str(resp.status_code))
             return False
 
         # success
@@ -210,16 +210,16 @@ class GitHubTools(GetGistCommons):
         # send request
         url = self._api_url("gists")
         self.output("Sending contents of {} to {}".format(self.file_path, url))
-        response = self.requests.post(url, data=dumps(data))
+        resp = self.requests.post(url, data=dumps(data))
 
         # error
-        if response.status_code != 201:
+        if resp.status_code != 201:
             self.oops("Could not create " + self.filename)
-            self.oops("POST request returned " + str(response.status_code))
+            self.oops("POST request returned " + str(resp.status_code))
             return False
 
         # parse created gist
-        gist = self._parse_gist(response.json())
+        gist = self._parse_gist(resp.json())
 
         # success
         self.yeah("Done!")
