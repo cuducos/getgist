@@ -66,8 +66,8 @@ class GitHubTools(GetGistCommons):
         # add oauth header & reach the api
         self.headers["Authorization"] = "token " + oauth_token
         url = self._api_url("user")
-        raw_response = self.requests.get(url)
-        response = raw_response.json()
+        raw_resp = self.requests.get(url)
+        resp = raw_resp.json()
 
         # abort & remove header if token is invalid
         if resp.get("login", None) != self.user:
