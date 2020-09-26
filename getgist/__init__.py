@@ -29,18 +29,18 @@ class GetGistCommons(object):
         output_to = stderr if color == "red" else stdout
         secho(self.indent(message), fg=color, file=output_to)
 
-    def error_message(self, message):
+    def oops(self, message):
         """Helper to colorize error messages"""
         return self.output(message, color="red")
 
-    def success_message(self, message):
+    def yeah(self, message):
         """Helper to colorize success messages"""
         return self.output(message, color="green")
 
-    def warning_message(self, message):
+    def warn(self, message):
         """Helper to colorize warning messages"""
         return self.output(message, color="yellow")
 
-    def highlighted_message(self, message):
+    def hey(self, message):
         """Helper to colorize highlighted messages"""
         return self.output(message, color="blue")

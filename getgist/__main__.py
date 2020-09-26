@@ -14,7 +14,7 @@ GETGIST_DESC = """
     shortcut `geymy <file name>` (see `getmy --help` for details).
 
     If you set GETGIST_TOKEN envvar with your personal access token (see
-    https://github.com/settings/tokens for details) you can get get priavte
+    https://github.com/settings/tokens for details) you can get get private
     gists from your account and you can upload local changes to your gist repo
     (see `putmy --help` for details).
 """
@@ -79,9 +79,9 @@ class GetGist(object):
                 No default user set yet. To avoid this prompt set an
                 environmental variable called  `GETGIST_USER`.'
             """
-            self.local.error_message(message)
+            self.local.oops(message)
 
-        # instantiate filename, guthub tools and fetch gist
+        # instantiate filename, github tools and fetch gist
         self.github = GitHubTools(user, filename, assume_yes)
         self.gist = self.github.select_gist(allow_none)
 
@@ -124,7 +124,7 @@ def run_getmy(filename, **kwargs):
 
 @command(help=PUTGIST_DESC)
 @option("--yes-to-all", "-y", is_flag=True, help="Assume yes to all prompts.")
-@option("--private", "-p", is_flag=True, help="Crete new gist as private")
+@option("--private", "-p", is_flag=True, help="Create new gist as private")
 @argument("user")
 @argument("filename")
 def run_putgist(filename, user, **kwargs):
@@ -143,7 +143,7 @@ def run_putgist(filename, user, **kwargs):
 
 @command(help=PUTMY_DESC)
 @option("--yes-to-all", "-y", is_flag=True, help="Assume yes to all prompts.")
-@option("--private", "-p", is_flag=True, help="Crete new gist as private")
+@option("--private", "-p", is_flag=True, help="Create new gist as private")
 @argument("filename")
 def run_putmy(filename, **kwargs):
     """Shortcut for run_putgist() reading username from env var"""

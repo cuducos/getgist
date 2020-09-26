@@ -14,11 +14,11 @@ def oauth_only(function):
     def check_for_oauth(self, *args, **kwargs):
         """
         Returns False if GitHubTools instance is not authenticated, or return
-        the decorated fucntion if it is.
+        the decorated function if it is.
         """
         if not self.is_authenticated:
-            self.error_message("To use putgist you have to set your GETGIST_TOKEN")
-            self.error_message("(see `putgist --help` for details)")
+            self.oops("To use putgist you have to set your GETGIST_TOKEN")
+            self.oops("(see `putgist --help` for details)")
             return False
         return function(self, *args, **kwargs)
 
@@ -66,17 +66,17 @@ class GitHubTools(GetGistCommons):
         # add oauth header & reach the api
         self.headers["Authorization"] = "token " + oauth_token
         url = self._api_url("user")
-        raw_resp = self.requests.get(url)
-        resp = raw_resp.json()
+        raw_response = self.requests.get(url)
+        response = raw_response.json()
 
         # abort & remove header if token is invalid
-        if resp.get("login", None) != self.user:
-            self.error_message("Invalid token for user " + self.user)
+        if response.get("login", None) != self.user:
+            self.oops("Invalid token for user " + self.user)
             self.headers.pop("Authorization")
             return
 
         self.is_authenticated = True
-        self.success_message("User {} authenticated".format(self.user))
+        self.yeah("User {} authenticated".format(self.user))
 
     def get_gists(self):
         """
@@ -89,21 +89,21 @@ class GitHubTools(GetGistCommons):
         else:
             url = self._api_url("users", self.user, "gists")
         self.output("Fetching " + url)
-        raw_resp = self.requests.get(url)
+        raw_response = self.requests.get(url)
 
         # abort if user not found
-        if raw_resp.status_code != 200:
-            self.error_message("User `{}` not found".format(self.user))
+        if raw_response.status_code != 200:
+            self.oops("User `{}` not found".format(self.user))
             return
 
         # abort if there are no gists
-        resp = raw_resp.json()
-        if not resp:
-            self.error_message("No gists found for user `{}`".format(self.user))
+        response = raw_response.json()
+        if not response:
+            self.oops("No gists found for user `{}`".format(self.user))
             return
 
         # parse response
-        for gist in raw_resp.json():
+        for gist in raw_response.json():
             yield self._parse_gist(gist)
 
     def select_gist(self, allow_none=False):
@@ -115,7 +115,7 @@ class GitHubTools(GetGistCommons):
         useful when `putgist` is calling this method
         :return: (dict) selected gist
         """
-        # pick up all macthing gists
+        # pick up all matching gists
         matches = list()
         for gist in self.get_gists():
             for gist_file in gist.get("files"):
@@ -127,11 +127,11 @@ class GitHubTools(GetGistCommons):
             if allow_none:
                 return None
             else:
-                msg = "No file named `{}` found in {}'s gists"
-                self.error_message(msg.format(self.file_path, self.user))
+                message = "No file named `{}` found in {}'s gists"
+                self.oops(message.format(self.file_path, self.user))
                 if not self.is_authenticated:
-                    self.warning_message("To access private gists set the GETGIST_TOKEN")
-                    self.warning_message("(see `getgist --help` for details)")
+                    self.warn("To access private gists set the GETGIST_TOKEN")
+                    self.warn("(see `getgist --help` for details)")
                 return False
 
         # return if there's is only one match
@@ -177,13 +177,13 @@ class GitHubTools(GetGistCommons):
 
         # error
         if response.status_code != 200:
-            self.error_message("Could not update " + gist.get("description"))
-            self.error_message("PATCH request returned " + str(response.status_code))
+            self.oops("Could not update " + gist.get("description"))
+            self.oops("PATCH request returned " + str(response.status_code))
             return False
 
         # success
-        self.success_message("Done!")
-        self.highlighted_message("The URL to this Gist is: {}".format(gist["url"]))
+        self.yeah("Done!")
+        self.hey("The URL to this Gist is: {}".format(gist["url"]))
         return True
 
     @oauth_only
@@ -214,16 +214,16 @@ class GitHubTools(GetGistCommons):
 
         # error
         if response.status_code != 201:
-            self.error_message("Could not create " + self.filename)
-            self.error_message("POST request returned " + str(response.status_code))
+            self.oops("Could not create " + self.filename)
+            self.oops("POST request returned " + str(response.status_code))
             return False
 
         # parse created gist
         gist = self._parse_gist(response.json())
 
         # success
-        self.success_message("Done!")
-        self.highlighted_message("The URL to this Gist is: {}".format(gist["url"]))
+        self.yeah("Done!")
+        self.hey("The URL to this Gist is: {}".format(gist["url"]))
         return True
 
     def _ask_which_gist(self, matches):
@@ -234,9 +234,9 @@ class GitHubTools(GetGistCommons):
         :return: (dict) of the selected gist
         """
         # ask user which gist to use
-        self.highlighted_message("Use {} from which gist?".format(self.filename))
+        self.hey("Use {} from which gist?".format(self.filename))
         for count, gist in enumerate(matches, 1):
-            self.highlighted_message("[{}] {}".format(count, gist.get("description")))
+            self.hey("[{}] {}".format(count, gist.get("description")))
 
         # get the gist index
         selected = False
@@ -245,7 +245,7 @@ class GitHubTools(GetGistCommons):
             try:
                 selected = matches[gist_index]
             except IndexError:
-                self.error_message("Invalid number, please try again.")
+                self.oops("Invalid number, please try again.")
 
         self.output("Using `{}` Gist".format(selected["description"]))
         return selected
