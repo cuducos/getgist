@@ -66,8 +66,8 @@ class GitHubTools(GetGistCommons):
         # add oauth header & reach the api
         self.headers["Authorization"] = "token " + oauth_token
         url = self._api_url("user")
-        raw_resp = self.requests.get(url)
-        resp = raw_resp.json()
+        raw_response = self.requests.get(url)
+        response = raw_response.json()
 
         # abort & remove header if token is invalid
         if resp.get("login", None) != self.user:
@@ -154,8 +154,8 @@ class GitHubTools(GetGistCommons):
                 break
         if url:
             self.output("Reading {}".format(url))
-            resp = self.requests.get(url)
-            return resp.content
+            response = self.requests.get(url)
+            return response.content
 
     @oauth_only
     def update(self, gist, content):
@@ -173,12 +173,12 @@ class GitHubTools(GetGistCommons):
         url = self._api_url("gists", gist.get("id"))
         data = {"files": {self.filename: {"content": content}}}
         self.output("Sending contents of {} to {}".format(self.file_path, url))
-        resp = self.requests.patch(url, data=dumps(data))
+        response = self.requests.patch(url, data=dumps(data))
 
         # error
-        if resp.status_code != 200:
+        if response.status_code != 200:
             self.oops("Could not update " + gist.get("description"))
-            self.oops("PATCH request returned " + str(resp.status_code))
+            self.oops("PATCH request returned " + str(response.status_code))
             return False
 
         # success
@@ -213,13 +213,13 @@ class GitHubTools(GetGistCommons):
         resp = self.requests.post(url, data=dumps(data))
 
         # error
-        if resp.status_code != 201:
+        if response.status_code != 201:
             self.oops("Could not create " + self.filename)
-            self.oops("POST request returned " + str(resp.status_code))
+            self.oops("POST request returned " + str(response.status_code))
             return False
 
         # parse created gist
-        gist = self._parse_gist(resp.json())
+        gist = self._parse_gist(response.json())
 
         # success
         self.yeah("Done!")
