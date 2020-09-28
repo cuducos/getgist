@@ -56,7 +56,7 @@ class LocalTools(GetGistCommons):
         """
         Read the contents of a file.
         :param filename: (str) path to a file in the local file system
-        :return: (str) contents of the file, or (False) if not found/not file
+        :return: (str) contents of the file, or (False) if not found/not a file
         """
         if not file_path:
             file_path = self.file_path
