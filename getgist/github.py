@@ -193,7 +193,7 @@ class GitHubTools(GetGistCommons):
         :param gist: (dict) gist parsed by GitHubTools._parse()
         :param content: (str or bytes) to be written
         :param public: (bool) defines if the gist is public or private
-        :return: (bool) indicatind the success or failure of the creation
+        :return: (bool) indicating the success or failure of the creation
         """
         # abort if content is False
         if content is False:
@@ -230,7 +230,7 @@ class GitHubTools(GetGistCommons):
         """
         Asks user which gist to use in case of more than one gist matching the
         instance filename.
-        :param matches: (list) of dictioaries generated within select_gists()
+        :param matches: (list) of dictionaries generated within select_gists()
         :return: (dict) of the selected gist
         """
         # ask user which gist to use

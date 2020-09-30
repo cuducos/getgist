@@ -34,7 +34,7 @@ def response_mock(uri, **kwargs):
     The file name is composed by the equivalent of the request URI replacing
     slashes by underscores (eg: users/janedoe/gists is converted to
     users_janedoe_gists), and to it it's appended the case (success if True, or
-    fail if False) and the .json extention.
+    fail if False) and the .json extension.
 
     :param uri: (str) Example: users/janedoe/gists
     :param kwargs: case (bool) True/success or False/fail; status_code (int)
