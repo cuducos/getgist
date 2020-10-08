@@ -16,8 +16,15 @@ class LocalTools(GetGistCommons):
         return: (None)
         """
         self.cwd = os.getcwd()
-        self.file_path = os.path.expanduser(filename)
-        self.filename = os.path.basename(filename)
+
+        if filename:
+            self.file_path = os.path.expanduser(filename)
+            self.filename = os.path.basename(filename)
+
+        else:
+            self.file_path = None
+            self.filename = None
+        
         self.assume_yes = assume_yes
 
     def save(self, content):

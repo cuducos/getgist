@@ -42,14 +42,20 @@ class GitHubTools(GetGistCommons):
         Save basic variables to all methods, instantiate GetGistrequests and
         calls the OAuth method.
         :param user: (str) GitHub username
-        :param file_path: (str) file_path to be saved (locally), created or
-        updated (remotelly)
+        :param file_path: (str or None) file_path to be saved (locally), created or
+        updated (remotelly) 
         :param assume_yes: (bool) assume yes (or first option) for all prompts
         :return: (None)
         """
         self.user = user
         self.file_path = file_path
-        self.filename = os.path.basename(file_path)
+        
+        if self.file_path:
+            self.filename = os.path.basename(file_path)
+
+        else:
+            self.filename = None
+
         self.assume_yes = assume_yes
         self.add_oauth_header()
 
@@ -139,6 +145,14 @@ class GitHubTools(GetGistCommons):
             return matches.pop(0)
 
         return self._ask_which_gist(matches)
+
+    def list_gists(self):
+        """ Prints all gists filenames """       
+        for gist in self.get_gists():
+            for gist_file in gist.get("files"):
+                print(f"[{gist.get('description')}] {gist_file.get('filename')}")
+
+
 
     def read_gist_file(self, gist):
         """

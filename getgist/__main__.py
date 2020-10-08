@@ -43,6 +43,11 @@ PUTMY_DESC = """
 """
 
 
+LSGISTS_DESC = """
+    Lists all Github Gists from a user, with one single command. 
+    Usage:  `lsgists <GitHub username>`.
+"""
+
 class GetGist(object):
     """
     Main GetGist objects linking inputs from the CLI to the helpers from
@@ -83,7 +88,9 @@ class GetGist(object):
 
         # instantiate filename, github tools and fetch gist
         self.github = GitHubTools(user, filename, assume_yes)
-        self.gist = self.github.select_gist(allow_none)
+
+        if filename:
+            self.gist = self.github.select_gist(allow_none)
 
     def get(self):
         """Reads the remote file from Gist and save it locally"""
@@ -98,6 +105,10 @@ class GetGist(object):
             self.github.update(self.gist, content)
         else:
             self.github.create(content, public=self.public)
+
+    def ls(self):
+        """ Lists all gists from a github user """
+        self.github.list_gists()
 
 
 @command(help=GETGIST_DESC)
@@ -158,3 +169,10 @@ def run_putmy(filename, **kwargs):
         allow_none=True,
     )
     getgist.put()
+
+
+@command(help=LSGISTS_DESC)
+@argument("user")
+def run_lsgists(user):
+   getgist = GetGist(user=user)
+   getgist.ls()
