@@ -57,7 +57,7 @@ class GetGist(object):
 
     def __init__(self, **kwargs):
         """
-        Instantiate GitHubTools & LocalTools, and set the variables required
+        Instantiate GitHubTools & LocalTools (if needed), and set the variables required
         to get, create or update gists (filename and public/private flag)
         :param user: (str) GitHub username
         :param filename: (str) name of file from any Gist or local file system
