@@ -44,7 +44,7 @@ PUTMY_DESC = """
 
 
 LSGISTS_DESC = """
-    Lists all Github Gists from a user, with one single command. 
+    Lists all files from a Github user's Gists, with one single command.
     Usage:  `lsgists <GitHub username>`.
 """
 
