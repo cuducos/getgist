@@ -150,7 +150,7 @@ class GitHubTools(GetGistCommons):
         """ Prints all gists filenames """       
         for gist in self.get_gists():
             for gist_file in gist.get("files"):
-                print(f"[{gist.get('description')}] {gist_file.get('filename')}")
+                print ("[{}] {}".format(gist.get("description"),gist_file.get('filename')))
 
 
 
