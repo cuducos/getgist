@@ -147,12 +147,19 @@ class GitHubTools(GetGistCommons):
         return self._ask_which_gist(matches)
 
     def list_gists(self):
-        """ Prints all gists filenames """       
+        """ Prints all gists names, filenames and URLs"""
+        gists = []
+
         for gist in self.get_gists():
             for gist_file in gist.get("files"):
-                print (f'[{gist.get("description")}]\t{gist_file.get("filename")}\t{gist.get("url")}')
+                gists.append([gist.get("description"),gist_file.get("filename"),gist.get("url")])
 
+        #Get max length from gists names and filenames
+        max_name_len = max(len(gist[0]) for gist in gists)
+        max_file_len = max(len(gist[1]) for gist in gists)
 
+        for gist in gists:
+            print ("[{:^{}}] {:^{}} {}".format(gist[0], max_name_len, gist[1], max_file_len, gist[2]))
 
     def read_gist_file(self, gist):
         """
