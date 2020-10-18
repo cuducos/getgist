@@ -48,6 +48,7 @@ LSGISTS_DESC = """
     Usage:  `lsgists <GitHub username>`.
 """
 
+
 class GetGist(object):
     """
     Main GetGist objects linking inputs from the CLI to the helpers from
@@ -174,5 +175,5 @@ def run_putmy(filename, **kwargs):
 @command(help=LSGISTS_DESC)
 @argument("user")
 def run_lsgists(user):
-   getgist = GetGist(user=user)
-   getgist.ls()
+    getgist = GetGist(user=user)
+    getgist.ls()

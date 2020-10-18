@@ -42,19 +42,14 @@ class GitHubTools(GetGistCommons):
         Save basic variables to all methods, instantiate GetGistrequests and
         calls the OAuth method.
         :param user: (str) GitHub username
-        :param file_path: (str or None) file_path to be saved (locally), created or
-        updated (remotelly) 
+        :param file_path: (str or None) file_path to be saved (locally), created or updated (remotelly)
         :param assume_yes: (bool) assume yes (or first option) for all prompts
         :return: (None)
         """
         self.user = user
         self.file_path = file_path
-        
         if self.file_path:
             self.filename = os.path.basename(file_path)
-
-        else:
-            self.filename = None
 
         self.assume_yes = assume_yes
         self.add_oauth_header()
@@ -152,14 +147,24 @@ class GitHubTools(GetGistCommons):
 
         for gist in self.get_gists():
             for gist_file in gist.get("files"):
-                gists.append([gist.get("description"),gist_file.get("filename"),gist.get("url")])
+                gists.append(
+                    [
+                        gist.get("description"),
+                        gist_file.get("filename"),
+                        gist.get("url"),
+                    ]
+                )
 
-        #Get max length from gists names and filenames
+        # Get max length from gists names and filenames
         max_name_len = max(len(gist[0]) for gist in gists)
         max_file_len = max(len(gist[1]) for gist in gists)
 
         for gist in gists:
-            print ("[{:^{}}] {:^{}} {}".format(gist[0], max_name_len, gist[1], max_file_len, gist[2]))
+            print(
+                "[{:^{}}] {:^{}} {}".format(
+                    gist[0], max_name_len, gist[1], max_file_len, gist[2]
+                )
+            )
 
     def read_gist_file(self, gist):
         """
