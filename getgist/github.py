@@ -48,9 +48,7 @@ class GitHubTools(GetGistCommons):
         """
         self.user = user
         self.file_path = file_path
-        if self.file_path:
-            self.filename = os.path.basename(file_path)
-
+        self.filename = os.path.basename(file_path) if file_path else None
         self.assume_yes = assume_yes
         self.add_oauth_header()
 
@@ -160,7 +158,7 @@ class GitHubTools(GetGistCommons):
         max_file_len = max(len(gist[1]) for gist in gists)
 
         for gist in gists:
-            print(
+            self.output(
                 "[{:^{}}] {:^{}} {}".format(
                     gist[0], max_name_len, gist[1], max_file_len, gist[2]
                 )

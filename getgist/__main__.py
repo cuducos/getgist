@@ -78,8 +78,8 @@ class GetGist(object):
         filename = kwargs.get("filename")
         self.public = not kwargs.get("create_private", False)
 
-        # instantiate local tools & check for user
-        self.local = LocalTools(filename, assume_yes)
+        # instantiate local tools (if filename is given) & check for user
+        self.local = LocalTools(filename, assume_yes) if filename else None
         if not user:
             message = """
                 No default user set yet. To avoid this prompt set an
@@ -87,11 +87,9 @@ class GetGist(object):
             """
             self.local.oops(message)
 
-        # instantiate filename, github tools and fetch gist
+        # instantiate filename (if given), github tools and fetch gist
         self.github = GitHubTools(user, filename, assume_yes)
-
-        if filename:
-            self.gist = self.github.select_gist(allow_none)
+        self.gist = self.github.select_gist(allow_none) if filename else None
 
     def get(self):
         """Reads the remote file from Gist and save it locally"""
