@@ -7,13 +7,13 @@ def test_tabulate(mocker):
     tabulate = mocker.patch("getgist.tabulate")
     commons = GetGistCommons()
     commons.tabulate(
-        FileFromGist("file1.txt", "My First Gist", "http://…"),
-        FileFromGist("file2.txt", "My 2nd Gist", "https://…"),
+        FileFromGist("file1.txt", "My First Gist", "http://..."),
+        FileFromGist("file2.txt", "My 2nd Gist", "https://..."),
     )
     tabulate.assert_called_once_with(
         (
-            ("file1.txt", "My First Gist", "http://…"),
-            ("file2.txt", "My 2nd Gist", "https://…"),
+            ("file1.txt", "My First Gist", "http://..."),
+            ("file2.txt", "My 2nd Gist", "https://..."),
         ),
         headers=("Gist", "File", "URL"),
     )

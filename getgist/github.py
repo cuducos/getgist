@@ -29,6 +29,24 @@ def oauth_only(function):
     return check_for_oauth
 
 
+def with_filename_only(function):
+    """Decorator to restrict some GitHubTools methods to run only if the
+    instance has an attribute `filename` set (which is optional)."""
+
+    def check_for_filename_attribute(self, *args, **kwargs):
+        """
+        Returns False if GitHubTools instance has no filename attribute, or
+        return the decorated function if it has.
+        """
+        if not hasattr(self, "filename") or not self.filename:
+            msg = "To use {} method you need a filename, which was not set."
+            self.oops(msg.format(function.__name__))
+            return False
+        return function(self, *args, **kwargs)
+
+    return check_for_filename_attribute
+
+
 class GitHubTools(GetGistCommons):
     """Helpers to deal with GitHub API and manipulate gists"""
 
@@ -109,6 +127,7 @@ class GitHubTools(GetGistCommons):
         for gist in raw_resp.json():
             yield self._parse_gist(gist)
 
+    @with_filename_only
     def select_gist(self, allow_none=False):
         """
         Given the requested filename, it selects the proper gist; if more than
@@ -156,6 +175,7 @@ class GitHubTools(GetGistCommons):
         )
         self.tabulate(*gists)
 
+    @with_filename_only
     def read_gist_file(self, gist):
         """
         Returns the contents of file hosted inside a gist at GitHub.
@@ -173,6 +193,7 @@ class GitHubTools(GetGistCommons):
             response = self.requests.get(url)
             return response.content
 
+    @with_filename_only
     @oauth_only
     def update(self, gist, content):
         """
@@ -202,6 +223,7 @@ class GitHubTools(GetGistCommons):
         self.hey("The URL to this Gist is: {}".format(gist["url"]))
         return True
 
+    @with_filename_only
     @oauth_only
     def create(self, content, **kwargs):
         """
@@ -242,6 +264,7 @@ class GitHubTools(GetGistCommons):
         self.hey("The URL to this Gist is: {}".format(gist["url"]))
         return True
 
+    @with_filename_only
     def _ask_which_gist(self, matches):
         """
         Asks user which gist to use in case of more than one gist matching the

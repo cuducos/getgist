@@ -140,6 +140,13 @@ def test_select_gist_multi_matches(mocker, response, gists, authenticated_github
     assert authenticated_github.select_gist() == gists[1]
 
 
+def test_select_gist_without_filename(mocker, response, gists, authenticated_github):
+    get = mocker.patch("getgist.request.GetGistRequests.get")
+    get.return_value = response("users/janedoe/gists")
+    authenticated_github.filename = None
+    assert not authenticated_github.select_gist()
+
+
 def test_read_gist(mocker, response, gists, authenticated_github):
     get = mocker.patch("getgist.request.GetGistRequests.get")
     get.return_value = MockResponse("Hello, world!", 200)
