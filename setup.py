@@ -29,7 +29,7 @@ with open("README.rst") as readme:
             ]
         },
         include_package_data=True,
-        install_requires=["click>=6.6", "requests>=2.18.1"],
+        install_requires=["click>=6.6", "requests>=2.18.1", "tabulate>=0.8.7"],
         keywords="gist, command-line, github, dotfiles",
         license="MIT",
         long_description=readme.read(),

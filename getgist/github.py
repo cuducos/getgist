@@ -1,4 +1,5 @@
 import os
+from collections import namedtuple
 from json import dumps
 from pkg_resources import get_distribution
 
@@ -6,6 +7,9 @@ from click import prompt
 
 from getgist import GetGistCommons
 from getgist.request import GetGistRequests
+
+
+FileFromGist = namedtuple("File", "name gist url")
 
 
 def oauth_only(function):
@@ -141,28 +145,16 @@ class GitHubTools(GetGistCommons):
 
     def list_gists(self):
         """ Prints all gists names, filenames and URLs"""
-        gists = []
-
-        for gist in self.get_gists():
-            for gist_file in gist.get("files"):
-                gists.append(
-                    [
-                        gist.get("description"),
-                        gist_file.get("filename"),
-                        gist.get("url"),
-                    ]
-                )
-
-        # Get max length from gists names and filenames
-        max_name_len = max(len(gist[0]) for gist in gists)
-        max_file_len = max(len(gist[1]) for gist in gists)
-
-        for gist in gists:
-            self.output(
-                "[{:^{}}] {:^{}} {}".format(
-                    gist[0], max_name_len, gist[1], max_file_len, gist[2]
-                )
+        gists = tuple(
+            FileFromGist(
+                gist_file.get("filename"),
+                gist.get("description"),
+                gist.get("url"),
             )
+            for gist in self.get_gists()
+            for gist_file in gist.get("files")
+        )
+        self.tabulate(*gists)
 
     def read_gist_file(self, gist):
         """

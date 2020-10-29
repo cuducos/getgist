@@ -1,5 +1,6 @@
 from sys import stderr, stdout
 
+from tabulate import tabulate
 from click import secho
 
 
@@ -44,3 +45,6 @@ class GetGistCommons(object):
     def hey(self, message):
         """Helper to colorize highlighted messages"""
         return self.output(message, color="blue")
+
+    def tabulate(self, *files):
+        return self.output(tabulate(files, headers=("Gist", "File", "URL")))

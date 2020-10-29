@@ -44,7 +44,7 @@ PUTMY_DESC = """
 
 
 LSGISTS_DESC = """
-    Lists all files from a Github user's Gists, with one single command.
+    Lists all files from a GitHub user's Gists, with one single command.
     Usage:  `lsgists <GitHub username>`.
 """
 
@@ -70,26 +70,22 @@ class GetGist(object):
         :param assume_yes: (bool) assume yes (or first option) for all prompts
         :return: (None)
         """
-
-        # get arguments
         user = kwargs.get("user")
         allow_none = kwargs.get("allow_none", False)
         assume_yes = kwargs.get("assume_yes", False)
         filename = kwargs.get("filename")
         self.public = not kwargs.get("create_private", False)
 
-        # instantiate local tools (if filename is given) & check for user
+        self.github = GitHubTools(user, filename, assume_yes)
         self.local = LocalTools(filename, assume_yes) if filename else None
+        self.gist = self.github.select_gist(allow_none) if filename else None
+
         if not user:
             message = """
-                No default user set yet. To avoid this prompt set an
-                environmental variable called  `GETGIST_USER`.'
+            No default user set yet. To avoid this prompt set an
+            environmental variable called  `GETGIST_USER`.'
             """
             self.local.oops(message)
-
-        # instantiate filename (if given), github tools and fetch gist
-        self.github = GitHubTools(user, filename, assume_yes)
-        self.gist = self.github.select_gist(allow_none) if filename else None
 
     def get(self):
         """Reads the remote file from Gist and save it locally"""
