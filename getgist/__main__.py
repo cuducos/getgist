@@ -48,7 +48,7 @@ LSGISTS_DESC = """
     Usage:  `lsgists <GitHub username>`.
 """
 
-LSMY_DESC = """
+MYGISTS_DESC = """
     Call `lsgists` files assuming the user is set in an envvar called GETGIST_USER.
     Usage:  `lsgists <GitHub username>`.
 """
@@ -178,8 +178,8 @@ def run_lsgists(user):
     getgist.ls()
 
 
-@command(help=LSMY_DESC)
-def run_lsmy():
+@command(help=MYGISTS_DESC)
+def run_mygists():
     user = getenv("GETGIST_USER")
     getgist = GetGist(user=user)
     getgist.ls()
