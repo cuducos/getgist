@@ -26,6 +26,7 @@ with open("README.rst") as readme:
                 "putgist=getgist.__main__:run_putgist",
                 "putmy=getgist.__main__:run_putmy",
                 "lsgists=getgist.__main__:run_lsgists",
+                "lsmy=getgist.__main__:run_lsmy",
             ]
         },
         include_package_data=True,
