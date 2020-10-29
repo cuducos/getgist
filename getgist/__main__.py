@@ -1,7 +1,9 @@
 from os import getenv
+from sys import exit
 
 from click import argument, command, option
 
+from getgist import GetGistCommons
 from getgist.github import GitHubTools
 from getgist.local import LocalTools
 
@@ -76,16 +78,18 @@ class GetGist(object):
         filename = kwargs.get("filename")
         self.public = not kwargs.get("create_private", False)
 
-        self.github = GitHubTools(user, filename, assume_yes)
-        self.local = LocalTools(filename, assume_yes) if filename else None
-        self.gist = self.github.select_gist(allow_none) if filename else None
-
         if not user:
             message = """
             No default user set yet. To avoid this prompt set an
             environmental variable called  `GETGIST_USER`.'
             """
-            self.local.oops(message)
+            GetGistCommons().oops(message)
+            exit(1)
+
+        self.github = GitHubTools(user, filename, assume_yes)
+        self.local = LocalTools(filename, assume_yes) if filename else None
+        self.gist = self.github.select_gist(allow_none) if filename else None
+
 
     def get(self):
         """Reads the remote file from Gist and save it locally"""
