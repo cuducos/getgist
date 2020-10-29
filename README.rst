@@ -75,6 +75,21 @@ OAuth authentication* below). For example:
 *GetGist* asks you what to do when it finds the different files with the
 same name in different Gists.
 
+Listing Gist files from GitHub
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Just run ``lsgists <username>``. For example:
+
+.. code:: console
+
+    $ lsgists cuducos
+      Gist               File           URL
+    -----------------  -------------  -------------------------
+    README.md          My Gist #2     https://gist.github.com/…
+    anothe_file.md     My Gist #2     https://gist.github.com/…
+    file.md            First Gist     https://gist.github.com/…
+
+
 Using OAuth authentication
 --------------------------
 
@@ -86,6 +101,7 @@ as as enviroment variable to allow:
 
 1. the download of private Gists
 2. the update of existing Gists
+3. listing private gists
 
 How?
 ~~~~
