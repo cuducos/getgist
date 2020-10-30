@@ -95,7 +95,6 @@ class GetGist(object):
         self.local = LocalTools(filename, assume_yes) if filename else None
         self.gist = self.github.select_gist(allow_none) if filename else None
 
-
     def get(self):
         """Reads the remote file from Gist and save it locally"""
         if self.gist:
