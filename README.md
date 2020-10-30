@@ -1,4 +1,4 @@
-[![Travis CI](https://img.shields.io/travis/cuducos/getgist.svg?style=flat)](https://travis-ci.org/cuducos/getgist)[![Coveralls](https://img.shields.io/coveralls/cuducos/getgist.svg?style=flat)](https://coveralls.io/github/cuducos/getgist)[![Code Climate](https://img.shields.io/codeclimate/maintainability-percentage/cuducos/getgist.svg)](https://codeclimate.com/github/cuducos/getgist)[![PyPI Version](https://img.shields.io/pypi/v/getgist.svg?style=flat)](https://pypi.python.org/pypi/getgist)[![Python Version](https://img.shields.io/pypi/pyversions/getgist.svg?style=flat)](https://pypi.python.org/pypi/getgist)
+[![Travis CI](https://img.shields.io/travis/cuducos/getgist.svg?style=flat)](https://travis-ci.org/cuducos/getgist) [![Coveralls](https://img.shields.io/coveralls/cuducos/getgist.svg?style=flat)](https://coveralls.io/github/cuducos/getgist) [![PyPI Version](https://img.shields.io/pypi/v/getgist.svg?style=flat)](https://pypi.python.org/pypi/getgist) [![Python Version](https://img.shields.io/pypi/pyversions/getgist.svg?style=flat)](https://pypi.python.org/pypi/getgist)
 
 # GetGist
 
