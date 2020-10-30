@@ -17,7 +17,8 @@ class GetGistCommons(object):
         :return: (str)
         """
         indent = self.indent_char * self.indent_size
-        return indent + message
+        lines = (indent + line for line in message.split("\n"))
+        return "\n".join(lines)
 
     def output(self, message, color=None):
         """
