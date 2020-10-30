@@ -16,10 +16,10 @@ before_install:
   - pipx install poetry
 install:
   - poetry install
-  - coverage erase
+  - poetry run coverage erase
 script:
   - poetry run tox
 afeter_success:
-  - coverage combine
-  - coverage report
-  - coveralls
+  - poetry run coverage combine
+  - poetry run coverage report
+  - poetry run coveralls
