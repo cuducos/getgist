@@ -1,4 +1,5 @@
 from click.testing import CliRunner
+
 from getgist.__main__ import (
     GETGIST_DESC,
     GETMY_DESC,
