@@ -146,7 +146,7 @@ How?
 
 1. Set an environment variable called ``GETGIST_USER`` with your GitHub
    username
-2. Use the shortcut ``getmy <filename>`` or ``putmy <filename>``
+2. Use the shortcut ``getmy <filename>``, ``putmy <filename>`` or ``mygists``
 
 Example
 ~~~~~~~
