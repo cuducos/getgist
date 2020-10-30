@@ -1,8 +1,19 @@
 import click
 from click.testing import CliRunner
-from getgist.__main__ import run_getgist, run_getmy
-from getgist.__main__ import run_putgist, run_putmy, run_lsgists, run_mygists
-from getgist.__main__ import GETGIST_DESC, GETMY_DESC, PUTGIST_DESC, PUTMY_DESC, LSGISTS_DESC, MYGISTS_DESC
+from getgist.__main__ import (
+    GETGIST_DESC,
+    GETMY_DESC,
+    LSGISTS_DESC,
+    MYGISTS_DESC,
+    PUTGIST_DESC,
+    PUTMY_DESC,
+    run_getgist,
+    run_getmy,
+    run_lsgists,
+    run_mygists,
+    run_putgist,
+    run_putmy,
+)
 
 import pytest
 
