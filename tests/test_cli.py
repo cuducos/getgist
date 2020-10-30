@@ -1,3 +1,4 @@
+import pytest
 from click.testing import CliRunner
 from getgist.__main__ import (
     run_getgist,
@@ -11,91 +12,66 @@ from getgist.__main__ import (
 runner = CliRunner()
 
 
-def test_run_getgist_cli_without_username():
-    result = runner.invoke(run_getgist)
-    assert "Error: Missing argument 'USER'." in result.output
-
-
-def test_run_getgist_cli_without_filename():
-    result = runner.invoke(run_getgist, ["cuducos"])
-    assert "Error: Missing argument 'FILENAME'." in result.output
-
-
-def test_run_getgist_cli_with_username_and_filename(mocker):
-    mocker.patch("getgist.__main__.GetGist.get")
-    result = runner.invoke(run_getgist, ["cuducos", ".gitignore_global"])
-    assert result.exit_code == 0
-
-
-def test_run_getmy_cli_without_filename():
-    result = runner.invoke(run_getmy)
-    assert "Error: Missing argument 'FILENAME'." in result.output
-    assert result.exit_code == 2
-
-
-def test_run_getmy_cli_with_filename(mocker, monkeypatch):
+@pytest.mark.parametrize(
+    "command, to_patch, args",
+    [
+        (run_getmy, None, []),
+        (run_putmy, "getgist.__main__.GetGist.put", []),
+        (run_putgist, None, ["cuducos"]),
+        (run_getgist, None, ["cuducos"]),
+    ],
+)
+def test_run_command_with_error_in_filename(
+    command, to_patch, args, mocker, monkeypatch
+):
     monkeypatch.setenv("GETGIST_USER", "cuducos")
-    mocker.patch("getgist.__main__.GetGist.get")
-    result = runner.invoke(run_getmy, ["bootstrap.sh"])
-    assert result.exit_code == 0
 
+    if to_patch:
+        mocker.patch(to_patch)
 
-def test_run_putmy_cli_without_filename(mocker, monkeypatch):
-    monkeypatch.setenv("GETGIST_USER", "cuducos")
-    mocker.patch("getgist.__main__.GetGist.put")
-    result = runner.invoke(run_putmy)
+    result = runner.invoke(command, args)
     assert result.exit_code == 2
     assert "Error: Missing argument 'FILENAME'." in result.output
 
 
-def test_run_putmy_cli_with_filename(mocker, monkeypatch):
+@pytest.mark.parametrize(
+    "command, to_patch, args",
+    [
+        (run_putgist, "getgist.__main__.GetGist.put", []),
+        (run_getgist, None, []),
+        (run_lsgists, "getgist.__main__.GetGist.put", []),
+    ],
+)
+def test_run_command_with_error_in_username(
+    command, to_patch, args, mocker, monkeypatch
+):
     monkeypatch.setenv("GETGIST_USER", "cuducos")
-    mocker.patch("getgist.__main__.GetGist.put")
-    result = runner.invoke(run_putmy, ["~/.vimrc"])
-    assert result.exit_code == 0
 
+    if to_patch:
+        mocker.patch(to_patch)
 
-def test_run_putgist_cli_without_username_and_filename(mocker):
-    mocker.patch("getgist.__main__.GetGist.put")
-    result = runner.invoke(run_putgist)
+    result = runner.invoke(command, args)
     assert result.exit_code == 2
     assert "Error: Missing argument 'USER'." in result.output
 
 
-def test_run_putgist_cli_with_username(mocker):
-    mocker.patch("getgist.__main__.GetGist.put")
-    result = runner.invoke(run_putgist, ["cuducos"])
-    assert result.exit_code == 2
-    assert "Error: Missing argument 'FILENAME'." in result.output
-
-
-def test_run_putgist_cli_with_username_and_filaname(mocker):
-    mocker.patch("getgist.__main__.GetGist.put")
-    result = runner.invoke(run_putgist, ["cuducos", "~/.vimrc"])
-    assert result.exit_code == 0
-
-
-def test_run_lsgist_cli_without_username(mocker):
-    mocker.patch("getgist.__main__.GetGist.put")
-    result = runner.invoke(run_lsgists)
-    assert result.exit_code == 2
-    assert "Error: Missing argument 'USER'." in result.output
-
-
-def test_run_lsgist_cli_with_username(mocker):
-    mocker.patch("getgist.__main__.GetGist.put")
-    result = runner.invoke(run_lsgists, ["cuducos"])
-    assert result.exit_code == 0
-
-
-def test_run_mygists_cli_without_username(mocker):
-    mocker.patch("getgist.__main__.GetGist.put")
-    result = runner.invoke(run_mygists)
-    assert result.exit_code == 1
-
-
-def test_run_mygists_cli_with_username(mocker, monkeypatch):
+@pytest.mark.parametrize(
+    "command, to_patch, args",
+    [
+        (run_getgist, "getgist.__main__.GetGist.get", ["cuducos", ".gitignore_global"]),
+        (run_getmy, "getgist.__main__.GetGist.get", [".gitignore_global"]),
+        (run_putmy, "getgist.__main__.GetGist.put", ["~/.vimrc"]),
+        (run_mygists, "getgist.__main__.GetGist.put", []),
+        (run_lsgists, "getgist.__main__.GetGist.put", ["cuducos"]),
+        (run_putgist, "getgist.__main__.GetGist.put", ["cuducos", "~/.vimrc"]),
+        (run_mygists, "getgist.__main__.GetGist.get", []),
+    ],
+)
+def test_run_command_with_success(command, to_patch, args, mocker, monkeypatch):
     monkeypatch.setenv("GETGIST_USER", "cuducos")
-    mocker.patch("getgist.__main__.GetGist.put")
-    result = runner.invoke(run_mygists)
+
+    if to_patch:
+        mocker.patch(to_patch)
+
+    result = runner.invoke(command, args)
     assert result.exit_code == 0
