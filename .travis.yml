@@ -1,5 +1,5 @@
 sudo: required
-dist: xenial
+dist: buster
 language: generic
 before_install:
   - sudo apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev
@@ -7,19 +7,18 @@ before_install:
   - PYENV_ROOT="$HOME/.pyenv"
   - PATH="$PYENV_ROOT/bin:$PATH"
   - eval "$(pyenv init -)"
-  - pyenv install 2.7.16
-  - pyenv install 3.4.9
-  - pyenv install 3.5.7
-  - pyenv install 3.6.8
-  - pyenv install 3.7.3
-  - pyenv local 3.7.3 3.6.8 3.5.7 3.4.9 2.7.16
+  - pyenv install 3.6.10
+  - pyenv install 3.7.7
+  - pyenv install 3.8.6
+  - pyenv install 3.9.0
+  - pyenv local 3.9.0 3.8.6 3.7.7 3.6.10
+  - pip install pipx
+  - pipx install poetry
 install:
-  - pip install black coveralls tox
-  - pyenv rehash
+  - poetry install
   - coverage erase
 script:
-  - tox
-  - black . --check
+  - poetry run tox
 afeter_success:
   - coverage combine
   - coverage report
