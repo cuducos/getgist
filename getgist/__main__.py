@@ -50,7 +50,7 @@ LSGISTS_DESC = """
 
 MYGISTS_DESC = """
     Call `lsgists` files assuming the user is set in an envvar called GETGIST_USER.
-    Usage:  `lsgists <GitHub username>`.
+    Usage:  `mygists`.
 """
 
 
