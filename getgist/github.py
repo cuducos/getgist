@@ -1,4 +1,5 @@
 import os
+from collections import namedtuple
 from json import dumps
 from pkg_resources import get_distribution
 
@@ -6,6 +7,9 @@ from click import prompt
 
 from getgist import GetGistCommons
 from getgist.request import GetGistRequests
+
+
+FileFromGist = namedtuple("File", "name gist url")
 
 
 def oauth_only(function):
@@ -25,6 +29,24 @@ def oauth_only(function):
     return check_for_oauth
 
 
+def with_filename_only(function):
+    """Decorator to restrict some GitHubTools methods to run only if the
+    instance has an attribute `filename` set (which is optional)."""
+
+    def check_for_filename_attribute(self, *args, **kwargs):
+        """
+        Returns False if GitHubTools instance has no filename attribute, or
+        return the decorated function if it has.
+        """
+        if not hasattr(self, "filename") or not self.filename:
+            msg = "To use {} method you need a filename, which was not set."
+            self.oops(msg.format(function.__name__))
+            return False
+        return function(self, *args, **kwargs)
+
+    return check_for_filename_attribute
+
+
 class GitHubTools(GetGistCommons):
     """Helpers to deal with GitHub API and manipulate gists"""
 
@@ -42,14 +64,13 @@ class GitHubTools(GetGistCommons):
         Save basic variables to all methods, instantiate GetGistrequests and
         calls the OAuth method.
         :param user: (str) GitHub username
-        :param file_path: (str) file_path to be saved (locally), created or
-        updated (remotelly)
+        :param file_path: (str or None) file_path to be saved (locally), created or updated (remotelly)
         :param assume_yes: (bool) assume yes (or first option) for all prompts
         :return: (None)
         """
         self.user = user
         self.file_path = file_path
-        self.filename = os.path.basename(file_path)
+        self.filename = os.path.basename(file_path) if file_path else None
         self.assume_yes = assume_yes
         self.add_oauth_header()
 
@@ -106,6 +127,7 @@ class GitHubTools(GetGistCommons):
         for gist in raw_resp.json():
             yield self._parse_gist(gist)
 
+    @with_filename_only
     def select_gist(self, allow_none=False):
         """
         Given the requested filename, it selects the proper gist; if more than
@@ -140,6 +162,20 @@ class GitHubTools(GetGistCommons):
 
         return self._ask_which_gist(matches)
 
+    def list_gists(self):
+        """ Prints all gists names, filenames and URLs"""
+        gists = tuple(
+            FileFromGist(
+                gist_file.get("filename"),
+                gist.get("description"),
+                gist.get("url"),
+            )
+            for gist in self.get_gists()
+            for gist_file in gist.get("files")
+        )
+        self.tabulate(*gists)
+
+    @with_filename_only
     def read_gist_file(self, gist):
         """
         Returns the contents of file hosted inside a gist at GitHub.
@@ -157,6 +193,7 @@ class GitHubTools(GetGistCommons):
             response = self.requests.get(url)
             return response.content
 
+    @with_filename_only
     @oauth_only
     def update(self, gist, content):
         """
@@ -186,6 +223,7 @@ class GitHubTools(GetGistCommons):
         self.hey("The URL to this Gist is: {}".format(gist["url"]))
         return True
 
+    @with_filename_only
     @oauth_only
     def create(self, content, **kwargs):
         """
@@ -226,6 +264,7 @@ class GitHubTools(GetGistCommons):
         self.hey("The URL to this Gist is: {}".format(gist["url"]))
         return True
 
+    @with_filename_only
     def _ask_which_gist(self, matches):
         """
         Asks user which gist to use in case of more than one gist matching the

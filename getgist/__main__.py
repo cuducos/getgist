@@ -1,7 +1,9 @@
 from os import getenv
+from sys import exit
 
 from click import argument, command, option
 
+from getgist import GetGistCommons
 from getgist.github import GitHubTools
 from getgist.local import LocalTools
 
@@ -43,6 +45,17 @@ PUTMY_DESC = """
 """
 
 
+LSGISTS_DESC = """
+    Lists all files from a GitHub user's Gists, with one single command.
+    Usage:  `lsgists <GitHub username>`.
+"""
+
+MYGISTS_DESC = """
+    Call `lsgists` files assuming the user is set in an envvar called GETGIST_USER.
+    See:  `lsgists --help` for more more details.
+"""
+
+
 class GetGist(object):
     """
     Main GetGist objects linking inputs from the CLI to the helpers from
@@ -52,7 +65,7 @@ class GetGist(object):
 
     def __init__(self, **kwargs):
         """
-        Instantiate GitHubTools & LocalTools, and set the variables required
+        Instantiate GitHubTools & LocalTools (if needed), and set the variables required
         to get, create or update gists (filename and public/private flag)
         :param user: (str) GitHub username
         :param filename: (str) name of file from any Gist or local file system
@@ -64,26 +77,23 @@ class GetGist(object):
         :param assume_yes: (bool) assume yes (or first option) for all prompts
         :return: (None)
         """
-
-        # get arguments
         user = kwargs.get("user")
         allow_none = kwargs.get("allow_none", False)
         assume_yes = kwargs.get("assume_yes", False)
         filename = kwargs.get("filename")
         self.public = not kwargs.get("create_private", False)
 
-        # instantiate local tools & check for user
-        self.local = LocalTools(filename, assume_yes)
         if not user:
             message = """
-                No default user set yet. To avoid this prompt set an
-                environmental variable called  `GETGIST_USER`.'
+            No default user set yet. To avoid this prompt set an
+            environmental variable called  `GETGIST_USER`.'
             """
-            self.local.oops(message)
+            GetGistCommons().oops(message)
+            exit(1)
 
-        # instantiate filename, github tools and fetch gist
         self.github = GitHubTools(user, filename, assume_yes)
-        self.gist = self.github.select_gist(allow_none)
+        self.local = LocalTools(filename, assume_yes) if filename else None
+        self.gist = self.github.select_gist(allow_none) if filename else None
 
     def get(self):
         """Reads the remote file from Gist and save it locally"""
@@ -98,6 +108,10 @@ class GetGist(object):
             self.github.update(self.gist, content)
         else:
             self.github.create(content, public=self.public)
+
+    def ls(self):
+        """ Lists all gists from a github user """
+        self.github.list_gists()
 
 
 @command(help=GETGIST_DESC)
@@ -158,3 +172,17 @@ def run_putmy(filename, **kwargs):
         allow_none=True,
     )
     getgist.put()
+
+
+@command(help=LSGISTS_DESC)
+@argument("user")
+def run_lsgists(user):
+    getgist = GetGist(user=user)
+    getgist.ls()
+
+
+@command(help=MYGISTS_DESC)
+def run_mygists():
+    user = getenv("GETGIST_USER")
+    getgist = GetGist(user=user)
+    getgist.ls()

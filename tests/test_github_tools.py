@@ -1,6 +1,6 @@
 from re import search
 
-from getgist.github import GitHubTools
+from getgist.github import FileFromGist, GitHubTools
 from tests.conftest import MockResponse, GETGIST_TOKEN, GETGIST_USER
 
 
@@ -140,6 +140,13 @@ def test_select_gist_multi_matches(mocker, response, gists, authenticated_github
     assert authenticated_github.select_gist() == gists[1]
 
 
+def test_select_gist_without_filename(mocker, response, gists, authenticated_github):
+    get = mocker.patch("getgist.request.GetGistRequests.get")
+    get.return_value = response("users/janedoe/gists")
+    authenticated_github.filename = None
+    assert not authenticated_github.select_gist()
+
+
 def test_read_gist(mocker, response, gists, authenticated_github):
     get = mocker.patch("getgist.request.GetGistRequests.get")
     get.return_value = MockResponse("Hello, world!", 200)
@@ -232,3 +239,24 @@ def test_get_token(mocker):
     getenv = mocker.patch("getgist.github.os.getenv")
     GitHubTools._get_token()
     getenv.assert_called_once_with("GETGIST_TOKEN")
+
+
+def test_ls_gists(mocker, response, gists, authenticated_github):
+    tabulate = mocker.patch.object(GitHubTools, "tabulate")
+    get = mocker.patch("getgist.request.GetGistRequests.get")
+    get.return_value = response("users/janedoe/gists")
+    authenticated_github.list_gists()
+    tabulate.assert_called_once_with(
+        FileFromGist(".gist", ".gist", "https://gist.github.com/id_gist_1"),
+        FileFromGist(
+            ".gist",
+            "Description of Gist 2",
+            "https://gist.github.com/id_gist_2",
+        ),
+        FileFromGist(".gist.dev", ".gist.dev", "https://gist.github.com/id_gist_3"),
+        FileFromGist(
+            ".gist.sample",
+            ".gist.dev",
+            "https://gist.github.com/id_gist_3",
+        ),
+    )
