@@ -21,7 +21,7 @@ runner = CliRunner()
         (run_getgist, None, ["cuducos"]),
     ],
 )
-def test_run_command_with_error_in_filename(
+def test_run_command_with_missing_filename(
     command, to_patch, args, mocker, monkeypatch
 ):
     monkeypatch.setenv("GETGIST_USER", "cuducos")
