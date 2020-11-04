@@ -166,8 +166,8 @@ class GitHubTools(GetGistCommons):
         """ Prints all gists names, filenames and URLs"""
         gists = tuple(
             FileFromGist(
-                gist_file.get("filename"),
                 gist.get("description"),
+                gist_file.get("filename"),
                 gist.get("url"),
             )
             for gist in self.get_gists()

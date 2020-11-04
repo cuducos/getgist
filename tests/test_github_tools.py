@@ -249,14 +249,14 @@ def test_ls_gists(mocker, response, gists, authenticated_github):
     tabulate.assert_called_once_with(
         FileFromGist(".gist", ".gist", "https://gist.github.com/id_gist_1"),
         FileFromGist(
-            ".gist",
             "Description of Gist 2",
+            ".gist",
             "https://gist.github.com/id_gist_2",
         ),
         FileFromGist(".gist.dev", ".gist.dev", "https://gist.github.com/id_gist_3"),
         FileFromGist(
-            ".gist.sample",
             ".gist.dev",
+            ".gist.sample",
             "https://gist.github.com/id_gist_3",
         ),
     )
