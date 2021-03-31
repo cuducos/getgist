@@ -1,30 +1,43 @@
 # Changelog
 
+**0.2.0**
+  * Adds `lsgist` command
+  * Drops support for Python 2
+  * Adds support for Python 3.8 and 3.9
+
 **0.1.3**
   * Fix a bug when using `~` as a shortcut in file path
   * Add tests for nested files
   * Add Python 3.7 to `tox`
   * Use Click's `prompt` and `confirm`
   * Minor internal API and test enhancements
+
 **0.1.2**
   * Allow the usage of file paths and not only filenames
   * Add tests for Python 3.6 and 3.7
+
 **0.1.1**
   * Show gist URL after creating or updating
+
 **0.1.0**
   * Complete re-write
   * Add personal access token (OAuth)
   * Allow the update of existing Gists at GitHub (when authenticated)
   * Allow the download of private Gists (when authenticated)  
   * Fix bug when getting gists with non standard encoding (`UnicodeEncodeError`)
+
 **0.0.6**
   * Add default user feature
+
 **0.0.5**
   * Ask user which Gist to use if more than one file is found
   * General code improvements
+
 **0.0.4**
   * Use `entry_points` instead of `scripts`
+
 **0.0.3**
   * Fix a bug related to the directory where the file was being saved
+
 **0.0.2**
   * Fix a bug related to the installation, path and import

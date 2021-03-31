@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "getgist"
-version = "0.1.3"
+version = "0.2.0"
 description = "CLI to update local and remote files from GitHub Gists."
 authors = ["Eduardo Cuducos <cuducos@users.noreply.github.com>"]
 license = "MIT"
