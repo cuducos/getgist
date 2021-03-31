@@ -1,1 +1,47 @@
-[]
+[
+  {
+    "url": "https://api.github.com/gists/id_gist_4",
+    "forks_url": "https://api.github.com/gists/id_gist_4/forks",
+    "commits_url": "https://api.github.com/gists/id_gist_4/commits",
+    "id": "id_gist_4",
+    "git_pull_url": "https://gist.github.com/id_gist_4.git",
+    "git_push_url": "https://gist.github.com/id_gist_4.git",
+    "html_url": "https://gist.github.com/id_gist_4",
+    "files": {
+      ".gist.prod": {
+        "filename": ".gist.prod",
+        "type": "text/plain",
+        "language": "Text",
+        "raw_url": "https://gist.githubusercontent.com/janedoe/id_gist_4/raw/hash_gist_4/.gist.prod",
+        "size": 256
+      }
+    },
+    "public": false,
+    "created_at": "2014-01-01T00:00:00Z",
+    "updated_at": "2014-01-01T00:00:00Z",
+    "description": "",
+    "comments": 0,
+    "user": null,
+    "comments_url": "https://api.github.com/gists/id_gist_4/comments",
+    "owner": {
+      "login": "janedoe",
+      "id": 42,
+      "avatar_url": "https://avatars.githubusercontent.com/u/42?v=3",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/janedoe",
+      "html_url": "https://github.com/janedoe",
+      "followers_url": "https://api.github.com/users/janedoe/followers",
+      "following_url": "https://api.github.com/users/janedoe/following{/other_user}",
+      "gists_url": "https://api.github.com/users/janedoe/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/janedoe/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/janedoe/subscriptions",
+      "organizations_url": "https://api.github.com/users/janedoe/orgs",
+      "repos_url": "https://api.github.com/users/janedoe/repos",
+      "events_url": "https://api.github.com/users/janedoe/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/janedoe/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "truncated": false
+  }
+]

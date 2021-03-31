@@ -129,7 +129,7 @@ class GitHubTools(GetGistCommons):
         self.is_authenticated = True
         self.yeah("User {} authenticated".format(self.user))
 
-    def get_gists(self, page=0):
+    def get_gists(self, page=1):
         """
         List generator containing gist relevant information
         such as id, description, filenames and raw URL (dict).
@@ -152,7 +152,7 @@ class GitHubTools(GetGistCommons):
         # abort if there are no gists
         resp = raw_resp.json()
         if not resp:
-            if page == 0:
+            if page == 1:
                 self.oops("No gists found for user `{}`".format(self.user))
             return
 
