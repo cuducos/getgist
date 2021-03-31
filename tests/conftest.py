@@ -36,7 +36,7 @@ def response_mock(uri, **kwargs):
     users_janedoe_gists), and to it it's appended the case (success if True, or
     fail if False) and the .json extension.
 
-    :param uri: (str) Example: users/janedoe/gists
+    :param uri: (str) Example: users/janedoe/gists/page0
     :param kwargs: case (bool) True/success or False/fail; status_code (int)
     :return: contents of the JSON file (eg: contents of
     tests/fixtures/users_janedoe_gists.success.json)

@@ -99,16 +99,18 @@ class GitHubTools(GetGistCommons):
         self.is_authenticated = True
         self.yeah("User {} authenticated".format(self.user))
 
-    def get_gists(self):
+    def get_gists(self, page=0):
         """
         List generator containing gist relevant information
         such as id, description, filenames and raw URL (dict).
         """
         # fetch all gists
         if self.is_authenticated:
-            url = self._api_url("gists")
+            base_url = self._api_url("gists")
         else:
-            url = self._api_url("users", self.user, "gists")
+            base_url = self._api_url("users", self.user, "gists")
+
+        url = "{}?page={}".format(base_url, page)
         self.output("Fetching " + url)
         raw_resp = self.requests.get(url)
 
@@ -124,8 +126,13 @@ class GitHubTools(GetGistCommons):
             return
 
         # parse response
-        for gist in raw_resp.json():
-            yield self._parse_gist(gist)
+        yield from (self._parse_gist(gist) for gist in raw_resp.json())
+
+        # check next page
+        try:
+            yield from (gist for gist in self.get_gists(page=page + 1))
+        except StopIteration:
+            pass
 
     @with_filename_only
     def select_gist(self, allow_none=False):
