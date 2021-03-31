@@ -57,7 +57,7 @@ def response_mock(uri, **kwargs):
 def parse_mock(**kwargs):
     """Accepts as kwargs the following arguments to build a dictionary with an
     expected gist (dict) values: id (int), filename (str or list), description
-    (str) and user (str)
+    (str), user (str) and public (bool).
     """
 
     # filter the arguments
@@ -66,6 +66,7 @@ def parse_mock(**kwargs):
     hash_ = "hash_gist_{}".format(id_num)
     gist_url = kwargs.get("url")
     user = kwargs.get("user", "janedoe")
+    public = kwargs.get("public", True)
 
     filename = kwargs.get("filename", ".gist")
     if not isinstance(filename, list):
@@ -84,7 +85,9 @@ def parse_mock(**kwargs):
         url = struct.format(base=base, user=user, id=id_, hash=hash_, filename=name)
         files.append(dict(filename=name, raw_url=url))
 
-    return dict(description=description, id=id_, files=files, url=gist_url)
+    return dict(
+        description=description, id=id_, files=files, url=gist_url, public=public
+    )
 
 
 @pytest.fixture
@@ -130,6 +133,7 @@ def gists():
         user=GETGIST_USER,
         filename=".gist",
         url="https://gist.github.com/id_gist_1",
+        public=True,
     )
     gist2 = parse_mock(
         id=2,
@@ -137,18 +141,21 @@ def gists():
         filename=".gist",
         description="Description of Gist 2",
         url="https://gist.github.com/id_gist_2",
+        public=True,
     )
     gist3 = parse_mock(
         id=3,
         user=GETGIST_USER,
         filename=[".gist.sample", ".gist.dev"],
         url="https://gist.github.com/id_gist_3",
+        public=True,
     )
     gist4 = parse_mock(
         id=4,
         user=GETGIST_USER,
         filename=".gist.prod",
         url="https://gist.github.com/id_gist_4",
+        public=False,
     )
 
     return gist1, gist2, gist3, gist4

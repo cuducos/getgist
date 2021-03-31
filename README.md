@@ -64,6 +64,8 @@ $ lsgists cuducos
   My Gist #2     README.md          https://gist.github.com/…
 ```
 
+Secret Gists (when user is authenticated) are listed with `[Secret Gist]` tag next to their names.
+
 ## Using OAuth authentication
 
 ### Why?

@@ -278,26 +278,28 @@ def test_get_token(mocker):
     getenv.assert_called_once_with("GETGIST_TOKEN")
 
 
-def test_ls_gists(mocker, response, gists, authenticated_github):
+def test_ls_gists(mocker, response, authenticated_github):
     tabulate = mocker.patch.object(GitHubTools, "tabulate")
     get = mocker.patch("getgist.request.GetGistRequests.get")
     get.side_effect = (
-        response("users/janedoe/gists/page0"),
-        response("users/janedoe/gists/page1"),
-        response("users/janedoe/gists/page2"),
+        response("gists/page0"),
+        response("gists/page1"),
+        response("gists/page2"),
     )
     authenticated_github.list_gists()
-    tabulate.assert_called_once_with(
-        FileFromGist(".gist", ".gist", "https://gist.github.com/id_gist_1"),
+    expected = (
+        FileFromGist(".gist", ".gist", "https://gist.github.com/id_gist_1", True),
         FileFromGist(
-            "Description of Gist 2",
-            ".gist",
-            "https://gist.github.com/id_gist_2",
+            "Description of Gist 2", ".gist", "https://gist.github.com/id_gist_2", True
         ),
-        FileFromGist(".gist.dev", ".gist.dev", "https://gist.github.com/id_gist_3"),
         FileFromGist(
-            ".gist.dev",
-            ".gist.sample",
-            "https://gist.github.com/id_gist_3",
+            ".gist.dev", ".gist.dev", "https://gist.github.com/id_gist_3", False
+        ),
+        FileFromGist(
+            ".gist.dev", ".gist.sample", "https://gist.github.com/id_gist_3", False
+        ),
+        FileFromGist(
+            ".gist.prod", ".gist.prod", "https://gist.github.com/id_gist_4", False
         ),
     )
+    tabulate.assert_called_once_with(*expected)

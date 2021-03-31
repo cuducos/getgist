@@ -48,4 +48,5 @@ class GetGistCommons(object):
         return self.output(message, color="blue")
 
     def tabulate(self, *files):
-        return self.output(tabulate(files, headers=("Gist", "File", "URL")))
+        data = tuple((str(f), f.gist, f.url) for f in files)
+        return self.output(tabulate(data, headers=("Gist", "File", "URL")))

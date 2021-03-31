@@ -1,5 +1,4 @@
 import os
-from collections import namedtuple
 from json import dumps
 from pkg_resources import get_distribution
 
@@ -9,7 +8,38 @@ from getgist import GetGistCommons
 from getgist.request import GetGistRequests
 
 
-FileFromGist = namedtuple("File", "name gist url")
+class FileFromGist:
+    def __init__(self, name, gist, url, public):
+        self.name = name
+        self.gist = gist
+        self.url = url
+        self.public = public
+
+    def __str__(self):
+        if self.public:
+            return self.name
+        return "{} [Secret Gist]".format(self.name)
+
+    def __repr__(self):
+        return str(
+            {
+                "name": self.name,
+                "gist": self.gist,
+                "url": self.url,
+                "public": self.public,
+            }
+        )
+
+    def __eq__(self, other):
+        if self.name != other.name:
+            return False
+        if self.gist != other.gist:
+            return False
+        if self.url != other.url:
+            return False
+        if self.public != other.public:
+            return False
+        return True
 
 
 def oauth_only(function):
@@ -122,7 +152,8 @@ class GitHubTools(GetGistCommons):
         # abort if there are no gists
         resp = raw_resp.json()
         if not resp:
-            self.oops("No gists found for user `{}`".format(self.user))
+            if page == 0:
+                self.oops("No gists found for user `{}`".format(self.user))
             return
 
         # parse response
@@ -176,6 +207,7 @@ class GitHubTools(GetGistCommons):
                 gist.get("description"),
                 gist_file.get("filename"),
                 gist.get("url"),
+                gist.get("public"),
             )
             for gist in self.get_gists()
             for gist_file in gist.get("files")
@@ -323,6 +355,7 @@ class GitHubTools(GetGistCommons):
             id=gist.get("id"),
             files=files,
             url=gist.get("html_url"),
+            public=gist.get("public"),
         )
 
     @staticmethod
