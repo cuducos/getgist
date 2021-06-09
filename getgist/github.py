@@ -121,7 +121,7 @@ class GitHubTools(GetGistCommons):
         resp = raw_resp.json()
 
         # abort & remove header if token is invalid
-        if resp.get("login", None) != self.user:
+        if resp.get("login", None).lower() != self.user.lower():
             self.oops("Invalid token for user " + self.user)
             self.headers.pop("Authorization")
             return
