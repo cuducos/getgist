@@ -1,5 +1,8 @@
 # Changelog
 
+**0.2.2**
+  * Fix a bug that would not allow users to login due to case-sensitiveness
+
 **0.2.1**
   * Fix a bug related to listing gists (wrong pagination causing duplicates)
 
@@ -26,7 +29,7 @@
   * Complete re-write
   * Add personal access token (OAuth)
   * Allow the update of existing Gists at GitHub (when authenticated)
-  * Allow the download of private Gists (when authenticated)  
+  * Allow the download of private Gists (when authenticated)
   * Fix bug when getting gists with non standard encoding (`UnicodeEncodeError`)
 
 **0.0.6**
