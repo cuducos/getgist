@@ -13,7 +13,7 @@ GETGIST_DESC = """
     Usage: `getgist <GitHub username> <file name from any file inside a gist>`.
 
     If you set GETGIST_USER envvar with your GitHub username, you can use the
-    shortcut `geymy <file name>` (see `getmy --help` for details).
+    shortcut `getmy <file name>` (see `getmy --help` for details).
 
     If you set GETGIST_TOKEN envvar with your personal access token (see
     https://github.com/settings/tokens for details) you can get get private
